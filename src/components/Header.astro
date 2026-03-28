@@ -1,6 +1,6 @@
 ---
 // Header component — gradient banner with botanical personality
-// Navigation lives in the left sidebar now, so header is purely branding
+// Features Salem the cat running across the header
 ---
 
 <header class="site-header">
@@ -9,6 +9,50 @@
     <a href="/" class="site-name">Marihella</a>
     <p class="site-tagline">books · plants · wanderings · recipes</p>
     <div class="header-deco float-item" aria-hidden="true">✦ ❧ ✦</div>
+  </div>
+
+  <!-- Salem the cat running across the header -->
+  <div class="salem" aria-hidden="true">
+    <svg viewBox="0 0 64 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="salem-svg">
+      <!-- body -->
+      <ellipse cx="30" cy="26" rx="14" ry="8" fill="#1a1a1a"/>
+      <!-- head -->
+      <circle cx="46" cy="20" r="7" fill="#1a1a1a"/>
+      <!-- ears -->
+      <polygon points="41,14 43,7 46,13" fill="#1a1a1a"/>
+      <polygon points="47,13 50,6 52,12" fill="#1a1a1a"/>
+      <!-- inner ears -->
+      <polygon points="42,13 43.5,9 45,13" fill="#3a2a2e" opacity="0.6"/>
+      <polygon points="48,12 49.5,8 51,12" fill="#3a2a2e" opacity="0.6"/>
+      <!-- eyes -->
+      <ellipse cx="44" cy="19.5" rx="1.8" ry="2" fill="#a3d94e"/>
+      <ellipse cx="49" cy="19.5" rx="1.8" ry="2" fill="#a3d94e"/>
+      <ellipse cx="44.2" cy="19.5" rx="0.8" ry="1.8" fill="#111"/>
+      <ellipse cx="49.2" cy="19.5" rx="0.8" ry="1.8" fill="#111"/>
+      <!-- eye shine -->
+      <circle cx="43.5" cy="18.8" r="0.5" fill="white" opacity="0.8"/>
+      <circle cx="48.5" cy="18.8" r="0.5" fill="white" opacity="0.8"/>
+      <!-- nose -->
+      <ellipse cx="46.5" cy="22" rx="0.8" ry="0.5" fill="#444"/>
+      <!-- whiskers -->
+      <line x1="43" y1="21" x2="36" y2="19.5" stroke="#555" stroke-width="0.4"/>
+      <line x1="43" y1="22" x2="36" y2="22" stroke="#555" stroke-width="0.4"/>
+      <line x1="50" y1="21" x2="57" y2="19.5" stroke="#555" stroke-width="0.4"/>
+      <line x1="50" y1="22" x2="57" y2="22" stroke="#555" stroke-width="0.4"/>
+      <!-- tail — curling up -->
+      <path d="M16 24 Q8 22 6 16 Q4 10 8 6" stroke="#1a1a1a" stroke-width="3.5" stroke-linecap="round" fill="none"/>
+      <!-- front legs in running pose -->
+      <line x1="38" y1="32" x2="42" y2="38" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="34" y1="33" x2="30" y2="38" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- back legs stretched -->
+      <line x1="22" y1="32" x2="18" y2="38" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="26" y1="33" x2="30" y2="39" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+      <!-- tiny paws -->
+      <circle cx="42" cy="38.5" r="1.2" fill="#1a1a1a"/>
+      <circle cx="30" cy="38.5" r="1.2" fill="#1a1a1a"/>
+      <circle cx="18" cy="38.5" r="1.2" fill="#1a1a1a"/>
+      <circle cx="30" cy="39.5" r="1.2" fill="#1a1a1a"/>
+    </svg>
   </div>
 </header>
 
@@ -73,9 +117,50 @@
     max-width: none;
   }
 
+  /* --- Salem the cat --- */
+  .salem {
+    position: absolute;
+    bottom: 6px;
+    width: 48px;
+    height: 30px;
+    z-index: 2;
+    animation: salem-run 12s linear infinite;
+    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
+  }
+
+  .salem-svg {
+    width: 100%;
+    height: 100%;
+    /* slight bounce while running */
+    animation: salem-bounce 0.35s ease-in-out infinite;
+  }
+
+  @keyframes salem-run {
+    0%   { left: -60px; }
+    100% { left: calc(100% + 60px); }
+  }
+
+  @keyframes salem-bounce {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+  }
+
+  /* Pause on hover — Salem stops to look at you */
+  .site-header:hover .salem {
+    animation-play-state: paused;
+  }
+  .site-header:hover .salem-svg {
+    animation-play-state: paused;
+  }
+
   @media (max-width: 600px) {
     .site-header { padding: var(--space-4) var(--space-4); }
     .site-name { font-size: var(--text-2xl); }
     .header-deco { display: none; }
+    .salem { width: 36px; height: 22px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .salem { display: none; }
   }
 </style>
