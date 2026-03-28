@@ -1,5 +1,11 @@
 ---
 import { getCollection } from 'astro:content';
+import AnimatedIcons from './AnimatedIcons.astro';
+import BookIcon from './icons/BookIcon.astro';
+import CandleIcon from './icons/CandleIcon.astro';
+import StarIcon from './icons/StarIcon.astro';
+import PotionIcon from './icons/PotionIcon.astro';
+import QuillIcon from './icons/QuillIcon.astro';
 
 const navLinks = [
   { href: '/',         label: 'Home',          icon: '✦' },
@@ -24,6 +30,8 @@ const quotes = [
 const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
 ---
 
+<AnimatedIcons />
+
 <aside class="left-sidebar">
 
   <!-- Navigation widget -->
@@ -44,10 +52,10 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     </ul>
   </nav>
 
-  <!-- Currently reading -->
+  <!-- Currently reading with animated book -->
   {currentlyReading.length > 0 && (
     <div class="widget-box">
-      <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">📖</span> Reading Now</h4>
+      <h4 class="widget-title"><BookIcon class="icon-sm" /> Reading Now</h4>
       <ul class="reading-list">
         {currentlyReading.map(book => (
           <li>
@@ -59,18 +67,34 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     </div>
   )}
 
-  <!-- Quote widget -->
+  <!-- Quote widget with quill -->
   <div class="widget-box quote-widget">
-    <h4 class="widget-title"><span class="widget-icon twinkle" aria-hidden="true">✦</span> A thought</h4>
+    <h4 class="widget-title"><QuillIcon class="icon-sm" /> A thought</h4>
     <blockquote class="sidebar-quote">
       &ldquo;{randomQuote.text}&rdquo;
       {randomQuote.source && <cite>— {randomQuote.source}</cite>}
     </blockquote>
   </div>
 
+  <!-- Candle decoration -->
+  <div class="widget-box candle-widget">
+    <div class="candle-row">
+      <CandleIcon />
+      <div class="candle-text">
+        <p>burning the midnight oil</p>
+        <div class="star-row">
+          <StarIcon delay={1} />
+          <StarIcon delay={2} />
+          <StarIcon delay={3} />
+        </div>
+      </div>
+      <CandleIcon />
+    </div>
+  </div>
+
   <!-- Mood badges -->
   <div class="widget-box">
-    <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">✧</span> Mood</h4>
+    <h4 class="widget-title"><PotionIcon class="icon-sm" /> Mood</h4>
     <div class="mood-badges">
       <span class="mood-badge sage">📚 book hoarder</span>
       <span class="mood-badge terra">🌿 plant mum</span>
@@ -171,12 +195,26 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     font-style: normal;
   }
 
-  .twinkle {
-    animation: twinkle 3s ease-in-out infinite;
+  /* --- Candle widget --- */
+  .candle-widget { text-align: center; }
+  .candle-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
   }
-  @keyframes twinkle {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.4; }
+  .candle-text p {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-gold);
+    margin: 0;
+  }
+  .star-row {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-1);
+    margin-top: var(--space-1);
   }
 
   /* --- Mood badges --- */
@@ -217,16 +255,12 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
       position: static;
       order: -1;
     }
-    .nav-widget {
-      order: -1;
-    }
+    .nav-widget { order: -1; }
     .nav-list {
       display: flex;
       flex-wrap: wrap;
       gap: var(--space-1);
     }
-    .mood-badges, .quote-widget, .reading-list {
-      /* keep compact on mobile */
-    }
+    .candle-widget { display: none; }
   }
 </style>

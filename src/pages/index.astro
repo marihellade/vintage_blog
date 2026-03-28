@@ -1,5 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import BookIcon from '../components/icons/BookIcon.astro';
+import SproutIcon from '../components/icons/SproutIcon.astro';
+import StarIcon from '../components/icons/StarIcon.astro';
+import CandleIcon from '../components/icons/CandleIcon.astro';
 import { getCollection } from 'astro:content';
 
 const allBooks   = await getCollection('books');
@@ -26,6 +30,11 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
         the plants I'm trying not to kill, the places that made me feel something,
         and the recipes I'll make again and again.
       </p>
+      <div class="welcome-icons" aria-hidden="true">
+        <StarIcon delay={1} />
+        <CandleIcon />
+        <StarIcon delay={2} />
+      </div>
       <p class="welcome-sign">— Marihella</p>
     </div>
   </section>
@@ -33,7 +42,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   <!-- Currently reading banner -->
   {currentlyReading.length > 0 && (
     <section class="currently-banner">
-      <h3 class="section-title">Currently Reading</h3>
+      <h3 class="section-title"><BookIcon class="icon-sm" /> Currently Reading</h3>
       <div class="currently-grid">
         {currentlyReading.map(book => (
           <a href={`/books/${book.slug}`} class="card currently-card">
@@ -66,7 +75,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   <!-- Featured book review -->
   {featuredBook && (
     <section class="featured-section">
-      <h3 class="section-title">From the Book Diary</h3>
+      <h3 class="section-title"><BookIcon class="icon-sm" /> From the Book Diary</h3>
       <div class="card featured-book-card">
         <div class="featured-book-layout">
           <div class="featured-cover">
@@ -139,7 +148,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
     <>
       <hr class="fancy" />
       <section class="featured-section">
-        <h3 class="section-title">From the Garden</h3>
+        <h3 class="section-title"><SproutIcon class="icon-sm" /> From the Garden</h3>
         <div class="card plant-feature-card">
           <h4><a href="/plants">{featuredPlant.data.name}</a></h4>
           {featuredPlant.data.botanicalName && <p class="meta"><em>{featuredPlant.data.botanicalName}</em></p>}
@@ -190,6 +199,13 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
     color: var(--color-ink-soft);
     font-style: italic;
     margin-bottom: var(--space-2);
+  }
+  .welcome-icons {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-3);
+    margin: var(--space-3) 0;
   }
   .welcome-sign {
     font-family: var(--font-heading);

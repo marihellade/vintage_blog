@@ -1,0 +1,25 @@
+---
+interface Props { class?: string; }
+const { class: className = '' } = Astro.props;
+---
+<span class:list={['icon-candle', className]} aria-hidden="true">
+  <svg viewBox="0 0 24 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- glow -->
+    <circle class="flame-glow" cx="12" cy="8" r="8" fill="#B8934A" opacity="0.3"/>
+    <!-- candle body -->
+    <rect x="8" y="16" width="8" height="18" rx="1" fill="#F7F0E1" stroke="#DEC48A" stroke-width="0.5"/>
+    <!-- wax drips -->
+    <ellipse cx="10" cy="16" rx="1.5" ry="2" fill="#FDF8F0"/>
+    <ellipse cx="14" cy="16.5" rx="1" ry="1.5" fill="#FDF8F0"/>
+    <!-- wick -->
+    <line x1="12" y1="16" x2="12" y2="11" stroke="#4A3728" stroke-width="0.8"/>
+    <!-- flame -->
+    <g class="flame">
+      <ellipse cx="12" cy="8" rx="2.5" ry="4.5" fill="#C4614A" opacity="0.9"/>
+      <ellipse cx="12" cy="7.5" rx="1.5" ry="3" fill="#DEC48A"/>
+      <ellipse cx="12" cy="7" rx="0.8" ry="1.8" fill="#FDF8F0" opacity="0.9"/>
+    </g>
+    <!-- holder -->
+    <ellipse cx="12" cy="34" rx="6" ry="1.5" fill="#B8934A" opacity="0.6"/>
+  </svg>
+</span>
