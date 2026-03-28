@@ -160,9 +160,24 @@
         <path d="M221 61C229 61 235 66 235 72C230 74 223 74 217 71C216 67 217 63 221 61Z" fill="#2B412E"/>
         <path d="M202 60C206 57 211 56 216 58" stroke="#1A261D" stroke-width="1.2" opacity="0.5"/>
 
-        <!-- closed eye — sleeping crescent -->
-        <path d="M208 59C211 56 215 56 218 59"
-              stroke="#B79A5A" stroke-width="1.8" stroke-linecap="round"/>
+        <!-- closed eye — sleeping crescent (fades out when dragon stirs) -->
+        <g class="dragon-eye-closed">
+          <path d="M208 59C211 56 215 56 218 59"
+                stroke="#B79A5A" stroke-width="1.8" stroke-linecap="round"/>
+        </g>
+
+        <!-- open eye — slit iris (fades in when Salem jumps over) -->
+        <g class="dragon-eye-open">
+          <ellipse cx="213" cy="58" rx="5.5" ry="4" fill="#3A5A3E"/>
+          <ellipse cx="213" cy="58" rx="1.4" ry="3.2" fill="#111D13"/>
+          <circle  cx="211.5" cy="56.5" r="0.9" fill="white" opacity="0.8"/>
+          <ellipse cx="213" cy="58" rx="7" ry="5.5" fill="none"
+                   stroke="#C8984E" stroke-width="0.6" opacity="0.45"/>
+        </g>
+
+        <!-- golden glow around eye when awake -->
+        <ellipse class="dragon-wake-glow" cx="213" cy="56" rx="18" ry="12"
+                 fill="#C8984E" opacity="0"/>
 
         <!-- horns -->
         <path d="M202 50C198 42 199 35 205 28" stroke="#B79A5A" stroke-width="2.5" stroke-linecap="round"/>
@@ -294,7 +309,7 @@
      JavaScript below overwrites this with exact values for every viewport size. */
   @keyframes salem-leap {
     0%,  82%  { transform: translateY(0px)   rotate(0deg);   }
-    88%       { transform: translateY(-52px) rotate(-20deg); }
+    88%       { transform: translateY(-80px) rotate(-20deg); }
     94%, 100% { transform: translateY(0px)   rotate(0deg);   }
   }
 
@@ -364,9 +379,40 @@
     .salem { width: 36px; height: 22px; }
   }
 
+  /* --- Dragon wake --- */
+  .dragon-eye-closed {
+    animation: dragon-eye-close-anim 12s ease-in-out infinite;
+  }
+  .dragon-eye-open {
+    animation: dragon-eye-open-anim 12s ease-in-out infinite;
+  }
+  .dragon-wake-glow {
+    animation: dragon-wake-glow-anim 12s ease-in-out infinite;
+  }
+
+  /* CSS fallbacks — JS overrides with exact screen-measured percentages */
+  @keyframes dragon-eye-close-anim {
+    0%, 80%   { opacity: 1; }
+    86%       { opacity: 0; }
+    94%, 100% { opacity: 1; }
+  }
+  @keyframes dragon-eye-open-anim {
+    0%, 80%   { opacity: 0; }
+    86%       { opacity: 1; }
+    94%, 100% { opacity: 0; }
+  }
+  @keyframes dragon-wake-glow-anim {
+    0%, 80%   { opacity: 0;    }
+    88%       { opacity: 0.12; }
+    94%, 100% { opacity: 0;    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .salem { display: none; }
     .dragon-breath { animation: none; }
+    .dragon-eye-closed { animation: none; opacity: 1; }
+    .dragon-eye-open   { animation: none; opacity: 0; }
+    .dragon-wake-glow  { animation: none; opacity: 0; }
   }
 </style>
 
@@ -385,17 +431,39 @@
       const dLeft  = dr.left  - hr.left;
       const dRight = dr.right - hr.left;
       const dMid   = (dLeft + dRight) / 2;
-      const liftPct = ((dLeft  - 30 + 60) / totalTravel * 100).toFixed(2);
-      const peakPct = ((dMid        + 60) / totalTravel * 100).toFixed(2);
-      const landPct = ((dRight + 20 + 60) / totalTravel * 100).toFixed(2);
+      const liftPct      = ((dLeft  - 30 + 60) / totalTravel * 100).toFixed(2);
+      const peakPct      = ((dMid        + 60) / totalTravel * 100).toFixed(2);
+      const landPct      = ((dRight + 20 + 60) / totalTravel * 100).toFixed(2);
+      // Dragon stirs slightly before Salem lifts, closes eye shortly after she lands
+      const stirPct      = Math.max(0,  parseFloat(liftPct) - 5 ).toFixed(2);
+      const sleepPct     = Math.min(99, parseFloat(landPct) + 4 ).toFixed(2);
       if (!styleEl) {
         styleEl = document.createElement('style');
         document.head.appendChild(styleEl);
       }
-      styleEl.textContent = `@keyframes salem-leap {
+      styleEl.textContent = `
+@keyframes salem-leap {
   0%, ${liftPct}%   { transform: translateY(0px)   rotate(0deg);   }
-  ${peakPct}%       { transform: translateY(-52px) rotate(-20deg); }
+  ${peakPct}%       { transform: translateY(-80px) rotate(-20deg); }
   ${landPct}%, 100% { transform: translateY(0px)   rotate(0deg);   }
+}
+@keyframes dragon-eye-close-anim {
+  0%, ${stirPct}%   { opacity: 1; }
+  ${peakPct}%       { opacity: 0; }
+  ${sleepPct}%      { opacity: 0; }
+  99%, 100%         { opacity: 1; }
+}
+@keyframes dragon-eye-open-anim {
+  0%, ${stirPct}%   { opacity: 0; }
+  ${peakPct}%       { opacity: 1; }
+  ${sleepPct}%      { opacity: 1; }
+  99%, 100%         { opacity: 0; }
+}
+@keyframes dragon-wake-glow-anim {
+  0%, ${stirPct}%   { opacity: 0;    }
+  ${peakPct}%       { opacity: 0.12; }
+  ${sleepPct}%      { opacity: 0.12; }
+  99%, 100%         { opacity: 0;    }
 }`;
     }
     const init = () => requestAnimationFrame(() => requestAnimationFrame(recalc));
