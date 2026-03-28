@@ -38,7 +38,9 @@ use *italics*, **bold**, and > quotes.
 | `title` | Yes | `"Fourth Wing"` |
 | `author` | Yes | `"Rebecca Yarros"` |
 | `cover` | No | `"/images/books/fourth-wing.jpg"` |
-| `rating` | No | `4` (1 to 5) |
+| `rating` | No | `4` or `3.5` — supports half stars, 0.5 to 5 |
+| `dateStarted` | No | `2026-01-12` |
+| `dateFinished` | No | `2026-02-03` |
 | `status` | No | `reading`, `finished`, `dnf`, `want-to-read` |
 | `series` | No | `"The Empyrean"` |
 | `seriesNumber` | No | `1` |
@@ -46,6 +48,27 @@ use *italics*, **bold**, and > quotes.
 | `mood` | No | `"dragons, slow burn, brutal"` |
 | `tags` | No | `["fantasy", "romantasy"]` |
 | `featured` | No | `true` or `false` — shows on the home page |
+
+### Half-star ratings
+
+Ratings support `.5` increments. Just use a decimal:
+
+```yaml
+rating: 3.5   # shows ✦✦✦✩✧
+rating: 4.5   # shows ✦✦✦✦✩
+rating: 5     # shows ✦✦✦✦✦
+```
+
+### Date formats
+
+Dates use the format `YYYY-MM-DD`. Both `dateStarted` and `dateFinished` are optional — fill in whichever you have. They show on the individual book page below the status badge.
+
+```yaml
+dateStarted: 2026-03-01
+dateFinished: 2026-03-20
+```
+
+> **Common mistake:** always close quoted values with a matching `"`. Writing `cover: "/images/my-book.jpg` without the closing quote will break the whole file and show an error like `title: Required`.
 
 ### Adding a book cover image
 
@@ -102,7 +125,7 @@ use *italics*, **bold**, and > quotes.
 | `title` | Yes | `"Rosemary Focaccia"` |
 | `source` | No | `"Adapted from various"` |
 | `sourceUrl` | No | `"https://example.com/recipe"` |
-| `rating` | No | `5` (1 to 5) |
+| `rating` | No | `5` or `4.5` — supports half stars, 0.5 to 5 |
 | `dateTried` | No | `2025-08-20` |
 | `tags` | No | `["bread", "vegetarian"]` |
 | `wouldMakeAgain` | No | `true` or `false` |
