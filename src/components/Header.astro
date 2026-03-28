@@ -258,15 +258,21 @@
     max-width: none;
   }
 
-  /* --- Salem — golden candlelight glow so the black cat is visible on dark --- */
+  /* --- Salem — golden glow + jumps over the dragon at ~75-85% of each run ---
+     Two animations on the container:
+       salem-run  → horizontal (left only, linear)
+       salem-leap → vertical arc (transform only, ease-in-out)
+     They share the same 12s duration so they stay in sync.
+     The bounce stays on the inner SVG and is separate. */
   .salem {
     position: absolute;
     bottom: 6px;
     width: 48px;
     height: 30px;
     z-index: 3;
-    animation: salem-run 12s linear infinite;
-    /* warm golden aura — like running through candlelight */
+    animation:
+      salem-run  12s linear     infinite,
+      salem-leap 12s ease-in-out infinite;
     filter:
       drop-shadow(0 0 5px rgba(200, 152, 78, 0.9))
       drop-shadow(0 0 10px rgba(200, 152, 78, 0.4));
@@ -278,9 +284,19 @@
     animation: salem-bounce 0.35s ease-in-out infinite;
   }
 
+  /* Horizontal travel only — no transform here to avoid conflict with salem-leap */
   @keyframes salem-run {
     0%   { left: -60px; }
     100% { left: calc(100% + 60px); }
+  }
+
+  /* Vertical arc — Salem arcs over the dragon which sits in the right ~20% of the header.
+     74% of 12s ≈ 8.9s is roughly when Salem reaches the dragon's left edge.
+     Peak (79%) tilts Salem nose-up mid-leap; landing (84%) brings it back down. */
+  @keyframes salem-leap {
+    0%,  74% { transform: translateY(0px)   rotate(0deg);   }
+    79%      { transform: translateY(-52px) rotate(-20deg); }
+    84%, 100% { transform: translateY(0px)  rotate(0deg);   }
   }
 
   @keyframes salem-bounce {
