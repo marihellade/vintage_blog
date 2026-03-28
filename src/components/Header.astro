@@ -431,39 +431,46 @@
       const dLeft  = dr.left  - hr.left;
       const dRight = dr.right - hr.left;
       const dMid   = (dLeft + dRight) / 2;
-      const liftPct      = ((dLeft  - 30 + 60) / totalTravel * 100).toFixed(2);
-      const peakPct      = ((dMid        + 60) / totalTravel * 100).toFixed(2);
-      const landPct      = ((dRight + 20 + 60) / totalTravel * 100).toFixed(2);
-      // Dragon stirs slightly before Salem lifts, closes eye shortly after she lands
-      const stirPct      = Math.max(0,  parseFloat(liftPct) - 5 ).toFixed(2);
-      const sleepPct     = Math.min(99, parseFloat(landPct) + 4 ).toFixed(2);
+      // Jump height: measure how far Salem's top needs to travel to clear the dragon's highest point
+      // Salem rests at bottom:6px, height:30px → top is at hr.bottom - 36
+      // Dragon top (horn tips) is at dr.top. Add 12px clearance above that.
+      const salemRestTop = hr.bottom - 36;
+      const jumpHeight   = Math.max(70, Math.round(salemRestTop - dr.top + 12));
+
+      const liftPct  = ((dLeft  - 30 + 60) / totalTravel * 100).toFixed(2);
+      const peakPct  = ((dMid        + 60) / totalTravel * 100).toFixed(2);
+      const landPct  = ((dRight + 20 + 60) / totalTravel * 100).toFixed(2);
+      // Eye opens exactly when Salem lifts; stays open until she's well past, then closes
+      const gazePct  = Math.min(98, parseFloat(landPct) + 7 ).toFixed(2);
+      const sleepPct = Math.min(99, parseFloat(gazePct) + 3 ).toFixed(2);
+
       if (!styleEl) {
         styleEl = document.createElement('style');
         document.head.appendChild(styleEl);
       }
       styleEl.textContent = `
 @keyframes salem-leap {
-  0%, ${liftPct}%   { transform: translateY(0px)   rotate(0deg);   }
-  ${peakPct}%       { transform: translateY(-80px) rotate(-20deg); }
-  ${landPct}%, 100% { transform: translateY(0px)   rotate(0deg);   }
+  0%, ${liftPct}%   { transform: translateY(0px)          rotate(0deg);   }
+  ${peakPct}%       { transform: translateY(-${jumpHeight}px) rotate(-20deg); }
+  ${landPct}%, 100% { transform: translateY(0px)          rotate(0deg);   }
 }
 @keyframes dragon-eye-close-anim {
-  0%, ${stirPct}%   { opacity: 1; }
+  0%, ${liftPct}%   { opacity: 1; }
   ${peakPct}%       { opacity: 0; }
-  ${sleepPct}%      { opacity: 0; }
-  99%, 100%         { opacity: 1; }
+  ${gazePct}%       { opacity: 0; }
+  ${sleepPct}%, 100%{ opacity: 1; }
 }
 @keyframes dragon-eye-open-anim {
-  0%, ${stirPct}%   { opacity: 0; }
+  0%, ${liftPct}%   { opacity: 0; }
   ${peakPct}%       { opacity: 1; }
-  ${sleepPct}%      { opacity: 1; }
-  99%, 100%         { opacity: 0; }
+  ${gazePct}%       { opacity: 1; }
+  ${sleepPct}%, 100%{ opacity: 0; }
 }
 @keyframes dragon-wake-glow-anim {
-  0%, ${stirPct}%   { opacity: 0;    }
+  0%, ${liftPct}%   { opacity: 0;    }
   ${peakPct}%       { opacity: 0.12; }
-  ${sleepPct}%      { opacity: 0.12; }
-  99%, 100%         { opacity: 0;    }
+  ${gazePct}%       { opacity: 0.12; }
+  ${sleepPct}%, 100%{ opacity: 0;    }
 }`;
     }
     const init = () => requestAnimationFrame(() => requestAnimationFrame(recalc));
