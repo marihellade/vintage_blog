@@ -1,6 +1,6 @@
 /* ============================================================
    GLOBAL STYLES — Marihella's site
-   Earthy · ethereal · art nouveau · apothecary
+   Dark academia · candlelit library · old books and night air
    ============================================================ */
 
 @import './tokens.css';
@@ -26,12 +26,23 @@ body {
   line-height: var(--leading-body);
   color: var(--color-ink);
   background-color: var(--color-parchment);
-  /* subtle dot pattern — like old handmade paper */
+  /* atmospheric dark background — candlelight glow from above, subtle parchment grain */
   background-image:
-    radial-gradient(circle at 1px 1px, rgba(122, 158, 126, 0.18) 1px, transparent 0),
-    radial-gradient(circle at 1px 1px, rgba(184, 147, 74, 0.12) 1px, transparent 0);
-  background-size: 24px 24px, 48px 48px;
-  background-position: 0 0, 12px 12px;
+    radial-gradient(ellipse 90% 55% at 50% -8%, rgba(200, 152, 78, 0.1) 0%, transparent 65%),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(200, 152, 78, 0.018) 0px,
+      rgba(200, 152, 78, 0.018) 1px,
+      transparent 1px,
+      transparent 10px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      rgba(200, 152, 78, 0.022) 0px,
+      rgba(200, 152, 78, 0.022) 1px,
+      transparent 1px,
+      transparent 32px
+    );
   min-height: 100vh;
   cursor: none;
 }
@@ -50,7 +61,11 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--color-ink);
 }
 
-h1 { font-size: var(--text-3xl); font-style: italic; }
+h1 {
+  font-size: var(--text-3xl);
+  font-style: italic;
+  text-shadow: 0 0 60px rgba(200, 152, 78, 0.12);
+}
 h2 { font-size: var(--text-2xl); }
 h3 { font-size: var(--text-xl); font-style: italic; }
 h4 { font-size: var(--text-lg); }
@@ -65,13 +80,13 @@ p {
 a {
   color: var(--color-forest);
   text-decoration: underline;
-  text-decoration-color: var(--color-sage-light);
+  text-decoration-color: var(--color-sage);
   text-underline-offset: 3px;
   transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 a:hover {
   color: var(--color-terracotta);
-  text-decoration-color: var(--color-terracotta-light);
+  text-decoration-color: var(--color-terracotta);
 }
 
 strong { font-weight: 600; }
@@ -84,8 +99,9 @@ blockquote {
   font-style: italic;
   font-size: var(--text-md);
   color: var(--color-ink-soft);
-  background: var(--color-cream);
+  background: #1A1410;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  box-shadow: inset 0 0 0 1px rgba(200, 152, 78, 0.08);
 }
 
 /* --- Lists --- */
@@ -103,23 +119,23 @@ img {
 }
 
 /* ============================================================
-   WIDGET BOXES — the scrapbook-panel feel
+   WIDGET BOXES — candlelit shelf panels
    ============================================================ */
 .widget-box {
-  background: #fdf8ef;
-  border: 2px solid var(--color-gold-light);
+  background: linear-gradient(160deg, #201A12 0%, #181310 100%);
+  border: 1px solid var(--color-gold-light);
   border-radius: var(--radius-md);
   padding: var(--space-4);
-  box-shadow: var(--shadow-sm);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(200, 152, 78, 0.07);
   position: relative;
 }
 
-/* Inner dashed border — double-border effect */
+/* Inner dashed border — old letter / double-border effect */
 .widget-box::before {
   content: '';
   position: absolute;
   inset: 4px;
-  border: 1px dashed rgba(184, 147, 74, 0.35);
+  border: 1px dashed rgba(200, 152, 78, 0.18);
   border-radius: calc(var(--radius-md) - 4px);
   pointer-events: none;
 }
@@ -135,7 +151,7 @@ img {
   gap: var(--space-2);
   margin-bottom: var(--space-3);
   padding-bottom: var(--space-2);
-  border-bottom: 2px dotted var(--color-gold-light);
+  border-bottom: 1px dotted var(--color-gold-light);
 }
 
 .widget-icon {
@@ -152,28 +168,29 @@ img {
   font-size: 1.1rem;
   color: var(--color-gold);
   letter-spacing: 0.5rem;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 .divider::before,
 .divider::after {
   content: '· · ·';
   margin: 0 0.75rem;
-  opacity: 0.5;
+  opacity: 0.4;
 }
 
 hr.fancy {
   border: none;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, var(--color-sage-light), var(--color-gold-light), var(--color-sage-light), transparent);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-sage), var(--color-gold), var(--color-sage), transparent);
   margin: var(--space-6) 0;
+  opacity: 0.6;
 }
 
 /* ============================================================
-   CARDS — with dashed borders and layered shadow
+   CARDS — old book page, layered amber shadow
    ============================================================ */
 .card {
-  background: var(--color-cream);
-  border: 2px dashed var(--color-gold-light);
+  background: linear-gradient(160deg, #1E1812 0%, #17130F 100%);
+  border: 1px solid var(--color-gold-light);
   border-radius: var(--radius-md);
   padding: var(--space-6);
   box-shadow: var(--shadow-card);
@@ -185,8 +202,8 @@ hr.fancy {
   content: '';
   position: absolute;
   inset: 4px -3px -3px 4px;
-  background: var(--color-sage-light);
-  opacity: 0.3;
+  background: var(--color-gold);
+  opacity: 0.06;
   border-radius: var(--radius-md);
   z-index: -1;
   transition: opacity 0.2s;
@@ -194,10 +211,10 @@ hr.fancy {
 
 .card:hover {
   transform: translateY(-3px) rotate(0.3deg);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(200, 152, 78, 0.15);
 }
 .card:hover::after {
-  opacity: 0.45;
+  opacity: 0.12;
 }
 
 /* ============================================================
@@ -211,23 +228,23 @@ hr.fancy {
   text-transform: uppercase;
   padding: 2px var(--space-3);
   border-radius: 999px;
-  background: rgba(122, 158, 126, 0.2);
-  color: var(--color-forest);
+  background: rgba(95, 128, 101, 0.18);
+  color: var(--color-sage-dark);
   border: 1px solid var(--color-sage);
 }
 .tag.terracotta {
-  background: rgba(196, 97, 74, 0.15);
+  background: rgba(212, 107, 82, 0.15);
   color: var(--color-terracotta);
   border-color: var(--color-terracotta);
 }
 .tag.gold {
-  background: rgba(184, 147, 74, 0.15);
+  background: rgba(200, 152, 78, 0.15);
   color: var(--color-gold);
   border-color: var(--color-gold-light);
 }
 
 /* ============================================================
-   SECTION HEADINGS — botanical accent
+   SECTION HEADINGS — candlelit chapter marker
    ============================================================ */
 .section-title {
   font-family: var(--font-heading);
@@ -239,7 +256,7 @@ hr.fancy {
   gap: var(--space-3);
   margin-bottom: var(--space-6);
   padding-bottom: var(--space-2);
-  border-bottom: 3px dotted var(--color-gold-light);
+  border-bottom: 2px dotted var(--color-gold-light);
 }
 .section-title::before {
   content: '✦';
@@ -252,7 +269,7 @@ hr.fancy {
    BOTANICAL BORDER — ornamental frame
    ============================================================ */
 .border-botanical {
-  border: 2px solid var(--color-gold-light);
+  border: 1px solid var(--color-gold-light);
   position: relative;
 }
 .border-botanical::before,
@@ -262,7 +279,7 @@ hr.fancy {
   color: var(--color-gold);
   font-size: 1.2rem;
   line-height: 1;
-  background: var(--color-cream);
+  background: var(--color-surface);
   padding: 0 var(--space-2);
 }
 .border-botanical::before { top: -0.6rem; left: 50%; transform: translateX(-50%); }
@@ -278,7 +295,7 @@ hr.fancy {
 
 @keyframes twinkle {
   0%, 100% { opacity: 1; }
-  50%      { opacity: 0.4; }
+  50%      { opacity: 0.35; }
 }
 
 .float-item { animation: float-gentle 5s ease-in-out infinite; }
@@ -294,7 +311,7 @@ hr.fancy {
 }
 
 :focus-visible {
-  outline: 2px solid var(--color-sage);
+  outline: 2px solid var(--color-gold);
   outline-offset: 3px;
   border-radius: var(--radius-sm);
 }

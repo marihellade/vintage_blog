@@ -346,25 +346,25 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     white-space: nowrap;
   }
   .status-badge.reading {
-    background: var(--color-terracotta-light);
+    background: #3A1810;
     color: var(--color-terracotta);
   }
   .status-badge.finished {
-    background: var(--color-sage-light);
-    color: var(--color-forest);
+    background: #1A301A;
+    color: var(--color-sage-dark);
   }
   .status-badge.dnf {
-    background: #f0d4d4;
-    color: #8b3a3a;
+    background: #2A1010;
+    color: #C47A7A;
   }
   .status-badge.want-to-read {
-    background: #F3E8C8;
+    background: #2A1E08;
     color: var(--color-gold);
   }
 
   .book-cover-placeholder.dnf {
-    background: linear-gradient(135deg, #e8a898, #c4614a);
-    opacity: 0.7;
+    background: linear-gradient(135deg, #6A2A1E, #3A1010);
+    opacity: 1;
   }
   .dnf-card { opacity: 0.8; }
 

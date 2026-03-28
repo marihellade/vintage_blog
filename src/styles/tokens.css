@@ -1,25 +1,26 @@
 /* ============================================================
    DESIGN TOKENS — Marihella's site
-   Colors, typography, spacing, and visual rhythm
+   Dark academia · candlelit · apothecary · forest at night
    ============================================================ */
 
 :root {
   /* --- Palette --- */
-  --color-parchment:    #F7F0E1;   /* base background */
-  --color-cream:        #FDF8F0;   /* lighter panels */
-  --color-ink:          #2C1810;   /* primary text */
-  --color-ink-soft:     #4A3728;   /* secondary text / captions */
+  --color-parchment:    #0E0C09;   /* aged leather dark — body bg */
+  --color-surface:      #1C1610;   /* dark amber panel — widgets, cards */
+  --color-cream:        #EDE0C8;   /* warm ivory — text on dark, ornaments */
+  --color-ink:          #DDD2BC;   /* primary text — warm parchment */
+  --color-ink-soft:     #9A8570;   /* secondary text — warm mid-tone */
 
-  --color-sage:         #7A9E7E;   /* primary accent */
-  --color-sage-light:   #B5CEAC;   /* hover states, borders */
-  --color-sage-dark:    #4A7550;   /* active states, headings */
+  --color-sage:         #5F8065;   /* muted forest sage */
+  --color-sage-light:   #3A5A3E;   /* dark sage — borders, subtle fills */
+  --color-sage-dark:    #9ABF9E;   /* lighter sage — headings on dark bg */
 
-  --color-forest:       #2D5016;   /* strong accent, links */
-  --color-terracotta:   #C4614A;   /* warm contrast, tags, highlights */
-  --color-terracotta-light: #E8A898; /* soft terracotta */
+  --color-forest:       #7AA87E;   /* links — leafy green on dark */
+  --color-terracotta:   #D46B52;   /* warm contrast accent */
+  --color-terracotta-light: #3A1810; /* deep terracotta — badge backgrounds */
 
-  --color-gold:         #B8934A;   /* decorative details */
-  --color-gold-light:   #DEC48A;   /* subtle borders, dividers */
+  --color-gold:         #C8984E;   /* candlelight gold */
+  --color-gold-light:   #6A4E28;   /* dark amber — borders, dividers */
 
   /* --- Typography --- */
   --font-heading:  'Cormorant Garamond', 'IM Fell English', Georgia, serif;
@@ -36,7 +37,7 @@
   --text-3xl:   3.5rem;
 
   --leading-tight:  1.2;
-  --leading-body:   1.7;
+  --leading-body:   1.75;
 
   /* --- Spacing --- */
   --space-1:  0.25rem;
@@ -55,10 +56,10 @@
   --border-thin: 1px solid var(--color-gold-light);
   --border-med:  2px solid var(--color-gold);
 
-  /* --- Shadows --- */
-  --shadow-sm: 0 1px 4px rgba(44, 24, 16, 0.08);
-  --shadow-md: 0 4px 16px rgba(44, 24, 16, 0.12);
-  --shadow-card: 2px 4px 12px rgba(44, 24, 16, 0.10);
+  /* --- Shadows — heavier on dark bg --- */
+  --shadow-sm:   0 1px 6px rgba(0, 0, 0, 0.55);
+  --shadow-md:   0 4px 24px rgba(0, 0, 0, 0.65);
+  --shadow-card: 2px 4px 18px rgba(0, 0, 0, 0.6);
 
   /* --- Layout --- */
   --sidebar-width:  220px;

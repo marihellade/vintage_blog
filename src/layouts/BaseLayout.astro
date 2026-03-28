@@ -52,61 +52,73 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <div class="page-tree" aria-hidden="true">
       <svg viewBox="0 0 120 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
         <!-- roots -->
-        <path d="M60 800 Q50 780 35 770 Q25 760 20 745" stroke="#2C1810" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
-        <path d="M60 800 Q65 785 75 775 Q85 765 88 750" stroke="#2C1810" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
-        <path d="M60 800 Q55 790 45 788 Q35 786 28 780" stroke="#2C1810" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.3"/>
+        <path d="M60 800 Q50 780 35 770 Q25 760 20 745" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M60 800 Q65 785 75 775 Q85 765 88 750" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <path d="M60 800 Q55 790 45 788 Q35 786 28 780" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.3"/>
         <!-- main trunk -->
-        <path d="M60 800 Q58 720 55 650 Q52 580 58 510 Q62 450 55 390 Q50 340 58 280 Q63 230 55 180 Q50 140 58 100 Q62 70 58 40" stroke="#2C1810" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <path d="M60 800 Q58 720 55 650 Q52 580 58 510 Q62 450 55 390 Q50 340 58 280 Q63 230 55 180 Q50 140 58 100 Q62 70 58 40" stroke="#8A6848" stroke-width="5" stroke-linecap="round" fill="none"/>
         <!-- trunk texture lines -->
-        <path d="M60 750 Q56 720 59 690" stroke="#4A3728" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
-        <path d="M58 640 Q62 610 57 580" stroke="#4A3728" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
-        <path d="M60 520 Q55 490 60 460" stroke="#4A3728" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <path d="M60 750 Q56 720 59 690" stroke="#7A5A38" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <path d="M58 640 Q62 610 57 580" stroke="#7A5A38" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <path d="M60 520 Q55 490 60 460" stroke="#7A5A38" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
 
         <!-- large branches -->
-        <path d="M57 480 Q40 460 20 440 Q5 420 2 400" stroke="#2C1810" stroke-width="3" stroke-linecap="round" fill="none"/>
-        <path d="M57 480 Q70 455 85 430 Q98 410 105 385" stroke="#2C1810" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M56 360 Q35 340 15 310 Q5 290 2 270" stroke="#2C1810" stroke-width="2.5" stroke-linecap="round" fill="none"/>
-        <path d="M57 360 Q72 340 90 315 Q103 295 108 270" stroke="#2C1810" stroke-width="2" stroke-linecap="round" fill="none"/>
-        <path d="M56 240 Q38 220 18 200 Q8 185 4 165" stroke="#2C1810" stroke-width="2" stroke-linecap="round" fill="none"/>
-        <path d="M57 240 Q74 220 90 200 Q102 182 106 162" stroke="#2C1810" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-        <path d="M57 140 Q42 120 25 105 Q14 92 8 76" stroke="#2C1810" stroke-width="1.8" stroke-linecap="round" fill="none"/>
-        <path d="M57 140 Q70 118 83 102 Q94 88 98 72" stroke="#2C1810" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M57 480 Q40 460 20 440 Q5 420 2 400" stroke="#8A6848" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M57 480 Q70 455 85 430 Q98 410 105 385" stroke="#8A6848" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M56 360 Q35 340 15 310 Q5 290 2 270" stroke="#8A6848" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M57 360 Q72 340 90 315 Q103 295 108 270" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M56 240 Q38 220 18 200 Q8 185 4 165" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M57 240 Q74 220 90 200 Q102 182 106 162" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M57 140 Q42 120 25 105 Q14 92 8 76" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M57 140 Q70 118 83 102 Q94 88 98 72" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
 
         <!-- smaller branches -->
-        <path d="M20 440 Q10 430 2 418" stroke="#2C1810" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.8"/>
-        <path d="M20 440 Q15 424 12 410" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
-        <path d="M105 385 Q112 372 115 358" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
-        <path d="M15 310 Q6 298 2 283" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
-        <path d="M108 270 Q114 256 116 240" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
-        <path d="M18 200 Q8 188 3 173" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
-        <path d="M90 200 Q100 186 104 170" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
-        <path d="M25 105 Q18 92 14 78" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
-        <path d="M83 102 Q90 88 92 73" stroke="#2C1810" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M20 440 Q10 430 2 418" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+        <path d="M20 440 Q15 424 12 410" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M105 385 Q112 372 115 358" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M15 310 Q6 298 2 283" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M108 270 Q114 256 116 240" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M18 200 Q8 188 3 173" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M90 200 Q100 186 104 170" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M25 105 Q18 92 14 78" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M83 102 Q90 88 92 73" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
 
         <!-- twigs -->
-        <path d="M2 400 Q-2 390 0 378" stroke="#2C1810" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
-        <path d="M2 270 Q-1 258 1 246" stroke="#2C1810" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
-        <path d="M4 165 Q0 153 2 140" stroke="#2C1810" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
-        <path d="M8 76 Q4 64 6 52" stroke="#2C1810" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
-        <path d="M116 240 Q119 228 117 215" stroke="#2C1810" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
-        <path d="M58 40 Q52 24 55 8" stroke="#2C1810" stroke-width="1.5" stroke-linecap="round" fill="none"/>
-        <path d="M58 40 Q66 25 62 10" stroke="#2C1810" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M2 400 Q-2 390 0 378" stroke="#8A6848" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M2 270 Q-1 258 1 246" stroke="#8A6848" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M4 165 Q0 153 2 140" stroke="#8A6848" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M8 76 Q4 64 6 52" stroke="#8A6848" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M116 240 Q119 228 117 215" stroke="#8A6848" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M58 40 Q52 24 55 8" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M58 40 Q66 25 62 10" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.7"/>
 
         <!-- small leaves scattered on branches -->
-        <ellipse cx="2" cy="395" rx="4" ry="2.5" fill="#4A7550" opacity="0.5" transform="rotate(-30 2 395)"/>
-        <ellipse cx="108" cy="267" rx="4" ry="2.5" fill="#7A9E7E" opacity="0.5" transform="rotate(25 108 267)"/>
-        <ellipse cx="4" cy="162" rx="3.5" ry="2" fill="#4A7550" opacity="0.45" transform="rotate(-20 4 162)"/>
-        <ellipse cx="104" cy="168" rx="3.5" ry="2" fill="#7A9E7E" opacity="0.45" transform="rotate(15 104 168)"/>
-        <ellipse cx="8" cy="73" rx="3" ry="1.8" fill="#4A7550" opacity="0.5" transform="rotate(-25 8 73)"/>
-        <ellipse cx="93" cy="70" rx="3" ry="1.8" fill="#7A9E7E" opacity="0.5" transform="rotate(20 93 70)"/>
-        <ellipse cx="55" cy="6" rx="3" ry="1.8" fill="#4A7550" opacity="0.5" transform="rotate(-10 55 6)"/>
-        <ellipse cx="63" cy="8" rx="3" ry="1.8" fill="#7A9E7E" opacity="0.45" transform="rotate(30 63 8)"/>
+        <ellipse cx="2" cy="395" rx="4" ry="2.5" fill="#6A9A70" opacity="0.5" transform="rotate(-30 2 395)"/>
+        <ellipse cx="108" cy="267" rx="4" ry="2.5" fill="#9ABF9E" opacity="0.5" transform="rotate(25 108 267)"/>
+        <ellipse cx="4" cy="162" rx="3.5" ry="2" fill="#6A9A70" opacity="0.45" transform="rotate(-20 4 162)"/>
+        <ellipse cx="104" cy="168" rx="3.5" ry="2" fill="#9ABF9E" opacity="0.45" transform="rotate(15 104 168)"/>
+        <ellipse cx="8" cy="73" rx="3" ry="1.8" fill="#6A9A70" opacity="0.5" transform="rotate(-25 8 73)"/>
+        <ellipse cx="93" cy="70" rx="3" ry="1.8" fill="#9ABF9E" opacity="0.5" transform="rotate(20 93 70)"/>
+        <ellipse cx="55" cy="6" rx="3" ry="1.8" fill="#6A9A70" opacity="0.5" transform="rotate(-10 55 6)"/>
+        <ellipse cx="63" cy="8" rx="3" ry="1.8" fill="#9ABF9E" opacity="0.45" transform="rotate(30 63 8)"/>
 
         <!-- tiny dot leaves cluster near top -->
-        <circle cx="50" cy="20" r="2" fill="#4A7550" opacity="0.4"/>
-        <circle cx="65" cy="15" r="1.5" fill="#7A9E7E" opacity="0.4"/>
-        <circle cx="45" cy="12" r="1.5" fill="#4A7550" opacity="0.35"/>
-        <circle cx="70" cy="22" r="1.8" fill="#7A9E7E" opacity="0.35"/>
+        <circle cx="50" cy="20" r="2" fill="#6A9A70" opacity="0.4"/>
+        <circle cx="65" cy="15" r="1.5" fill="#9ABF9E" opacity="0.4"/>
+        <circle cx="45" cy="12" r="1.5" fill="#6A9A70" opacity="0.35"/>
+        <circle cx="70" cy="22" r="1.8" fill="#9ABF9E" opacity="0.35"/>
+
+        <!-- Evanescent drifting leaves — fade in, float, fade out -->
+        <ellipse class="leaf-drift leaf-1"  cx="8"   cy="398" rx="4"   ry="2.4" fill="#9ABF9E"/>
+        <ellipse class="leaf-drift leaf-2"  cx="109" cy="264" rx="3.8" ry="2.3" fill="#C8984E"/>
+        <ellipse class="leaf-drift leaf-3"  cx="5"   cy="163" rx="3.5" ry="2"   fill="#9ABF9E"/>
+        <ellipse class="leaf-drift leaf-4"  cx="106" cy="166" rx="3.5" ry="2.1" fill="#6A9A70"/>
+        <ellipse class="leaf-drift leaf-5"  cx="10"  cy="76"  rx="3"   ry="1.8" fill="#C8984E"/>
+        <ellipse class="leaf-drift leaf-6"  cx="94"  cy="70"  rx="3"   ry="1.8" fill="#9ABF9E"/>
+        <ellipse class="leaf-drift leaf-7"  cx="4"   cy="272" rx="3.8" ry="2.2" fill="#6A9A70"/>
+        <ellipse class="leaf-drift leaf-8"  cx="116" cy="238" rx="3.5" ry="2"   fill="#C8984E"/>
+        <ellipse class="leaf-drift leaf-9"  cx="52"  cy="14"  rx="3"   ry="1.8" fill="#9ABF9E"/>
+        <ellipse class="leaf-drift leaf-10" cx="24"  cy="106" rx="3.2" ry="1.9" fill="#6A9A70"/>
       </svg>
     </div>
 
@@ -292,11 +304,64 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     height: 100vh;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.45;
+    opacity: 0.55;
   }
   .page-tree svg {
     width: 100%;
     height: 100%;
+    overflow: visible;
+  }
+
+  /* --- Evanescent drifting leaves --- */
+  .leaf-drift {
+    opacity: 0;
+    transform-box: fill-box;
+    transform-origin: center;
+    animation-timing-function: ease-in-out;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
+  }
+
+  /* Four distinct drift paths */
+  @keyframes leaf-fall-left {
+    0%   { opacity: 0;    transform: translate(0,   0)   rotate(-8deg); }
+    18%  { opacity: 0.65; }
+    82%  { opacity: 0.35; }
+    100% { opacity: 0;    transform: translate(-14px, 28px) rotate(-62deg); }
+  }
+  @keyframes leaf-fall-right {
+    0%   { opacity: 0;    transform: translate(0,  0)   rotate(8deg); }
+    18%  { opacity: 0.6;  }
+    82%  { opacity: 0.3;  }
+    100% { opacity: 0;    transform: translate(12px, 25px) rotate(58deg); }
+  }
+  @keyframes leaf-fall-down {
+    0%   { opacity: 0;    transform: translate(0,  0)   rotate(0deg); }
+    20%  { opacity: 0.55; }
+    80%  { opacity: 0.35; }
+    100% { opacity: 0;    transform: translate(-4px, 30px) rotate(-28deg); }
+  }
+  @keyframes leaf-swirl {
+    0%   { opacity: 0;    transform: translate(0,    0)   rotate(0deg)   scale(1); }
+    25%  { opacity: 0.6;  transform: translate(-5px, 9px) rotate(-22deg) scale(1.08); }
+    75%  { opacity: 0.3;  transform: translate(-9px, 20px) rotate(-42deg) scale(0.95); }
+    100% { opacity: 0;    transform: translate(-13px, 32px) rotate(-66deg) scale(0.8); }
+  }
+
+  /* Staggered delays per leaf */
+  .leaf-1  { animation-name: leaf-fall-left;  animation-duration: 6.0s; animation-delay: 0.0s; }
+  .leaf-2  { animation-name: leaf-fall-right; animation-duration: 7.0s; animation-delay: 1.5s; }
+  .leaf-3  { animation-name: leaf-fall-left;  animation-duration: 5.5s; animation-delay: 3.0s; }
+  .leaf-4  { animation-name: leaf-fall-right; animation-duration: 6.5s; animation-delay: 0.8s; }
+  .leaf-5  { animation-name: leaf-fall-down;  animation-duration: 5.0s; animation-delay: 2.2s; }
+  .leaf-6  { animation-name: leaf-fall-right; animation-duration: 7.5s; animation-delay: 4.5s; }
+  .leaf-7  { animation-name: leaf-fall-left;  animation-duration: 6.2s; animation-delay: 5.0s; }
+  .leaf-8  { animation-name: leaf-swirl;      animation-duration: 8.0s; animation-delay: 1.0s; }
+  .leaf-9  { animation-name: leaf-fall-down;  animation-duration: 6.0s; animation-delay: 3.5s; }
+  .leaf-10 { animation-name: leaf-fall-left;  animation-duration: 5.8s; animation-delay: 6.2s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .leaf-drift { animation: none; opacity: 0; }
   }
 
   /* Hide on smaller screens where it would crowd the layout */
