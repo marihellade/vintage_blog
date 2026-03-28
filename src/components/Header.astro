@@ -290,13 +290,12 @@
     100% { left: calc(100% + 60px); }
   }
 
-  /* Vertical arc — Salem arcs over the dragon which sits in the right ~20% of the header.
-     74% of 12s ≈ 8.9s is roughly when Salem reaches the dragon's left edge.
-     Peak (79%) tilts Salem nose-up mid-leap; landing (84%) brings it back down. */
+  /* Vertical arc — fallback for before JS runs (tuned for ~1920px wide screens).
+     JavaScript below overwrites this with exact values for every viewport size. */
   @keyframes salem-leap {
-    0%,  74% { transform: translateY(0px)   rotate(0deg);   }
-    79%      { transform: translateY(-52px) rotate(-20deg); }
-    84%, 100% { transform: translateY(0px)  rotate(0deg);   }
+    0%,  82%  { transform: translateY(0px)   rotate(0deg);   }
+    88%       { transform: translateY(-52px) rotate(-20deg); }
+    94%, 100% { transform: translateY(0px)   rotate(0deg);   }
   }
 
   @keyframes salem-bounce {
@@ -370,3 +369,45 @@
     .dragon-breath { animation: none; }
   }
 </style>
+
+<script>
+  (function () {
+    const header = document.querySelector('.site-header');
+    const dragon = document.querySelector('.header-dragon');
+    if (!header || !dragon) return;
+    let styleEl = null;
+    function recalc() {
+      if (window.getComputedStyle(dragon).display === 'none') return;
+      const hw = header.offsetWidth;
+      const dr = dragon.getBoundingClientRect();
+      const hr = header.getBoundingClientRect();
+      const totalTravel = hw + 120;
+      const dLeft  = dr.left  - hr.left;
+      const dRight = dr.right - hr.left;
+      const dMid   = (dLeft + dRight) / 2;
+      const liftPct = ((dLeft  - 30 + 60) / totalTravel * 100).toFixed(2);
+      const peakPct = ((dMid        + 60) / totalTravel * 100).toFixed(2);
+      const landPct = ((dRight + 20 + 60) / totalTravel * 100).toFixed(2);
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        document.head.appendChild(styleEl);
+      }
+      styleEl.textContent = `@keyframes salem-leap {
+  0%, ${liftPct}%   { transform: translateY(0px)   rotate(0deg);   }
+  ${peakPct}%       { transform: translateY(-52px) rotate(-20deg); }
+  ${landPct}%, 100% { transform: translateY(0px)   rotate(0deg);   }
+}`;
+    }
+    const init = () => requestAnimationFrame(() => requestAnimationFrame(recalc));
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(recalc, 150);
+    });
+  })();
+</script>
