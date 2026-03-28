@@ -2,7 +2,7 @@
 title: "The Seven Year Slip"
 author: "Ashley Poston"
 cover: "/images/books/The-Seven-Year-Slip.jpg"
-rating: 4
+rating: 4.5
 status: "finished"
 mood: "favourite"
 tags: ["romance", "magical realism", "contemporary", library book"]
