@@ -298,6 +298,13 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     min-width: 0;
   }
 
+  /* --- Right sidebar widget titles: match nav link readability --- */
+  .right-sidebar .widget-title {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: var(--text-sm);
+  }
+
   /* --- Right sidebar --- */
   .right-sidebar {
     display: flex;
@@ -306,7 +313,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   }
 
   .season-text {
-    font-style: italic;
+    font-family: var(--font-body);
+    font-style: normal;
     font-size: var(--text-sm);
     color: var(--color-ink-soft);
     line-height: 1.6;
@@ -344,8 +352,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     gap: var(--space-3);
   }
   .tea-text {
-    font-family: var(--font-heading);
-    font-style: italic;
+    font-family: var(--font-body);
+    font-style: normal;
     font-size: var(--text-sm);
     color: var(--color-ink-soft);
     margin: 0;
@@ -372,10 +380,10 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     margin: 0;
   }
   .hit-label {
-    font-family: var(--font-accent);
-    font-size: 0.6rem;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
+    font-family: var(--font-body);
+    font-size: var(--text-xs);
+    letter-spacing: 0;
+    text-transform: none;
     color: var(--color-gold);
   }
   .hit-digits {
