@@ -48,8 +48,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   <body>
     <Cursor />
 
-    <!-- Decorative tree — left edge of page -->
-    <div class="page-tree" aria-hidden="true">
+    <!-- Decorative trees — left edge of page -->
+    <div class="page-tree page-tree-l3" aria-hidden="true">
       <svg viewBox="0 0 120 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
         <!-- roots -->
         <path d="M60 800 Q50 780 35 770 Q25 760 20 745" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
@@ -214,126 +214,223 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         <ellipse class="leaf-drift leaf-9"  cx="52"  cy="14"  rx="3"   ry="1.8" fill="#9ABF9E"/>
         <ellipse class="leaf-drift leaf-10" cx="24"  cy="106" rx="3.2" ry="1.9" fill="#6A9A70"/>
 
-        <!-- ═══ READING GIRL — loose storybook sketch, nestled in tree base ═══ -->
-        <g class="reading-girl" opacity="0.82">
 
-          <!-- ── HAIR SILHOUETTE — drawn first, behind everything ──
-               One filled shape. Starts at the crown, arcs over the
-               back of the head, flows in a long sweep to the ground.
-               Warm dark brown. No inner detail — just the mass. -->
-          <path d="M 70 739
-                   Q 80 733  90 737
-                   Q 97 744  96 759
-                   Q 94 775  89 786
-                   Q 86 792  82 793
-                   L 68 793
-                   Q 67 779  68 763
-                   Q 69 750  70 739 Z"
-                fill="#6B3C14" opacity="0.68"/>
+      </svg>
+    </div>
 
-          <!-- ── LOWER BODY / LAP — very soft wash ──
-               Faded-denim suggestion. One knee up toward chest,
-               the other tucked. Mostly negative space. -->
-          <path d="M 63 774
-                   Q 77 765  92 769
-                   Q 103 775  102 787
-                   Q 84 795  62 793
-                   Q 60 784  62 779 Z"
-                fill="#4A5E6A" opacity="0.20"/>
+    <!-- Left medium tree -->
+    <div class="page-tree page-tree-l2" aria-hidden="true">
+      <svg viewBox="0 0 120 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+        <!-- roots -->
+        <path d="M60 800 Q52 783 38 775 Q28 769 22 758" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.45"/>
+        <path d="M60 800 Q66 786 76 778 Q86 770 90 760" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.38"/>
+        <!-- main trunk -->
+        <path d="M60 800 Q57 740 54 680 Q51 620 57 560 Q61 510 54 460 Q49 420 56 380 Q60 350 56 320" stroke="#8A6848" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <!-- trunk texture -->
+        <path d="M58 740 Q54 710 57 680" stroke="#7A5A38" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.38"/>
+        <path d="M56 600 Q60 572 55 542" stroke="#7A5A38" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.38"/>
+        <!-- branch pair 1 -->
+        <path d="M55 620 Q38 604 18 586 Q6 573 2 560" stroke="#8A6848" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M56 620 Q73 602 90 584 Q102 572 108 558" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <!-- branch pair 2 -->
+        <path d="M54 490 Q36 473 16 454 Q5 441 2 428" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M55 490 Q72 471 88 454 Q100 441 106 427" stroke="#8A6848" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        <!-- branch pair 3 -->
+        <path d="M55 370 Q38 354 20 336 Q10 324 4 310" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M56 370 Q72 352 88 336 Q100 323 106 308" stroke="#8A6848" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+        <!-- leaf clusters: branch 1 tips -->
+        <ellipse cx="2"   cy="552" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.60" transform="rotate(-36 2 552)"/>
+        <ellipse cx="8"   cy="544" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.52" transform="rotate(-18 8 544)"/>
+        <ellipse cx="-2"  cy="562" rx="5"   ry="3"   fill="#7AA870" opacity="0.48" transform="rotate(-52 -2 562)"/>
+        <ellipse cx="12"  cy="556" rx="4"   ry="2.4" fill="#C8984E" opacity="0.36" transform="rotate(-8 12 556)"/>
+        <ellipse cx="107" cy="550" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.60" transform="rotate(34 107 550)"/>
+        <ellipse cx="101" cy="558" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.52" transform="rotate(16 101 558)"/>
+        <ellipse cx="110" cy="562" rx="5"   ry="3"   fill="#C8984E" opacity="0.42" transform="rotate(50 110 562)"/>
+        <!-- leaf clusters: branch 2 tips -->
+        <ellipse cx="2"   cy="420" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.58" transform="rotate(-32 2 420)"/>
+        <ellipse cx="8"   cy="412" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.50" transform="rotate(-14 8 412)"/>
+        <ellipse cx="-1"  cy="430" rx="5"   ry="3"   fill="#7AA870" opacity="0.44" transform="rotate(-48 -1 430)"/>
+        <ellipse cx="106" cy="419" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.58" transform="rotate(30 106 419)"/>
+        <ellipse cx="100" cy="427" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.50" transform="rotate(13 100 427)"/>
+        <ellipse cx="108" cy="430" rx="4.5" ry="2.8" fill="#C8984E" opacity="0.40" transform="rotate(46 108 430)"/>
+        <!-- leaf clusters: branch 3 tips -->
+        <ellipse cx="4"   cy="302" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.62" transform="rotate(-38 4 302)"/>
+        <ellipse cx="10"  cy="294" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.54" transform="rotate(-18 10 294)"/>
+        <ellipse cx="0"   cy="312" rx="5"   ry="3"   fill="#C8984E" opacity="0.44" transform="rotate(-55 0 312)"/>
+        <ellipse cx="106" cy="300" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.62" transform="rotate(36 106 300)"/>
+        <ellipse cx="100" cy="308" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.54" transform="rotate(16 100 308)"/>
+        <ellipse cx="108" cy="312" rx="5"   ry="3"   fill="#7AA870" opacity="0.44" transform="rotate(52 108 312)"/>
+      </svg>
+    </div>
 
-          <!-- gestural line — raised-knee silhouette, single confident stroke -->
-          <path d="M 66 777 Q 78 766  90 769 Q 98 771  97 780"
-                stroke="#3A4E5A" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.30"/>
+    <!-- Left short tree -->
+    <div class="page-tree page-tree-l1" aria-hidden="true">
+      <svg viewBox="0 0 120 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet">
+        <!-- roots -->
+        <path d="M60 800 Q54 788 44 782 Q35 777 30 770" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.38"/>
+        <path d="M60 800 Q64 788 72 782 Q80 776 84 770" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.30"/>
+        <!-- main trunk -->
+        <path d="M60 800 Q58 758 55 716 Q52 674 57 634 Q60 604 54 572 Q50 548 56 522" stroke="#8A6848" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <!-- trunk texture -->
+        <path d="M57 756 Q54 730 56 704" stroke="#7A5A38" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.35"/>
+        <!-- branch pair 1 -->
+        <path d="M55 680 Q40 665 22 650 Q12 639 7 626" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M56 680 Q70 664 86 650 Q97 638 103 625" stroke="#8A6848" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        <!-- branch pair 2 -->
+        <path d="M54 572 Q38 557 20 541 Q10 530 4 517" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M56 572 Q70 556 86 541 Q97 529 103 516" stroke="#8A6848" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+        <!-- leaf clusters: branch 1 tips -->
+        <ellipse cx="7"   cy="618" rx="5.5" ry="3.2" fill="#9ABF9E" opacity="0.55" transform="rotate(-34 7 618)"/>
+        <ellipse cx="12"  cy="610" rx="5"   ry="2.8" fill="#6A9A70" opacity="0.48" transform="rotate(-16 12 610)"/>
+        <ellipse cx="3"   cy="628" rx="4.5" ry="2.6" fill="#7AA870" opacity="0.42" transform="rotate(-50 3 628)"/>
+        <ellipse cx="102" cy="617" rx="5.5" ry="3.2" fill="#6A9A70" opacity="0.55" transform="rotate(32 102 617)"/>
+        <ellipse cx="96"  cy="625" rx="5"   ry="2.8" fill="#9ABF9E" opacity="0.48" transform="rotate(14 96 625)"/>
+        <ellipse cx="105" cy="628" rx="4.5" ry="2.6" fill="#C8984E" opacity="0.38" transform="rotate(48 105 628)"/>
+        <!-- leaf clusters: branch 2 tips -->
+        <ellipse cx="4"   cy="509" rx="5.5" ry="3.2" fill="#6A9A70" opacity="0.55" transform="rotate(-30 4 509)"/>
+        <ellipse cx="10"  cy="501" rx="5"   ry="2.8" fill="#9ABF9E" opacity="0.48" transform="rotate(-13 10 501)"/>
+        <ellipse cx="0"   cy="519" rx="4.5" ry="2.6" fill="#7AA870" opacity="0.42" transform="rotate(-46 0 519)"/>
+        <ellipse cx="103" cy="508" rx="5.5" ry="3.2" fill="#9ABF9E" opacity="0.55" transform="rotate(28 103 508)"/>
+        <ellipse cx="97"  cy="516" rx="5"   ry="2.8" fill="#6A9A70" opacity="0.48" transform="rotate(12 97 516)"/>
+        <ellipse cx="105" cy="519" rx="4.5" ry="2.6" fill="#C8984E" opacity="0.38" transform="rotate(44 105 519)"/>
+      </svg>
+    </div>
 
-          <!-- bare feet — soft warm oval, no detail, just a presence -->
-          <ellipse cx="98" cy="782" rx="5.5" ry="2.8"
-                   fill="#C8A070" opacity="0.40" transform="rotate(18 98 782)"/>
-          <path d="M 93 783 Q 98 781  103 784"
-                stroke="#A07848" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.28"/>
+    <!-- Right tall tree (mirrored) -->
+    <div class="page-tree page-tree-r3" aria-hidden="true">
+      <svg viewBox="0 0 120 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet" style="transform: scaleX(-1); transform-origin: 50% 50%">
+        <!-- roots -->
+        <path d="M60 800 Q50 780 35 770 Q25 760 20 745" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+        <path d="M60 800 Q65 785 75 775 Q85 765 88 750" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <path d="M60 800 Q55 790 45 788 Q35 786 28 780" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.3"/>
+        <!-- main trunk -->
+        <path d="M60 800 Q58 720 55 650 Q52 580 58 510 Q62 450 55 390 Q50 340 58 280 Q63 230 55 180 Q50 140 58 100 Q62 70 58 40" stroke="#8A6848" stroke-width="5" stroke-linecap="round" fill="none"/>
+        <!-- trunk texture -->
+        <path d="M60 750 Q56 720 59 690" stroke="#7A5A38" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <path d="M58 640 Q62 610 57 580" stroke="#7A5A38" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <path d="M60 520 Q55 490 60 460" stroke="#7A5A38" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.4"/>
+        <!-- large branches -->
+        <path d="M57 480 Q40 460 20 440 Q5 420 2 400" stroke="#8A6848" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <path d="M57 480 Q70 455 85 430 Q98 410 105 385" stroke="#8A6848" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M56 360 Q35 340 15 310 Q5 290 2 270" stroke="#8A6848" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+        <path d="M57 360 Q72 340 90 315 Q103 295 108 270" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M56 240 Q38 220 18 200 Q8 185 4 165" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <path d="M57 240 Q74 220 90 200 Q102 182 106 162" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M57 140 Q42 120 25 105 Q14 92 8 76" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M57 140 Q70 118 83 102 Q94 88 98 72" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <!-- smaller branches -->
+        <path d="M20 440 Q10 430 2 418" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.8"/>
+        <path d="M105 385 Q112 372 115 358" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M15 310 Q6 298 2 283" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M108 270 Q114 256 116 240" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.7"/>
+        <path d="M58 40 Q52 24 55 8" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <!-- leaf clusters — left tips -->
+        <ellipse cx="-2" cy="390" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.65" transform="rotate(-40 -2 390)"/>
+        <ellipse cx="4"  cy="382" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.55" transform="rotate(-20 4 382)"/>
+        <ellipse cx="-4" cy="400" rx="5"   ry="3"   fill="#7AA870" opacity="0.50" transform="rotate(-55 -4 400)"/>
+        <ellipse cx="8"  cy="393" rx="4.5" ry="2.8" fill="#C8984E" opacity="0.40" transform="rotate(-10 8 393)"/>
+        <ellipse cx="-1" cy="262" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.65" transform="rotate(-38 -1 262)"/>
+        <ellipse cx="5"  cy="254" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.55" transform="rotate(-18 5 254)"/>
+        <ellipse cx="-3" cy="272" rx="5"   ry="3"   fill="#C8984E" opacity="0.40" transform="rotate(-52 -3 272)"/>
+        <ellipse cx="0"  cy="156" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.65" transform="rotate(-35 0 156)"/>
+        <ellipse cx="6"  cy="148" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.55" transform="rotate(-15 6 148)"/>
+        <ellipse cx="-2" cy="166" rx="5"   ry="3"   fill="#C8984E" opacity="0.40" transform="rotate(-50 -2 166)"/>
+        <ellipse cx="4"  cy="66"  rx="6"   ry="3.5" fill="#6A9A70" opacity="0.70" transform="rotate(-38 4 66)"/>
+        <ellipse cx="10" cy="58"  rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.60" transform="rotate(-18 10 58)"/>
+        <ellipse cx="0"  cy="76"  rx="5"   ry="3"   fill="#C8984E" opacity="0.45" transform="rotate(-55 0 76)"/>
+        <!-- leaf clusters — right tips -->
+        <ellipse cx="112" cy="378" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.65" transform="rotate(38 112 378)"/>
+        <ellipse cx="105" cy="386" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.55" transform="rotate(20 105 386)"/>
+        <ellipse cx="114" cy="390" rx="5"   ry="3"   fill="#C8984E" opacity="0.45" transform="rotate(55 114 390)"/>
+        <ellipse cx="113" cy="260" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.65" transform="rotate(36 113 260)"/>
+        <ellipse cx="107" cy="268" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.55" transform="rotate(18 107 268)"/>
+        <ellipse cx="116" cy="272" rx="5"   ry="3"   fill="#C8984E" opacity="0.40" transform="rotate(52 116 272)"/>
+        <ellipse cx="110" cy="154" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.65" transform="rotate(33 110 154)"/>
+        <ellipse cx="104" cy="162" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.55" transform="rotate(15 104 162)"/>
+        <ellipse cx="94"  cy="62"  rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.70" transform="rotate(36 94 62)"/>
+        <ellipse cx="100" cy="70"  rx="5.5" ry="3"   fill="#6A9A70" opacity="0.60" transform="rotate(16 100 70)"/>
+        <ellipse cx="96"  cy="78"  rx="5"   ry="3"   fill="#C8984E" opacity="0.45" transform="rotate(52 96 78)"/>
+        <!-- treetop -->
+        <ellipse cx="52"  cy="34"  rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.65" transform="rotate(-12 52 34)"/>
+        <ellipse cx="62"  cy="28"  rx="5.5" ry="3"   fill="#6A9A70" opacity="0.60" transform="rotate(20 62 28)"/>
+        <ellipse cx="46"  cy="24"  rx="5"   ry="3"   fill="#C8984E" opacity="0.50" transform="rotate(-28 46 24)"/>
+        <ellipse cx="68"  cy="18"  rx="5"   ry="3"   fill="#9ABF9E" opacity="0.55" transform="rotate(35 68 18)"/>
+        <ellipse cx="54"  cy="14"  rx="4.5" ry="2.8" fill="#7AA870" opacity="0.50" transform="rotate(-8 54 14)"/>
+        <ellipse cx="57"  cy="4"   rx="3"   ry="1.8" fill="#7AA870" opacity="0.55" transform="rotate(-5 57 4)"/>
+      </svg>
+    </div>
 
-          <!-- ── TORSO — loose sage/denim wash, minimal ── -->
-          <path d="M 64 762
-                   Q 68 756  78 754
-                   Q 87 753  89 761
-                   L 88 773
-                   Q 76 776  64 774 Z"
-                fill="#4A5E6A" opacity="0.26"/>
+    <!-- Right medium tree (mirrored) -->
+    <div class="page-tree page-tree-r2" aria-hidden="true">
+      <svg viewBox="0 0 120 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet" style="transform: scaleX(-1); transform-origin: 50% 50%">
+        <!-- roots -->
+        <path d="M60 800 Q52 783 38 775 Q28 769 22 758" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none" opacity="0.45"/>
+        <path d="M60 800 Q66 786 76 778 Q86 770 90 760" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.38"/>
+        <!-- main trunk -->
+        <path d="M60 800 Q63 740 66 680 Q69 620 63 560 Q59 510 66 460 Q71 420 64 380 Q60 350 64 320" stroke="#8A6848" stroke-width="4" stroke-linecap="round" fill="none"/>
+        <!-- trunk texture -->
+        <path d="M62 740 Q66 710 63 680" stroke="#7A5A38" stroke-width="0.8" stroke-linecap="round" fill="none" opacity="0.38"/>
+        <!-- branch pair 1 -->
+        <path d="M65 620 Q82 604 102 586 Q114 573 118 560" stroke="#8A6848" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+        <path d="M64 620 Q47 602 30 584 Q18 572 12 558" stroke="#8A6848" stroke-width="2" stroke-linecap="round" fill="none"/>
+        <!-- branch pair 2 -->
+        <path d="M66 490 Q84 473 104 454 Q115 441 118 428" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M65 490 Q48 471 32 454 Q20 441 14 427" stroke="#8A6848" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        <!-- branch pair 3 -->
+        <path d="M65 370 Q82 354 100 336 Q110 324 116 310" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M64 370 Q48 352 32 336 Q20 323 14 308" stroke="#8A6848" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+        <!-- leaf clusters: branch 1 tips -->
+        <ellipse cx="118" cy="552" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.60" transform="rotate(36 118 552)"/>
+        <ellipse cx="112" cy="544" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.52" transform="rotate(18 112 544)"/>
+        <ellipse cx="122" cy="562" rx="5"   ry="3"   fill="#7AA870" opacity="0.48" transform="rotate(52 122 562)"/>
+        <ellipse cx="13"  cy="550" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.60" transform="rotate(-34 13 550)"/>
+        <ellipse cx="19"  cy="558" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.52" transform="rotate(-16 19 558)"/>
+        <ellipse cx="10"  cy="562" rx="5"   ry="3"   fill="#C8984E" opacity="0.42" transform="rotate(-50 10 562)"/>
+        <!-- leaf clusters: branch 2 tips -->
+        <ellipse cx="118" cy="420" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.58" transform="rotate(32 118 420)"/>
+        <ellipse cx="112" cy="412" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.50" transform="rotate(14 112 412)"/>
+        <ellipse cx="14"  cy="419" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.58" transform="rotate(-30 14 419)"/>
+        <ellipse cx="20"  cy="427" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.50" transform="rotate(-13 20 427)"/>
+        <ellipse cx="12"  cy="430" rx="4.5" ry="2.8" fill="#C8984E" opacity="0.40" transform="rotate(-46 12 430)"/>
+        <!-- leaf clusters: branch 3 tips -->
+        <ellipse cx="116" cy="302" rx="6"   ry="3.5" fill="#9ABF9E" opacity="0.62" transform="rotate(38 116 302)"/>
+        <ellipse cx="110" cy="294" rx="5.5" ry="3"   fill="#6A9A70" opacity="0.54" transform="rotate(18 110 294)"/>
+        <ellipse cx="14"  cy="300" rx="6"   ry="3.5" fill="#6A9A70" opacity="0.62" transform="rotate(-36 14 300)"/>
+        <ellipse cx="20"  cy="308" rx="5.5" ry="3"   fill="#9ABF9E" opacity="0.54" transform="rotate(-16 20 308)"/>
+        <ellipse cx="12"  cy="312" rx="5"   ry="3"   fill="#7AA870" opacity="0.44" transform="rotate(-52 12 312)"/>
+      </svg>
+    </div>
 
-          <!-- single fabric fold stroke — gestural, not laboured -->
-          <path d="M 74 754 Q 75 763  74 773"
-                stroke="#3A4E5A" stroke-width="0.55" stroke-linecap="round" fill="none" opacity="0.24"/>
-
-          <!-- ── ARMS — skin tone strokes, reaching toward book ── -->
-          <path d="M 66 765 Q 63 771  61 779"
-                stroke="#C4A070" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.58"/>
-          <path d="M 85 764 Q 83 770  80 776"
-                stroke="#C4A070" stroke-width="3.0" stroke-linecap="round" fill="none" opacity="0.52"/>
-
-          <!-- ── OPEN BOOK — parchment, raised up, covering lower face ──
-               The top edge sits at mid-nose height. The face is private.
-               She is absorbed. We don't need to see her expression. -->
-          <path d="M 57 756 Q 69 751  80 754 L 78 770 Q 66 773  55 770 Z"
-                fill="#EDE0C8" opacity="0.87"/>
-          <!-- spine — warm gold, barely there -->
-          <line x1="68" y1="751" x2="66" y2="770" stroke="#C8984E" stroke-width="0.75" opacity="0.42"/>
-          <!-- left page text — faint, gestural -->
-          <line x1="58"  y1="759"   x2="67"  y2="758"   stroke="#9A8870" stroke-width="0.28" opacity="0.50"/>
-          <line x1="58"  y1="761.5" x2="67"  y2="760.5" stroke="#9A8870" stroke-width="0.28" opacity="0.45"/>
-          <line x1="58"  y1="764"   x2="67"  y2="763"   stroke="#9A8870" stroke-width="0.28" opacity="0.40"/>
-          <line x1="58"  y1="766.5" x2="66"  y2="765.5" stroke="#9A8870" stroke-width="0.28" opacity="0.35"/>
-          <!-- right page text -->
-          <line x1="69"  y1="758"   x2="78"  y2="759"   stroke="#9A8870" stroke-width="0.28" opacity="0.50"/>
-          <line x1="69"  y1="760.5" x2="78"  y2="761.5" stroke="#9A8870" stroke-width="0.28" opacity="0.45"/>
-          <line x1="69"  y1="763"   x2="78"  y2="764"   stroke="#9A8870" stroke-width="0.28" opacity="0.40"/>
-          <line x1="69"  y1="765.5" x2="77"  y2="766.5" stroke="#9A8870" stroke-width="0.28" opacity="0.35"/>
-          <!-- book border — single sketchy outline, not perfectly even -->
-          <path d="M 57 756 Q 69 751  80 754 L 78 770 Q 66 773  55 770 Z"
-                fill="none" stroke="#B8A880" stroke-width="0.55" opacity="0.38"/>
-
-          <!-- ── HEAD — round, tilted down and forward into the book ── -->
-          <circle cx="70" cy="746" r="7.5" fill="#D4A870" opacity="0.74"/>
-
-          <!-- ── HAIR CURTAIN — falls forward across the face ──
-               This is the key detail. A filled shape covers most of the
-               face from the hairline down past the mouth. We see almost
-               nothing of her expression. She is in her own world. -->
-          <path d="M 63 737
-                   Q 60 744  59 751
-                   Q 58 758  60 764
-                   Q 63 763  65 756
-                   Q 66 748  66 741 Z"
-                fill="#6B3C14" opacity="0.76"/>
-
-          <!-- one or two loose strands within the curtain — organic, not precise -->
-          <path d="M 63 737 Q 61 746  61 754 Q 61 760  63 764"
-                stroke="#5A3010" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.48"/>
-          <path d="M 65 738 Q 64 746  64 753"
-                stroke="#9A6030" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.28"/>
-
-          <!-- ── HAIR ON HEAD — crown mass, drawn over head circle ── -->
-          <ellipse cx="71" cy="741" rx="9.5" ry="6.0" fill="#6B3C14" opacity="0.78"/>
-
-          <!-- crown light — the only hair highlight, very faint -->
-          <path d="M 66 736 Q 72 733  79 736"
-                stroke="#A06030" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.28"/>
-
-          <!-- a few loose strands slipping over the shoulder, alive and natural -->
-          <path d="M 78 737 Q 83 744  85 754 Q 86 763  84 769"
-                stroke="#8A5228" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.40"/>
-          <path d="M 80 737 Q 85 745  86 756 Q 86 765  84 771"
-                stroke="#5A3010" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.26"/>
-
-          <!-- ── FACE — barely visible below the hair and above the book ──
-               A small strip of face is all that shows: cheek, the shadow
-               under the eye, and the softest lip hint. That is enough.
-               She is not performing — she is reading. -->
-          <!-- cheekbone warmth, very subtle -->
-          <ellipse cx="65" cy="749" rx="3.5" ry="2" fill="#D4853A" opacity="0.07"/>
-          <!-- chin/jaw edge — single faint stroke -->
-          <path d="M 62 756 Q 64 759  67 758"
-                stroke="#C4A070" stroke-width="0.5" fill="none" opacity="0.26"/>
-
-        </g>
+    <!-- Right short tree (mirrored) -->
+    <div class="page-tree page-tree-r1" aria-hidden="true">
+      <svg viewBox="0 0 120 800" fill="none" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMax meet" style="transform: scaleX(-1); transform-origin: 50% 50%">
+        <!-- roots -->
+        <path d="M60 800 Q54 788 44 782 Q35 777 30 770" stroke="#8A6848" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.38"/>
+        <path d="M60 800 Q64 788 72 782 Q80 776 84 770" stroke="#8A6848" stroke-width="1" stroke-linecap="round" fill="none" opacity="0.30"/>
+        <!-- main trunk -->
+        <path d="M60 800 Q62 758 65 716 Q68 674 63 634 Q60 604 66 572 Q70 548 64 522" stroke="#8A6848" stroke-width="3" stroke-linecap="round" fill="none"/>
+        <!-- trunk texture -->
+        <path d="M63 756 Q66 730 64 704" stroke="#7A5A38" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.35"/>
+        <!-- branch pair 1 -->
+        <path d="M65 680 Q80 665 98 650 Q108 639 113 626" stroke="#8A6848" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <path d="M64 680 Q50 664 34 650 Q23 638 17 625" stroke="#8A6848" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+        <!-- branch pair 2 -->
+        <path d="M66 572 Q82 557 100 541 Q110 530 116 517" stroke="#8A6848" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+        <path d="M64 572 Q50 556 34 541 Q23 529 17 516" stroke="#8A6848" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+        <!-- leaf clusters: branch 1 tips -->
+        <ellipse cx="113" cy="618" rx="5.5" ry="3.2" fill="#6A9A70" opacity="0.55" transform="rotate(34 113 618)"/>
+        <ellipse cx="108" cy="610" rx="5"   ry="2.8" fill="#9ABF9E" opacity="0.48" transform="rotate(16 108 610)"/>
+        <ellipse cx="117" cy="628" rx="4.5" ry="2.6" fill="#7AA870" opacity="0.42" transform="rotate(50 117 628)"/>
+        <ellipse cx="18"  cy="617" rx="5.5" ry="3.2" fill="#9ABF9E" opacity="0.55" transform="rotate(-32 18 617)"/>
+        <ellipse cx="24"  cy="625" rx="5"   ry="2.8" fill="#6A9A70" opacity="0.48" transform="rotate(-14 24 625)"/>
+        <ellipse cx="15"  cy="628" rx="4.5" ry="2.6" fill="#C8984E" opacity="0.38" transform="rotate(-48 15 628)"/>
+        <!-- leaf clusters: branch 2 tips -->
+        <ellipse cx="116" cy="509" rx="5.5" ry="3.2" fill="#9ABF9E" opacity="0.55" transform="rotate(30 116 509)"/>
+        <ellipse cx="110" cy="501" rx="5"   ry="2.8" fill="#6A9A70" opacity="0.48" transform="rotate(13 110 501)"/>
+        <ellipse cx="120" cy="519" rx="4.5" ry="2.6" fill="#7AA870" opacity="0.42" transform="rotate(46 120 519)"/>
+        <ellipse cx="17"  cy="508" rx="5.5" ry="3.2" fill="#6A9A70" opacity="0.55" transform="rotate(-28 17 508)"/>
+        <ellipse cx="23"  cy="516" rx="5"   ry="2.8" fill="#9ABF9E" opacity="0.48" transform="rotate(-12 23 516)"/>
+        <ellipse cx="15"  cy="519" rx="4.5" ry="2.6" fill="#C8984E" opacity="0.38" transform="rotate(-44 15 519)"/>
       </svg>
     </div>
 
@@ -518,22 +615,26 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     border-radius: var(--radius-sm);
   }
 
-  /* --- Decorative tree --- */
+  /* --- Decorative trees --- */
   .page-tree {
     position: fixed;
-    left: 100px;
     top: 0;
-    width: 80px;
-    height: 100vh;
     pointer-events: none;
     z-index: 0;
-    opacity: 0.55;
   }
   .page-tree svg {
     width: 150%;
     height: 100%;
     overflow: visible;
   }
+  /* Left trees — shortest outermost, tallest innermost */
+  .page-tree-l1 { left: 5px;  width: 50px; height: 50vh;  opacity: 0.28; }
+  .page-tree-l2 { left: 38px; width: 62px; height: 70vh;  opacity: 0.40; }
+  .page-tree-l3 { left: 90px; width: 80px; height: 100vh; opacity: 0.55; }
+  /* Right trees — mirrored, shortest outermost, tallest innermost */
+  .page-tree-r1 { right: 5px;  width: 50px; height: 50vh;  opacity: 0.28; }
+  .page-tree-r2 { right: 38px; width: 62px; height: 70vh;  opacity: 0.40; }
+  .page-tree-r3 { right: 90px; width: 80px; height: 100vh; opacity: 0.50; }
 
   /* --- Evanescent drifting leaves --- */
   .leaf-drift {
@@ -588,7 +689,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
   }
 
   /* Hide on smaller screens where it would crowd the layout */
-  @media (max-width: 1300px) {
+  @media (max-width: 1400px) {
+    .page-tree-l1, .page-tree-l2,
+    .page-tree-r1, .page-tree-r2, .page-tree-r3 { display: none; }
+  }
+  @media (max-width: 1200px) {
     .page-tree { display: none; }
   }
 
