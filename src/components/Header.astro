@@ -1,0 +1,150 @@
+---
+const navLinks = [
+  { href: '/',         label: 'Home' },
+  { href: '/books',    label: 'Book Diary' },
+  { href: '/plants',   label: 'Plant Journal' },
+  { href: '/travel',   label: 'Travel' },
+  { href: '/recipes',  label: 'Recipe Box' },
+  { href: '/about',    label: 'About' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="header-banner">
+      <div class="header-botanical-left" aria-hidden="true">❧</div>
+      <div class="header-title-block">
+        <a href="/" class="site-name">Marihella</a>
+        <p class="site-tagline">books · plants · wanderings</p>
+      </div>
+      <div class="header-botanical-right" aria-hidden="true">❧</div>
+    </div>
+
+    <nav class="site-nav" aria-label="Main navigation">
+      <ul>
+        {navLinks.map(link => (
+          <li>
+            <a
+              href={link.href}
+              class:list={['nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+            >
+              {link.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: var(--border-thin);
+    background: var(--color-cream);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+  }
+
+  .header-banner {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-6);
+    padding: var(--space-4) 0 var(--space-3);
+    border-bottom: 1px solid var(--color-gold-light);
+  }
+
+  .header-botanical-left,
+  .header-botanical-right {
+    color: var(--color-gold);
+    font-size: 1.5rem;
+    opacity: 0.7;
+    user-select: none;
+  }
+  .header-botanical-right { transform: scaleX(-1); }
+
+  .header-title-block {
+    text-align: center;
+  }
+
+  .site-name {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-style: italic;
+    color: var(--color-ink);
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    display: block;
+    transition: color 0.2s;
+  }
+  .site-name:hover { color: var(--color-sage-dark); }
+
+  .site-tagline {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin: 0;
+    max-width: none;
+  }
+
+  .site-nav ul {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    gap: var(--space-1);
+    flex-wrap: wrap;
+  }
+
+  .nav-link {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    text-decoration: none;
+    padding: var(--space-3) var(--space-4);
+    display: block;
+    position: relative;
+    transition: color 0.2s;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: var(--space-4);
+    right: var(--space-4);
+    height: 1px;
+    background: var(--color-terracotta);
+    transform: scaleX(0);
+    transition: transform 0.2s ease;
+  }
+
+  .nav-link:hover,
+  .nav-link.active {
+    color: var(--color-forest);
+  }
+  .nav-link:hover::after,
+  .nav-link.active::after {
+    transform: scaleX(1);
+  }
+
+  @media (max-width: 600px) {
+    .header-botanical-left,
+    .header-botanical-right { display: none; }
+    .site-name { font-size: var(--text-xl); }
+  }
+</style>

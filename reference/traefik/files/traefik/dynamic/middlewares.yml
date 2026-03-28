@@ -1,0 +1,15 @@
+http:
+  middlewares:
+    global-redirect-https:
+      redirectScheme:
+        scheme: https
+        permanent: true
+    sec-headers:
+      headers:
+        frameDeny: true
+        contentTypeNosniff: true
+        referrerPolicy: "no-referrer-when-downgrade"
+        stsSeconds: 15552000
+        stsIncludeSubdomains: true
+        stsPreload: true
+        browserXssFilter: true

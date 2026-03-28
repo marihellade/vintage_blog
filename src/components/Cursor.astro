@@ -1,0 +1,71 @@
+---
+// Custom botanical cursor
+// Hides on touch devices automatically (see global.css)
+---
+
+<div id="cursor" aria-hidden="true"></div>
+<div id="cursor-dot" aria-hidden="true"></div>
+
+<style>
+  #cursor {
+    position: fixed;
+    width: 32px;
+    height: 32px;
+    background-image: url('/cursors/sprig.svg');
+    background-size: contain;
+    background-repeat: no-repeat;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-4px, -4px);
+    transition: transform 0.08s ease, opacity 0.2s ease;
+    will-change: transform;
+  }
+
+  #cursor-dot {
+    position: fixed;
+    width: 5px;
+    height: 5px;
+    background: var(--color-terracotta);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10000;
+    transform: translate(-50%, -50%);
+    transition: transform 0.04s ease;
+    will-change: transform;
+  }
+
+  #cursor.clicking {
+    transform: translate(-4px, -4px) scale(0.85) rotate(-15deg);
+  }
+</style>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const dot = document.getElementById('cursor-dot');
+
+  if (cursor && dot) {
+    let mouseX = 0, mouseY = 0;
+
+    document.addEventListener('mousemove', (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      cursor.style.left = mouseX + 'px';
+      cursor.style.top  = mouseY + 'px';
+      dot.style.left    = mouseX + 'px';
+      dot.style.top     = mouseY + 'px';
+    });
+
+    document.addEventListener('mousedown', () => cursor.classList.add('clicking'));
+    document.addEventListener('mouseup',   () => cursor.classList.remove('clicking'));
+
+    // Show on hover over interactive elements
+    document.querySelectorAll('a, button, [role="button"], input, textarea, select').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        cursor.style.transform = 'translate(-4px, -4px) scale(1.2) rotate(10deg)';
+      });
+      el.addEventListener('mouseleave', () => {
+        cursor.style.transform = 'translate(-4px, -4px)';
+      });
+    });
+  }
+</script>

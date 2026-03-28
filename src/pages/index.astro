@@ -1,0 +1,297 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allBooks  = await getCollection('books');
+const allPlants = await getCollection('plants');
+const allTravel = await getCollection('travel');
+const allRecipes = await getCollection('recipes');
+
+const currentlyReading = allBooks.filter(b => b.data.status === 'reading');
+const featuredBook     = allBooks.find(b => b.data.featured && b.data.status === 'finished');
+const featuredPlant    = allPlants.find(p => p.data.featured);
+const featuredTravel   = allTravel.find(t => t.data.featured);
+const featuredRecipe   = allRecipes.find(r => r.data.featured);
+---
+
+<BaseLayout title="Home">
+  <div class="home">
+
+    <!-- Welcome -->
+    <section class="welcome-section">
+      <div class="welcome-card border-botanical">
+        <h1>Welcome to my corner</h1>
+        <p>
+          This is where I keep the things I love — the books that changed the way I see,
+          the plants I'm trying not to kill, the places that made me feel something,
+          and the recipes I'll make again and again. Pull up a chair.
+        </p>
+      </div>
+    </section>
+
+    <!-- Currently / Status widgets -->
+    <section class="status-strip">
+      <div class="status-widget">
+        <h5>Currently Reading</h5>
+        {currentlyReading.length > 0 ? (
+          <ul>
+            {currentlyReading.map(book => (
+              <li>
+                <a href={`/books/${book.slug}`}>{book.data.title}</a>
+                {book.data.series && <span class="status-detail">{book.data.series}</span>}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="status-empty">between books...</p>
+        )}
+      </div>
+
+      <div class="status-widget">
+        <h5>Currently Growing</h5>
+        {featuredPlant ? (
+          <p>
+            <a href={`/plants`}>{featuredPlant.data.name}</a>
+            <span class="status-detail">— {featuredPlant.data.status}</span>
+          </p>
+        ) : (
+          <p class="status-empty">tending the garden...</p>
+        )}
+      </div>
+
+      <div class="status-widget">
+        <h5>Currently Dreaming Of</h5>
+        {featuredTravel ? (
+          <p><a href={`/travel`}>{featuredTravel.data.destination}</a></p>
+        ) : (
+          <p class="status-empty">somewhere far away...</p>
+        )}
+      </div>
+    </section>
+
+    <!-- Featured sections -->
+    <div class="featured-grid">
+
+      {featuredBook && (
+        <section class="featured-block">
+          <h3 class="section-title">From the Book Diary</h3>
+          <div class="card">
+            <div class="featured-book-header">
+              <div>
+                <h4><a href={`/books/${featuredBook.slug}`}>{featuredBook.data.title}</a></h4>
+                <p class="meta">by {featuredBook.data.author}</p>
+                {featuredBook.data.rating && (
+                  <p class="rating" aria-label={`Rating: ${featuredBook.data.rating} out of 5`}>
+                    {'✦'.repeat(featuredBook.data.rating)}{'✧'.repeat(5 - featuredBook.data.rating)}
+                  </p>
+                )}
+              </div>
+            </div>
+            {featuredBook.data.mood && <p class="mood-line">{featuredBook.data.mood}</p>}
+            {featuredBook.data.favouriteQuote && (
+              <blockquote>&ldquo;{featuredBook.data.favouriteQuote}&rdquo;</blockquote>
+            )}
+            <p class="see-more"><a href="/books">browse all books &rarr;</a></p>
+          </div>
+        </section>
+      )}
+
+      {featuredTravel && (
+        <section class="featured-block">
+          <h3 class="section-title">Wanderings</h3>
+          <div class="card">
+            <h4><a href="/travel">{featuredTravel.data.title}</a></h4>
+            <p class="meta">{featuredTravel.data.destination}</p>
+            {featuredTravel.data.mood && <p class="mood-line">{featuredTravel.data.mood}</p>}
+            {featuredTravel.data.highlights.length > 0 && (
+              <ul class="highlight-list">
+                {featuredTravel.data.highlights.map(h => <li>{h}</li>)}
+              </ul>
+            )}
+            <p class="see-more"><a href="/travel">see all travels &rarr;</a></p>
+          </div>
+        </section>
+      )}
+
+      {featuredRecipe && (
+        <section class="featured-block">
+          <h3 class="section-title">From the Recipe Box</h3>
+          <div class="card">
+            <h4><a href="/recipes">{featuredRecipe.data.title}</a></h4>
+            {featuredRecipe.data.rating && (
+              <p class="rating" aria-label={`Rating: ${featuredRecipe.data.rating} out of 5`}>
+                {'✦'.repeat(featuredRecipe.data.rating)}{'✧'.repeat(5 - featuredRecipe.data.rating)}
+              </p>
+            )}
+            <div class="tag-row">
+              {featuredRecipe.data.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+            <p class="see-more"><a href="/recipes">see all recipes &rarr;</a></p>
+          </div>
+        </section>
+      )}
+
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .home {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+  }
+
+  /* --- Welcome --- */
+  .welcome-section {
+    text-align: center;
+    margin-bottom: var(--space-12);
+    padding-top: var(--space-4);
+  }
+  .welcome-card {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: var(--space-8);
+    background: var(--color-cream);
+    border-radius: var(--radius-md);
+  }
+  .welcome-card h1 {
+    font-size: var(--text-2xl);
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-4);
+  }
+  .welcome-card p {
+    max-width: none;
+    color: var(--color-ink-soft);
+    font-style: italic;
+    margin: 0;
+  }
+
+  /* --- Status strip --- */
+  .status-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-12);
+  }
+  .status-widget {
+    text-align: center;
+    padding: var(--space-4) var(--space-3);
+    background: var(--color-cream);
+    border: var(--border-thin);
+    border-radius: var(--radius-md);
+  }
+  .status-widget h5 {
+    color: var(--color-gold);
+    margin-bottom: var(--space-2);
+    font-size: var(--text-xs);
+  }
+  .status-widget ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .status-widget li { margin-bottom: var(--space-1); }
+  .status-widget a {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: var(--text-md);
+    text-decoration: none;
+  }
+  .status-detail {
+    display: block;
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+  .status-empty {
+    font-style: italic;
+    color: var(--color-gold);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
+  /* --- Featured grid --- */
+  .featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-8);
+  }
+
+  .featured-block {}
+
+  .featured-book-header {
+    display: flex;
+    gap: var(--space-4);
+    margin-bottom: var(--space-3);
+  }
+  .featured-book-header h4 {
+    margin-bottom: var(--space-1);
+  }
+  .featured-book-header h4 a {
+    text-decoration: none;
+    color: var(--color-ink);
+  }
+  .featured-book-header h4 a:hover { color: var(--color-forest); }
+
+  .meta {
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    font-style: italic;
+    margin-bottom: var(--space-2);
+  }
+
+  .rating {
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-2);
+  }
+
+  .mood-line {
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-3);
+  }
+
+  .highlight-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0;
+  }
+  .highlight-list li {
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    padding-left: var(--space-4);
+    position: relative;
+  }
+  .highlight-list li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    font-size: var(--text-xs);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin: var(--space-3) 0;
+  }
+
+  .see-more {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0;
+  }
+  .see-more a {
+    text-decoration: none;
+    color: var(--color-sage-dark);
+  }
+  .see-more a:hover { color: var(--color-terracotta); }
+</style>

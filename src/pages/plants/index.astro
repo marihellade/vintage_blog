@@ -1,0 +1,187 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allPlants = await getCollection('plants');
+const current  = allPlants.filter(p => p.data.status !== 'wishlist' && p.data.status !== 'rip');
+const wishlist = allPlants.filter(p => p.data.status === 'wishlist');
+const rip      = allPlants.filter(p => p.data.status === 'rip');
+---
+
+<BaseLayout title="Plant Journal" description="Everything growing (or dramatically not growing) in Marihella's garden.">
+  <div class="plant-page">
+
+    <header class="page-header">
+      <h1>Plant Journal</h1>
+      <p class="page-intro">
+        Everything growing in my garden and on my windowsills — the thriving, the dramatic,
+        and the ones I'm quietly babying back to life.
+      </p>
+    </header>
+
+    {current.length > 0 && (
+      <section class="plant-section">
+        <h2 class="section-title">Current Garden</h2>
+        <div class="plant-grid">
+          {current.map(plant => (
+            <div class="plant-card card">
+              {plant.data.photo ? (
+                <img src={plant.data.photo} alt={plant.data.name} class="plant-photo" loading="lazy" />
+              ) : (
+                <div class="plant-photo-placeholder">
+                  <span aria-hidden="true">🌿</span>
+                </div>
+              )}
+              <div class="plant-info">
+                <h4>{plant.data.name}</h4>
+                {plant.data.botanicalName && (
+                  <p class="botanical"><em>{plant.data.botanicalName}</em></p>
+                )}
+                <span class={`status-pill ${plant.data.status}`}>{plant.data.status}</span>
+                {plant.data.location && <p class="location">{plant.data.location}</p>}
+                {plant.data.wateringNotes && <p class="care-note">{plant.data.wateringNotes}</p>}
+                <div class="tag-row">
+                  {plant.data.tags.map(tag => <span class="tag">{tag}</span>)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {wishlist.length > 0 && (
+      <section class="plant-section">
+        <h2 class="section-title">Wishlist</h2>
+        <div class="plant-grid">
+          {wishlist.map(plant => (
+            <div class="plant-card card wishlist-card">
+              <div class="plant-photo-placeholder wishlist">
+                <span aria-hidden="true">✿</span>
+              </div>
+              <div class="plant-info">
+                <h4>{plant.data.name}</h4>
+                {plant.data.botanicalName && <p class="botanical"><em>{plant.data.botanicalName}</em></p>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    {rip.length > 0 && (
+      <section class="plant-section">
+        <h2 class="section-title">In Memoriam</h2>
+        <div class="plant-grid">
+          {rip.map(plant => (
+            <div class="plant-card card rip-card">
+              <div class="plant-info">
+                <h4>{plant.data.name}</h4>
+                <p class="botanical"><em>rest in peace</em></p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+  </div>
+</BaseLayout>
+
+<style>
+  .plant-page {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-12);
+  }
+  .page-header h1 { color: var(--color-sage-dark); margin-bottom: var(--space-3); }
+  .page-intro {
+    max-width: 540px;
+    margin: 0 auto;
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .plant-section { margin-bottom: var(--space-12); }
+
+  .plant-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .plant-card {
+    display: flex;
+    gap: var(--space-4);
+  }
+
+  .plant-photo {
+    width: 90px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+  }
+
+  .plant-photo-placeholder {
+    width: 90px;
+    height: 90px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--color-sage-light), var(--color-sage));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+  .plant-photo-placeholder.wishlist {
+    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
+  }
+
+  .plant-info h4 { margin-bottom: var(--space-1); }
+
+  .botanical {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    margin-bottom: var(--space-2);
+  }
+
+  .status-pill {
+    display: inline-block;
+    font-family: var(--font-accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1px var(--space-2);
+    border-radius: 999px;
+    margin-bottom: var(--space-2);
+  }
+  .status-pill.thriving  { background: var(--color-sage-light); color: var(--color-forest); }
+  .status-pill.growing   { background: #D4E8C2; color: var(--color-sage-dark); }
+  .status-pill.recovering { background: #FDE8C4; color: #8B6914; }
+  .status-pill.dramatic  { background: var(--color-terracotta-light); color: var(--color-terracotta); }
+  .status-pill.babying   { background: #F3D9E8; color: #9B4D7A; }
+
+  .location {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    margin-bottom: var(--space-1);
+  }
+
+  .care-note {
+    font-size: var(--text-xs);
+    font-style: italic;
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-2);
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+
+  .wishlist-card { opacity: 0.85; }
+  .rip-card { opacity: 0.6; }
+</style>

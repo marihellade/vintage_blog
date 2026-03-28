@@ -1,0 +1,141 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="About" description="A little about Marihella — who I am, what I love, and why this site exists.">
+  <div class="about-page">
+
+    <header class="page-header">
+      <h1>About Me</h1>
+    </header>
+
+    <div class="about-content">
+
+      <section class="about-section">
+        <p>
+          Hi. I'm Marihella. This is my small corner of the internet where I keep track of
+          the things that make life feel a little more magical — books that rearrange my brain,
+          plants that somehow survive my care, places that made me feel like I'd stepped into
+          another world, and recipes I'll keep coming back to.
+        </p>
+        <p>
+          I made this site because I wanted a place that was just mine. Not an algorithm,
+          not a feed, not someone else's platform. Just a quiet place to collect things I love.
+        </p>
+      </section>
+
+      <section class="about-section">
+        <h3 class="section-title">Things I Love</h3>
+        <ul class="loves-list">
+          <li>Fantasy novels with fae courts and morally complex characters</li>
+          <li>Mountains and forests — especially when they feel otherworldly</li>
+          <li>The smell of old bookshops</li>
+          <li>Mythical creatures in every form</li>
+          <li>A good slow burn</li>
+          <li>Fresh rosemary from the garden</li>
+          <li>Art that looks like a fairy tale — Abigail Larson, Gretel Lusky, Kay Nielsen</li>
+          <li>Rain on windows when you have nowhere to be</li>
+          <li>Urban fantasy that makes your city feel strange and alive</li>
+        </ul>
+      </section>
+
+      <section class="about-section">
+        <h3 class="section-title">Currently</h3>
+        <div class="currently-grid">
+          <div class="currently-item">
+            <h5>Reading</h5>
+            <p>A Court of Thorns and Roses series, Red Rising</p>
+          </div>
+          <div class="currently-item">
+            <h5>Growing</h5>
+            <p>A monstera that's getting ideas above its station</p>
+          </div>
+          <div class="currently-item">
+            <h5>Dreaming Of</h5>
+            <p>Somewhere with mountains, mist, and a cafe with a fireplace</p>
+          </div>
+          <div class="currently-item">
+            <h5>Baking</h5>
+            <p>Rosemary focaccia, always</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="about-section">
+        <h3 class="section-title">Why This Site</h3>
+        <p>
+          I believe the internet is better when it has weird little personal corners.
+          This is mine. It's not optimised, it's not monetised, it doesn't have a newsletter signup.
+          It's just a place where I put the things I want to remember.
+        </p>
+        <p>
+          If you've stumbled here somehow — welcome. Pull up a chair. Stay as long as you like.
+        </p>
+      </section>
+
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .about-page {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+  .page-header h1 { color: var(--color-sage-dark); }
+
+  .about-section {
+    margin-bottom: var(--space-8);
+  }
+
+  .loves-list {
+    list-style: none;
+    padding: 0;
+  }
+  .loves-list li {
+    padding: var(--space-2) 0;
+    padding-left: var(--space-6);
+    position: relative;
+    border-bottom: 1px dotted var(--color-gold-light);
+    color: var(--color-ink-soft);
+  }
+  .loves-list li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    font-size: var(--text-xs);
+  }
+
+  .currently-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-4);
+  }
+
+  .currently-item {
+    background: var(--color-cream);
+    border: var(--border-thin);
+    border-radius: var(--radius-md);
+    padding: var(--space-4);
+    text-align: center;
+  }
+  .currently-item h5 {
+    color: var(--color-gold);
+    margin-bottom: var(--space-2);
+  }
+  .currently-item p {
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    max-width: none;
+    margin: 0;
+  }
+</style>

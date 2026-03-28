@@ -1,0 +1,331 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allBooks = await getCollection('books');
+
+// Group by status
+const reading    = allBooks.filter(b => b.data.status === 'reading');
+const finished   = allBooks.filter(b => b.data.status === 'finished');
+const wantToRead = allBooks.filter(b => b.data.status === 'want-to-read');
+
+// Group by series
+const seriesMap = new Map<string, typeof allBooks>();
+for (const book of allBooks) {
+  if (book.data.series) {
+    const list = seriesMap.get(book.data.series) || [];
+    list.push(book);
+    seriesMap.set(book.data.series, list);
+  }
+}
+// Sort series entries by seriesNumber
+for (const [, books] of seriesMap) {
+  books.sort((a, b) => (a.data.seriesNumber ?? 0) - (b.data.seriesNumber ?? 0));
+}
+
+// All unique tags
+const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
+---
+
+<BaseLayout title="Book Diary" description="Every book I've read, reviewed, and loved — or at least survived.">
+  <div class="book-archive">
+
+    <header class="page-header">
+      <h1>Book Diary</h1>
+      <p class="page-intro">
+        Every book I've read, reviewed, and loved — or at least survived. I track my series,
+        my favourites, and the ones that made me sit in silence for ten minutes after finishing.
+      </p>
+    </header>
+
+    <!-- Currently reading -->
+    {reading.length > 0 && (
+      <section class="book-section">
+        <h2 class="section-title">Currently Reading</h2>
+        <div class="book-grid">
+          {reading.map(book => (
+            <a href={`/books/${book.slug}`} class="book-card card">
+              {book.data.cover ? (
+                <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
+              ) : (
+                <div class="book-cover-placeholder">
+                  <span>{book.data.title.charAt(0)}</span>
+                </div>
+              )}
+              <div class="book-info">
+                <h4>{book.data.title}</h4>
+                <p class="meta">{book.data.author}</p>
+                {book.data.series && (
+                  <p class="series-label">{book.data.series} #{book.data.seriesNumber}</p>
+                )}
+                {book.data.mood && <p class="mood-line">{book.data.mood}</p>}
+                <div class="tag-row">
+                  {book.data.tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Series tracker -->
+    {seriesMap.size > 0 && (
+      <section class="book-section">
+        <h2 class="section-title">Series I'm Following</h2>
+        <div class="series-grid">
+          {[...seriesMap.entries()].map(([seriesName, books]) => (
+            <div class="series-card card">
+              <h4>{seriesName}</h4>
+              <ul class="series-list">
+                {books.map(book => (
+                  <li>
+                    <a href={`/books/${book.slug}`}>
+                      {book.data.seriesNumber && <span class="series-num">#{book.data.seriesNumber}</span>}
+                      {book.data.title}
+                    </a>
+                    <span class={`status-badge ${book.data.status}`}>{book.data.status}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- All reviewed -->
+    {finished.length > 0 && (
+      <section class="book-section">
+        <h2 class="section-title">Reviewed</h2>
+        <div class="book-grid">
+          {finished.map(book => (
+            <a href={`/books/${book.slug}`} class="book-card card">
+              {book.data.cover ? (
+                <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
+              ) : (
+                <div class="book-cover-placeholder">
+                  <span>{book.data.title.charAt(0)}</span>
+                </div>
+              )}
+              <div class="book-info">
+                <h4>{book.data.title}</h4>
+                <p class="meta">{book.data.author}</p>
+                {book.data.rating && (
+                  <p class="rating">
+                    {'✦'.repeat(book.data.rating)}{'✧'.repeat(5 - book.data.rating)}
+                  </p>
+                )}
+                {book.data.mood && <p class="mood-line">{book.data.mood}</p>}
+                <div class="tag-row">
+                  {book.data.tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Want to read -->
+    {wantToRead.length > 0 && (
+      <section class="book-section">
+        <h2 class="section-title">Want to Read</h2>
+        <div class="book-grid">
+          {wantToRead.map(book => (
+            <a href={`/books/${book.slug}`} class="book-card card">
+              <div class="book-cover-placeholder wishlist">
+                <span>{book.data.title.charAt(0)}</span>
+              </div>
+              <div class="book-info">
+                <h4>{book.data.title}</h4>
+                <p class="meta">{book.data.author}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Tags -->
+    {allTags.length > 0 && (
+      <section class="book-section tags-section">
+        <h2 class="section-title">Browse by mood</h2>
+        <div class="tag-row">
+          {allTags.map(tag => <span class="tag">{tag}</span>)}
+        </div>
+      </section>
+    )}
+
+  </div>
+</BaseLayout>
+
+<style>
+  .book-archive {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-12);
+  }
+  .page-header h1 {
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-3);
+  }
+  .page-intro {
+    max-width: 560px;
+    margin: 0 auto;
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .book-section { margin-bottom: var(--space-12); }
+
+  /* --- Book grid --- */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .book-card {
+    display: flex;
+    gap: var(--space-4);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .book-cover {
+    width: 80px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .book-cover-placeholder {
+    width: 80px;
+    height: 120px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--color-sage-light), var(--color-sage));
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-style: italic;
+    color: white;
+    box-shadow: var(--shadow-sm);
+  }
+  .book-cover-placeholder.wishlist {
+    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
+  }
+
+  .book-info h4 {
+    font-size: var(--text-md);
+    margin-bottom: var(--space-1);
+  }
+
+  .meta {
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    font-style: italic;
+    margin-bottom: var(--space-1);
+  }
+
+  .rating {
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-1);
+  }
+
+  .mood-line {
+    font-style: italic;
+    font-size: var(--text-xs);
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-2);
+  }
+
+  .series-label {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-terracotta);
+    margin-bottom: var(--space-1);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  /* --- Series --- */
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-6);
+  }
+
+  .series-card h4 {
+    font-style: italic;
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-3);
+    border-bottom: 1px solid var(--color-gold-light);
+    padding-bottom: var(--space-2);
+  }
+
+  .series-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .series-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-2) 0;
+    border-bottom: 1px dotted var(--color-gold-light);
+    font-size: var(--text-sm);
+  }
+  .series-list li:last-child { border-bottom: none; }
+  .series-list a { text-decoration: none; font-family: var(--font-heading); font-size: var(--text-base); }
+  .series-num {
+    color: var(--color-gold);
+    font-size: var(--text-xs);
+    margin-right: var(--space-1);
+  }
+
+  .status-badge {
+    font-family: var(--font-accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 1px var(--space-2);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .status-badge.reading {
+    background: var(--color-terracotta-light);
+    color: var(--color-terracotta);
+  }
+  .status-badge.finished {
+    background: var(--color-sage-light);
+    color: var(--color-forest);
+  }
+  .status-badge.want-to-read {
+    background: #F3E8C8;
+    color: var(--color-gold);
+  }
+
+  .tags-section { text-align: center; }
+  .tags-section .tag-row { justify-content: center; }
+</style>

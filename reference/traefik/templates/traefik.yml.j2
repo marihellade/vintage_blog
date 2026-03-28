@@ -1,0 +1,22 @@
+entryPoints:
+  web:        { address: ":80" }
+  websecure:  { address: ":443" }
+
+providers:
+  docker:
+    exposedByDefault: false
+    network: proxy
+  file:
+    directory: "/etc/traefik/dynamic"
+    watch: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: "{{ letsencrypt_email }}"
+      storage: /letsencrypt/acme.json
+      httpChallenge:
+        entryPoint: web
+
+api:
+  dashboard: false

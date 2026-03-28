@@ -1,0 +1,165 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allTravel = await getCollection('travel');
+const sorted = allTravel.sort((a, b) => {
+  const da = a.data.date?.getTime() ?? 0;
+  const db = b.data.date?.getTime() ?? 0;
+  return db - da;
+});
+---
+
+<BaseLayout title="Travel" description="Places Marihella has wandered and wants to remember.">
+  <div class="travel-page">
+
+    <header class="page-header">
+      <h1>Wanderings</h1>
+      <p class="page-intro">
+        Places I've been, things I've seen, and small moments I don't want to forget.
+        Part vision board, part scrapbook.
+      </p>
+    </header>
+
+    <div class="travel-feed">
+      {sorted.map(async (trip) => {
+        const { Content } = await trip.render();
+        return (
+          <article class="travel-entry card">
+            {trip.data.cover && (
+              <img src={trip.data.cover} alt={trip.data.destination} class="travel-cover" loading="lazy" />
+            )}
+            <div class="travel-content">
+              <h3>{trip.data.title}</h3>
+              <div class="travel-meta">
+                <span class="destination">{trip.data.destination}</span>
+                {trip.data.date && (
+                  <span class="travel-date">
+                    {trip.data.date.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+                  </span>
+                )}
+              </div>
+              {trip.data.mood && <p class="mood-line">{trip.data.mood}</p>}
+              <div class="travel-body"><Content /></div>
+              {trip.data.highlights.length > 0 && (
+                <ul class="highlight-list">
+                  {trip.data.highlights.map(h => <li>{h}</li>)}
+                </ul>
+              )}
+              {trip.data.tags.length > 0 && (
+                <div class="tag-row">
+                  {trip.data.tags.map(tag => <span class="tag">{tag}</span>)}
+                </div>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .travel-page {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-12);
+  }
+  .page-header h1 { color: var(--color-sage-dark); margin-bottom: var(--space-3); }
+  .page-intro {
+    max-width: 500px;
+    margin: 0 auto;
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .travel-feed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .travel-entry {
+    overflow: hidden;
+  }
+
+  .travel-cover {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    margin: calc(-1 * var(--space-6));
+    margin-bottom: var(--space-4);
+    width: calc(100% + var(--space-6) * 2);
+  }
+
+  .travel-content h3 {
+    color: var(--color-ink);
+    margin-bottom: var(--space-2);
+  }
+
+  .travel-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-2);
+    flex-wrap: wrap;
+  }
+
+  .destination {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-terracotta);
+  }
+
+  .travel-date {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .mood-line {
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-3);
+  }
+
+  .travel-body { margin-bottom: var(--space-4); }
+  .travel-body :global(p) { margin-bottom: var(--space-3); }
+
+  .highlight-list {
+    list-style: none;
+    padding: 0;
+    margin: var(--space-3) 0;
+  }
+  .highlight-list li {
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    padding-left: var(--space-4);
+    position: relative;
+    margin-bottom: var(--space-1);
+  }
+  .highlight-list li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    font-size: var(--text-xs);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-3);
+  }
+</style>

@@ -1,0 +1,28 @@
+services:
+  traefik:
+    image: traefik:v3.1
+    container_name: traefik
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TZ: "{{ traefik_timezone }}"
+    userns_mode: "host"                     # <-- required with userns-remap
+    networks:
+      - proxy
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /opt/traefik/traefik.yml:/etc/traefik/traefik.yml:ro
+      - /opt/traefik/dynamic:/etc/traefik/dynamic:ro
+      - /opt/traefik/letsencrypt:/letsencrypt
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.http-catchall.rule: "HostRegexp(`{any:.+}`)"
+      traefik.http.routers.http-catchall.entrypoints: web
+      traefik.http.routers.http-catchall.middlewares: "global-redirect-https@file"
+
+networks:
+  proxy:
+    name: proxy
+    external: true

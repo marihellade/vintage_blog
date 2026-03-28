@@ -1,0 +1,67 @@
+/* ============================================================
+   DESIGN TOKENS — Marihella's site
+   Colors, typography, spacing, and visual rhythm
+   ============================================================ */
+
+:root {
+  /* --- Palette --- */
+  --color-parchment:    #F7F0E1;   /* base background */
+  --color-cream:        #FDF8F0;   /* lighter panels */
+  --color-ink:          #2C1810;   /* primary text */
+  --color-ink-soft:     #4A3728;   /* secondary text / captions */
+
+  --color-sage:         #7A9E7E;   /* primary accent */
+  --color-sage-light:   #B5CEAC;   /* hover states, borders */
+  --color-sage-dark:    #4A7550;   /* active states, headings */
+
+  --color-forest:       #2D5016;   /* strong accent, links */
+  --color-terracotta:   #C4614A;   /* warm contrast, tags, highlights */
+  --color-terracotta-light: #E8A898; /* soft terracotta */
+
+  --color-gold:         #B8934A;   /* decorative details */
+  --color-gold-light:   #DEC48A;   /* subtle borders, dividers */
+
+  /* --- Typography --- */
+  --font-heading:  'Cormorant Garamond', 'IM Fell English', Georgia, serif;
+  --font-body:     'Crimson Text', 'Palatino Linotype', Georgia, serif;
+  --font-accent:   'Cormorant SC', 'Cormorant Garamond', Georgia, serif;
+
+  --text-xs:    0.75rem;
+  --text-sm:    0.875rem;
+  --text-base:  1.0625rem;
+  --text-md:    1.25rem;
+  --text-lg:    1.5rem;
+  --text-xl:    2rem;
+  --text-2xl:   2.75rem;
+  --text-3xl:   3.5rem;
+
+  --leading-tight:  1.2;
+  --leading-body:   1.7;
+
+  /* --- Spacing --- */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* --- Borders & Radius --- */
+  --radius-sm:   4px;
+  --radius-md:   8px;
+  --radius-lg:   16px;
+  --border-thin: 1px solid var(--color-gold-light);
+  --border-med:  2px solid var(--color-gold);
+
+  /* --- Shadows --- */
+  --shadow-sm: 0 1px 4px rgba(44, 24, 16, 0.08);
+  --shadow-md: 0 4px 16px rgba(44, 24, 16, 0.12);
+  --shadow-card: 2px 4px 12px rgba(44, 24, 16, 0.10);
+
+  /* --- Layout --- */
+  --sidebar-width:  220px;
+  --content-max:    740px;
+  --page-max:       1100px;
+}

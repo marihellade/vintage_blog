@@ -1,0 +1,245 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const books = await getCollection('books');
+  return books.map(book => ({
+    params: { slug: book.slug },
+    props: { book },
+  }));
+}
+
+interface Props { book: CollectionEntry<'books'>; }
+const { book } = Astro.props;
+const { Content } = await book.render();
+const d = book.data;
+---
+
+<BaseLayout title={d.title} description={`${d.title} by ${d.author} — reviewed by Marihella`}>
+  <article class="book-page">
+
+    <header class="book-header">
+      <div class="book-header-content">
+        {d.cover ? (
+          <img src={d.cover} alt={`Cover of ${d.title}`} class="cover-large" />
+        ) : (
+          <div class="cover-placeholder-large">
+            <span>{d.title.charAt(0)}</span>
+          </div>
+        )}
+
+        <div class="book-meta-block">
+          <h1>{d.title}</h1>
+          <p class="author">by {d.author}</p>
+
+          {d.series && (
+            <p class="series-info">{d.series}{d.seriesNumber ? ` #${d.seriesNumber}` : ''}</p>
+          )}
+
+          {d.rating && (
+            <p class="rating" aria-label={`Rating: ${d.rating} out of 5`}>
+              {'✦'.repeat(d.rating)}{'✧'.repeat(5 - d.rating)}
+            </p>
+          )}
+
+          <div class="meta-details">
+            {d.status && <span class={`status-badge ${d.status}`}>{d.status}</span>}
+            {d.dateFinished && (
+              <span class="date-info">
+                finished {d.dateFinished.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+              </span>
+            )}
+          </div>
+
+          {d.mood && <p class="mood-display">{d.mood}</p>}
+
+          {d.tags.length > 0 && (
+            <div class="tag-row">
+              {d.tags.map(tag => <span class="tag">{tag}</span>)}
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+
+    {d.favouriteQuote && (
+      <div class="favourite-quote border-botanical">
+        <h5>Favourite Quote</h5>
+        <blockquote>&ldquo;{d.favouriteQuote}&rdquo;</blockquote>
+      </div>
+    )}
+
+    <div class="review-body">
+      <Content />
+    </div>
+
+    <footer class="book-footer">
+      <a href="/books">&larr; back to the book diary</a>
+    </footer>
+
+  </article>
+</BaseLayout>
+
+<style>
+  .book-page {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .book-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .book-header-content {
+    display: flex;
+    gap: var(--space-8);
+    align-items: flex-start;
+  }
+
+  .cover-large {
+    width: 160px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+  }
+
+  .cover-placeholder-large {
+    width: 160px;
+    height: 240px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--color-sage-light), var(--color-sage-dark));
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-style: italic;
+    color: white;
+    box-shadow: var(--shadow-md);
+  }
+
+  .book-meta-block h1 {
+    font-size: var(--text-2xl);
+    color: var(--color-ink);
+    margin-bottom: var(--space-1);
+  }
+
+  .author {
+    font-style: italic;
+    color: var(--color-ink-soft);
+    font-size: var(--text-md);
+    margin-bottom: var(--space-2);
+  }
+
+  .series-info {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-terracotta);
+    margin-bottom: var(--space-2);
+  }
+
+  .rating {
+    color: var(--color-gold);
+    letter-spacing: 0.2em;
+    font-size: var(--text-md);
+    margin-bottom: var(--space-3);
+  }
+
+  .meta-details {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .status-badge {
+    font-family: var(--font-accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px var(--space-3);
+    border-radius: 999px;
+  }
+  .status-badge.reading { background: var(--color-terracotta-light); color: var(--color-terracotta); }
+  .status-badge.finished { background: var(--color-sage-light); color: var(--color-forest); }
+  .status-badge.want-to-read { background: #F3E8C8; color: var(--color-gold); }
+
+  .date-info {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .mood-display {
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-3);
+    max-width: none;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  /* --- Quote --- */
+  .favourite-quote {
+    padding: var(--space-6);
+    background: var(--color-cream);
+    border-radius: var(--radius-md);
+    margin-bottom: var(--space-8);
+    text-align: center;
+  }
+  .favourite-quote h5 {
+    margin-bottom: var(--space-3);
+    color: var(--color-gold);
+  }
+  .favourite-quote blockquote {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+    font-size: var(--text-lg);
+    font-family: var(--font-heading);
+    color: var(--color-ink);
+  }
+
+  /* --- Review body --- */
+  .review-body {
+    margin-bottom: var(--space-8);
+  }
+  .review-body :global(p) {
+    margin-bottom: var(--space-4);
+  }
+
+  /* --- Footer --- */
+  .book-footer {
+    padding-top: var(--space-6);
+    border-top: var(--border-thin);
+  }
+  .book-footer a {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-sage-dark);
+  }
+  .book-footer a:hover { color: var(--color-terracotta); }
+
+  @media (max-width: 600px) {
+    .book-header-content { flex-direction: column; align-items: center; text-align: center; }
+    .cover-large, .cover-placeholder-large { width: 120px; height: 180px; }
+    .tag-row { justify-content: center; }
+  }
+</style>

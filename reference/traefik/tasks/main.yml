@@ -1,0 +1,44 @@
+- name: Ensure proxy network exists
+  community.docker.docker_network:
+    name: proxy
+    state: present
+
+- name: Create directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - /opt/traefik
+    - /opt/traefik/dynamic
+    - /opt/traefik/letsencrypt
+
+- name: Copy Traefik static config
+  ansible.builtin.template:
+    src: traefik.yml.j2
+    dest: /opt/traefik/traefik.yml
+    mode: "0644"
+
+- name: Copy middlewares
+  ansible.builtin.copy:
+    src: traefik/dynamic/middlewares.yml
+    dest: /opt/traefik/dynamic/middlewares.yml
+    mode: "0644"
+
+- name: Copy docker-compose
+  ansible.builtin.copy:
+    src: traefik/docker-compose.yml
+    dest: /opt/traefik/docker-compose.yml
+    mode: "0644"
+
+- name: Ensure acme.json exists with strict perms
+  ansible.builtin.file:
+    path: /opt/traefik/letsencrypt/acme.json
+    state: touch
+    mode: "0600"
+
+- name: Deploy Traefik
+  community.docker.docker_compose_v2:
+    project_src: /opt/traefik
+    state: present
+    pull: always

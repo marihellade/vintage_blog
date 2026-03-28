@@ -1,0 +1,104 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <div class="footer-divider" aria-hidden="true">
+      <span>✦</span>
+      <span>❧</span>
+      <span>✦</span>
+    </div>
+
+    <div class="footer-content">
+      <p class="footer-name">Marihella</p>
+      <p class="footer-byline">a small corner of the internet, tended with care</p>
+
+      <div class="footer-links">
+        <a href="/about">about</a>
+        <span aria-hidden="true">·</span>
+        <a href="/books">books</a>
+        <span aria-hidden="true">·</span>
+        <a href="/plants">plants</a>
+        <span aria-hidden="true">·</span>
+        <a href="/travel">travel</a>
+        <span aria-hidden="true">·</span>
+        <a href="/recipes">recipes</a>
+      </div>
+
+      <p class="footer-credit">
+        &copy; {year} &mdash; made with quiet evenings and too much tea
+      </p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-16);
+    border-top: var(--border-thin);
+    background: var(--color-cream);
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .footer-inner {
+    max-width: var(--page-max);
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  .footer-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    color: var(--color-gold);
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-6);
+  }
+
+  .footer-name {
+    font-family: var(--font-heading);
+    font-size: var(--text-lg);
+    font-style: italic;
+    color: var(--color-ink);
+    margin-bottom: var(--space-1);
+    max-width: none;
+  }
+
+  .footer-byline {
+    font-family: var(--font-body);
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    margin-bottom: var(--space-4);
+    max-width: none;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-4);
+  }
+  .footer-links a {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    text-decoration: none;
+  }
+  .footer-links a:hover { color: var(--color-forest); }
+  .footer-links span { color: var(--color-gold-light); }
+
+  .footer-credit {
+    font-size: var(--text-xs);
+    color: var(--color-gold);
+    font-style: italic;
+    max-width: none;
+    margin: 0;
+  }
+</style>

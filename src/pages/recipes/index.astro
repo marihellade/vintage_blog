@@ -1,0 +1,166 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allRecipes = await getCollection('recipes');
+const sorted = allRecipes.sort((a, b) => {
+  const da = a.data.dateTried?.getTime() ?? 0;
+  const db = b.data.dateTried?.getTime() ?? 0;
+  return db - da;
+});
+---
+
+<BaseLayout title="Recipe Box" description="Recipes Marihella has tried, loved, and scribbled notes on.">
+  <div class="recipe-page">
+
+    <header class="page-header">
+      <h1>Recipe Box</h1>
+      <p class="page-intro">
+        Recipes I've actually made, with honest notes about what I changed
+        and whether I'd make them again. No aesthetic food photography — just real opinions.
+      </p>
+    </header>
+
+    <div class="recipe-feed">
+      {sorted.map(async (recipe) => {
+        const { Content } = await recipe.render();
+        return (
+          <article class="recipe-entry card">
+            <div class="recipe-header">
+              <div>
+                <h3>{recipe.data.title}</h3>
+                <div class="recipe-meta">
+                  {recipe.data.source && (
+                    <span class="source">
+                      {recipe.data.sourceUrl ? (
+                        <a href={recipe.data.sourceUrl} target="_blank" rel="noopener">{recipe.data.source}</a>
+                      ) : (
+                        recipe.data.source
+                      )}
+                    </span>
+                  )}
+                  {recipe.data.dateTried && (
+                    <span class="tried-date">
+                      tried {recipe.data.dateTried.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              <div class="recipe-badges">
+                {recipe.data.rating && (
+                  <span class="rating">
+                    {'✦'.repeat(recipe.data.rating)}{'✧'.repeat(5 - recipe.data.rating)}
+                  </span>
+                )}
+                {recipe.data.wouldMakeAgain ? (
+                  <span class="tag">would make again</span>
+                ) : (
+                  <span class="tag terracotta">once was enough</span>
+                )}
+              </div>
+            </div>
+
+            <div class="recipe-body"><Content /></div>
+
+            {recipe.data.tags.length > 0 && (
+              <div class="tag-row">
+                {recipe.data.tags.map(tag => <span class="tag">{tag}</span>)}
+              </div>
+            )}
+          </article>
+        );
+      })}
+    </div>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .recipe-page {
+    max-width: var(--content-max);
+    margin: 0 auto;
+    padding: var(--space-8) var(--space-6);
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-12);
+  }
+  .page-header h1 { color: var(--color-sage-dark); margin-bottom: var(--space-3); }
+  .page-intro {
+    max-width: 520px;
+    margin: 0 auto;
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .recipe-feed {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+  }
+
+  .recipe-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+    flex-wrap: wrap;
+  }
+
+  .recipe-header h3 {
+    color: var(--color-ink);
+    margin-bottom: var(--space-1);
+  }
+
+  .recipe-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+  }
+
+  .source {
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+  }
+
+  .tried-date {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .recipe-badges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--space-2);
+  }
+
+  .rating {
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    font-size: var(--text-sm);
+  }
+
+  .recipe-body { margin-bottom: var(--space-4); }
+  .recipe-body :global(h2) {
+    font-size: var(--text-md);
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+    color: var(--color-sage-dark);
+  }
+  .recipe-body :global(p) { margin-bottom: var(--space-3); }
+  .recipe-body :global(ul), .recipe-body :global(ol) { margin-bottom: var(--space-3); }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    padding-top: var(--space-3);
+    border-top: 1px dotted var(--color-gold-light);
+  }
+</style>
