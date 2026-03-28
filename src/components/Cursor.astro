@@ -1,5 +1,5 @@
 ---
-// Botanical sparkle cursor — particles spawn on mouse move
+// Sparkle star cursor — glittering trail follows the mouse
 // Automatically hidden on touch devices (see global.css)
 ---
 
@@ -8,51 +8,62 @@
 <style>
   #cursor-dot {
     position: fixed;
-    width: 8px;
-    height: 8px;
-    background: var(--color-sage-dark);
-    border: 1.5px solid var(--color-gold);
+    width: 10px;
+    height: 10px;
+    background: radial-gradient(circle, #EDE0C8 30%, #C8984E 100%);
     border-radius: 50%;
     pointer-events: none;
     z-index: 10000;
     transform: translate(-50%, -50%);
-    transition: transform 0.06s ease, background 0.15s;
-    will-change: transform;
+    transition: width 0.1s ease, height 0.1s ease;
+    will-change: left, top;
+    box-shadow: 0 0 6px rgba(200, 152, 78, 0.7), 0 0 12px rgba(200, 152, 78, 0.3);
   }
 
   #cursor-dot.hovering {
-    background: var(--color-terracotta);
-    transform: translate(-50%, -50%) scale(1.4);
+    width: 14px;
+    height: 14px;
+    background: radial-gradient(circle, #fff 20%, var(--color-terracotta) 100%);
+    box-shadow: 0 0 10px rgba(212, 107, 82, 0.8), 0 0 20px rgba(212, 107, 82, 0.3);
   }
 
-  .cursor-particle {
+  .spark {
     position: fixed;
     pointer-events: none;
     z-index: 9999;
-    font-size: 12px;
     user-select: none;
-    animation: particle-fade 0.8s ease-out forwards;
+    line-height: 1;
+    transform: translate(-50%, -50%);
+    animation: spark-rise var(--dur, 0.9s) ease-out forwards;
   }
 
-  @keyframes particle-fade {
+  @keyframes spark-rise {
     0% {
-      opacity: 0.9;
-      transform: translate(-50%, -50%) scale(1) rotate(0deg);
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1) rotate(var(--r0, 0deg));
+    }
+    60% {
+      opacity: 0.7;
     }
     100% {
       opacity: 0;
-      transform: translate(-50%, -50%) scale(0.2) rotate(60deg) translateY(-20px);
+      transform:
+        translate(calc(-50% + var(--dx, 0px)), calc(-50% + var(--dy, -28px)))
+        scale(0.15)
+        rotate(var(--r1, 120deg));
     }
   }
 </style>
 
 <script>
-  const dot = document.getElementById('cursor-dot');
-  if (!dot) throw new Error('cursor-dot not found');
+  const dot = document.getElementById('cursor-dot')!;
 
-  const COLORS = ['#7A9E7E', '#B8934A', '#C4614A', '#4A7550', '#DEC48A'];
-  const SHAPES = ['✦', '❧', '✿', '·', '✧', '✦'];
-  const SPAWN_INTERVAL = 60; // ms between particles
+  // Star/sparkle character set — visually distinct, small
+  const SHAPES = ['✦', '✧', '★', '⋆', '✫', '✬', '✭', '✮', '✯', '✦', '✧', '⋆'];
+  // Warm gold / sage / cream palette
+  const COLORS = ['#EDE0C8', '#C8984E', '#D6C18D', '#9ABF9E', '#F5E9C8', '#DEC48A', '#fff'];
+
+  const INTERVAL = 35; // ms between sparks — denser trail
   let lastSpawn = 0;
 
   document.addEventListener('mousemove', (e) => {
@@ -60,13 +71,12 @@
     dot.style.top  = e.clientY + 'px';
 
     const now = Date.now();
-    if (now - lastSpawn > SPAWN_INTERVAL) {
-      spawnParticle(e.clientX, e.clientY);
+    if (now - lastSpawn > INTERVAL) {
+      spawnSpark(e.clientX, e.clientY);
       lastSpawn = now;
     }
   });
 
-  // Hover states for interactive elements
   document.addEventListener('mouseover', (e) => {
     const target = e.target as HTMLElement;
     if (target.closest('a, button, [role="button"], input, textarea, select')) {
@@ -80,19 +90,29 @@
     }
   });
 
-  function spawnParticle(x: number, y: number) {
-    // Respect reduced motion preference
+  function spawnSpark(x: number, y: number) {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const el = document.createElement('span');
-    el.className = 'cursor-particle';
+    el.className = 'spark';
     el.textContent = SHAPES[Math.floor(Math.random() * SHAPES.length)];
-    el.style.left = (x + (Math.random() - 0.5) * 16) + 'px';
-    el.style.top  = (y + (Math.random() - 0.5) * 16) + 'px';
-    el.style.color = COLORS[Math.floor(Math.random() * COLORS.length)];
-    el.style.fontSize = (8 + Math.random() * 8) + 'px';
-    document.body.appendChild(el);
 
-    el.addEventListener('animationend', () => el.remove());
+    // Position with a little spread around the cursor
+    el.style.left = (x + (Math.random() - 0.5) * 14) + 'px';
+    el.style.top  = (y + (Math.random() - 0.5) * 14) + 'px';
+    el.style.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+    el.style.fontSize = (9 + Math.random() * 10) + 'px';
+
+    // Each spark drifts in a random upward-biased direction
+    const angle = (Math.random() * 160 + 190) * (Math.PI / 180); // mostly upward (200–350°)
+    const dist  = 20 + Math.random() * 30;
+    el.style.setProperty('--dx',  (Math.cos(angle) * dist).toFixed(1) + 'px');
+    el.style.setProperty('--dy',  (Math.sin(angle) * dist).toFixed(1) + 'px');
+    el.style.setProperty('--r0',  (Math.random() * 60 - 30) + 'deg');
+    el.style.setProperty('--r1',  (Math.random() * 200 - 100 + 120) + 'deg');
+    el.style.setProperty('--dur', (0.7 + Math.random() * 0.6) + 's');
+
+    document.body.appendChild(el);
+    el.addEventListener('animationend', () => el.remove(), { once: true });
   }
 </script>

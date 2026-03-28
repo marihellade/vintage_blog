@@ -217,7 +217,9 @@
     text-align: center;
     position: relative;
     z-index: 2;
-    overflow: visible;
+    /* clip horizontal overflow (Salem at edge) without hiding dragon tail below */
+    overflow-x: clip;
+    overflow-y: visible;
     isolation: isolate;
   }
 
