@@ -39,7 +39,7 @@ use *italics*, **bold**, and > quotes.
 | `author` | Yes | `"Rebecca Yarros"` |
 | `cover` | No | `"/images/books/fourth-wing.jpg"` |
 | `rating` | No | `4` (1 to 5) |
-| `status` | No | `reading`, `finished`, `abandoned`, `want-to-read` |
+| `status` | No | `reading`, `finished`, `dnf`, `want-to-read` |
 | `series` | No | `"The Empyrean"` |
 | `seriesNumber` | No | `1` |
 | `favouriteQuote` | No | `"Any quote you loved"` |

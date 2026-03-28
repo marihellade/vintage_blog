@@ -14,6 +14,13 @@ interface Props { book: CollectionEntry<'books'>; }
 const { book } = Astro.props;
 const { Content } = await book.render();
 const d = book.data;
+
+const statusLabels: Record<string, string> = {
+  'reading':      '📖~ reading ~',
+  'finished':     '✨ finished ✨',
+  'dnf':          '💔 dnf',
+  'want-to-read': '👀 want 2 read',
+};
 ---
 
 <BaseLayout title={d.title} description={`${d.title} by ${d.author} — reviewed by Marihella`}>
@@ -44,7 +51,7 @@ const d = book.data;
           )}
 
           <div class="meta-details">
-            {d.status && <span class={`status-badge ${d.status}`}>{d.status}</span>}
+            {d.status && <span class={`status-badge ${d.status}`}>{statusLabels[d.status] ?? d.status}</span>}
             {d.dateFinished && (
               <span class="date-info">
                 finished {d.dateFinished.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
@@ -168,6 +175,7 @@ const d = book.data;
   }
   .status-badge.reading { background: var(--color-terracotta-light); color: var(--color-terracotta); }
   .status-badge.finished { background: var(--color-sage-light); color: var(--color-forest); }
+  .status-badge.dnf { background: #f0d4d4; color: #8b3a3a; }
   .status-badge.want-to-read { background: #F3E8C8; color: var(--color-gold); }
 
   .date-info {

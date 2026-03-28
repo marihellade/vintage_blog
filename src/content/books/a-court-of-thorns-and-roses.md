@@ -2,7 +2,7 @@
 title: "A Court of Thorns and Roses"
 author: "Sarah J. Maas"
 rating: 4
-status: reading
+status: finished
 series: "A Court of Thorns and Roses"
 seriesNumber: 1
 mood: "fae courts, beauty and danger, slow transformation"

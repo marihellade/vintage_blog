@@ -13,7 +13,7 @@ const books = defineCollection({
     rating: z.number().min(1).max(5).optional(),
     dateStarted: z.coerce.date().optional(),
     dateFinished: z.coerce.date().optional(),
-    status: z.enum(['reading', 'finished', 'abandoned', 'want-to-read']).default('finished'),
+    status: z.enum(['reading', 'finished', 'dnf', 'want-to-read']).default('finished'),
     series: z.string().optional(),         // e.g. "A Court of Thorns and Roses"
     seriesNumber: z.number().optional(),   // e.g. 1
     favouriteQuote: z.string().optional(),
