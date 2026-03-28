@@ -10,7 +10,7 @@ const books = defineCollection({
     title: z.string(),
     author: z.string(),
     cover: z.string().optional(),          // path like /images/books/fourth-wing.jpg
-    rating: z.number().min(1).max(5).optional(),
+    rating: z.number().min(0.5).max(5).multipleOf(0.5).optional(),
     dateStarted: z.coerce.date().optional(),
     dateFinished: z.coerce.date().optional(),
     status: z.enum(['reading', 'finished', 'dnf', 'want-to-read']).default('finished'),

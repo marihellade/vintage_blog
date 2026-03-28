@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { starsHtml, starsLabel } from '../../utils/stars';
 
 export async function getStaticPaths() {
   const books = await getCollection('books');
@@ -45,13 +46,18 @@ const statusLabels: Record<string, string> = {
           )}
 
           {d.rating && (
-            <p class="rating" aria-label={`Rating: ${d.rating} out of 5`}>
-              {'✦'.repeat(d.rating)}{'✧'.repeat(5 - d.rating)}
+            <p class="rating" aria-label={starsLabel(d.rating)}>
+              {starsHtml(d.rating)}
             </p>
           )}
 
           <div class="meta-details">
             {d.status && <span class={`status-badge ${d.status}`}>{statusLabels[d.status] ?? d.status}</span>}
+            {d.dateStarted && (
+              <span class="date-info">
+                started {d.dateStarted.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+              </span>
+            )}
             {d.dateFinished && (
               <span class="date-info">
                 finished {d.dateFinished.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}

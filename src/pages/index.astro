@@ -5,6 +5,7 @@ import SproutIcon from '../components/icons/SproutIcon.astro';
 import StarIcon from '../components/icons/StarIcon.astro';
 import CandleIcon from '../components/icons/CandleIcon.astro';
 import { getCollection } from 'astro:content';
+import { starsHtml, starsLabel } from '../utils/stars';
 
 const allBooks   = await getCollection('books');
 const allPlants  = await getCollection('plants');
@@ -89,8 +90,8 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
             <h4><a href={`/books/${featuredBook.slug}`}>{featuredBook.data.title}</a></h4>
             <p class="meta">by {featuredBook.data.author}</p>
             {featuredBook.data.rating && (
-              <p class="rating" aria-label={`Rating: ${featuredBook.data.rating} out of 5`}>
-                {'✦'.repeat(featuredBook.data.rating)}{'✧'.repeat(5 - featuredBook.data.rating)}
+              <p class="rating" aria-label={starsLabel(featuredBook.data.rating)}>
+                {starsHtml(featuredBook.data.rating)}
               </p>
             )}
             {featuredBook.data.mood && <p class="mood-line">{featuredBook.data.mood}</p>}
@@ -131,8 +132,8 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
         <div class="card">
           <h4><a href="/recipes">{featuredRecipe.data.title}</a></h4>
           {featuredRecipe.data.rating && (
-            <p class="rating" aria-label={`Rating: ${featuredRecipe.data.rating} out of 5`}>
-              {'✦'.repeat(featuredRecipe.data.rating)}{'✧'.repeat(5 - featuredRecipe.data.rating)}
+            <p class="rating" aria-label={starsLabel(featuredRecipe.data.rating)}>
+              {starsHtml(featuredRecipe.data.rating)}
             </p>
           )}
           <div class="tag-row">
