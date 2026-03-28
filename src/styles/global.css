@@ -1,5 +1,6 @@
 /* ============================================================
    GLOBAL STYLES — Marihella's site
+   Earthy · ethereal · art nouveau · apothecary
    ============================================================ */
 
 @import './tokens.css';
@@ -25,12 +26,17 @@ body {
   line-height: var(--leading-body);
   color: var(--color-ink);
   background-color: var(--color-parchment);
-  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
+  /* subtle dot pattern — like old handmade paper */
+  background-image:
+    radial-gradient(circle at 1px 1px, rgba(122, 158, 126, 0.18) 1px, transparent 0),
+    radial-gradient(circle at 1px 1px, rgba(184, 147, 74, 0.12) 1px, transparent 0);
+  background-size: 24px 24px, 48px 48px;
+  background-position: 0 0, 12px 12px;
   min-height: 100vh;
-  cursor: none; /* hide default cursor — custom cursor is active */
+  cursor: none;
 }
 
-/* Restore default cursor for interactive elements as fallback */
+/* Restore default cursor on touch devices */
 @media (pointer: coarse) {
   body { cursor: auto; }
   #cursor, #cursor-dot { display: none; }
@@ -96,38 +102,107 @@ img {
   display: block;
 }
 
-/* --- Decorative divider --- */
-.divider {
+/* ============================================================
+   WIDGET BOXES — the scrapbook-panel feel
+   ============================================================ */
+.widget-box {
+  background: #fdf8ef;
+  border: 2px solid var(--color-gold-light);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+}
+
+/* Inner dashed border — double-border effect */
+.widget-box::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px dashed rgba(184, 147, 74, 0.35);
+  border-radius: calc(var(--radius-md) - 4px);
+  pointer-events: none;
+}
+
+.widget-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-md);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--color-sage-dark);
   display: flex;
   align-items: center;
-  gap: var(--space-4);
-  margin: var(--space-8) 0;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding-bottom: var(--space-2);
+  border-bottom: 2px dotted var(--color-gold-light);
+}
+
+.widget-icon {
   color: var(--color-gold);
-  font-size: var(--text-sm);
+  font-style: normal;
+}
+
+/* ============================================================
+   DECORATIVE DIVIDERS
+   ============================================================ */
+.divider {
+  text-align: center;
+  margin: var(--space-8) 0;
+  font-size: 1.1rem;
+  color: var(--color-gold);
+  letter-spacing: 0.5rem;
+  opacity: 0.7;
 }
 .divider::before,
 .divider::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--color-gold-light), transparent);
+  content: '· · ·';
+  margin: 0 0.75rem;
+  opacity: 0.5;
 }
 
-/* --- Cards --- */
+hr.fancy {
+  border: none;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-sage-light), var(--color-gold-light), var(--color-sage-light), transparent);
+  margin: var(--space-6) 0;
+}
+
+/* ============================================================
+   CARDS — with dashed borders and layered shadow
+   ============================================================ */
 .card {
   background: var(--color-cream);
-  border: var(--border-thin);
+  border: 2px dashed var(--color-gold-light);
   border-radius: var(--radius-md);
   padding: var(--space-6);
   box-shadow: var(--shadow-card);
+  position: relative;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
-.card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+
+.card::after {
+  content: '';
+  position: absolute;
+  inset: 4px -3px -3px 4px;
+  background: var(--color-sage-light);
+  opacity: 0.3;
+  border-radius: var(--radius-md);
+  z-index: -1;
+  transition: opacity 0.2s;
 }
 
-/* --- Tags / badges --- */
+.card:hover {
+  transform: translateY(-3px) rotate(0.3deg);
+  box-shadow: var(--shadow-md);
+}
+.card:hover::after {
+  opacity: 0.45;
+}
+
+/* ============================================================
+   TAGS / BADGES
+   ============================================================ */
 .tag {
   display: inline-block;
   font-family: var(--font-accent);
@@ -136,22 +211,24 @@ img {
   text-transform: uppercase;
   padding: 2px var(--space-3);
   border-radius: 999px;
-  background: var(--color-sage-light);
+  background: rgba(122, 158, 126, 0.2);
   color: var(--color-forest);
   border: 1px solid var(--color-sage);
 }
 .tag.terracotta {
-  background: var(--color-terracotta-light);
+  background: rgba(196, 97, 74, 0.15);
   color: var(--color-terracotta);
   border-color: var(--color-terracotta);
 }
 .tag.gold {
-  background: #F3E8C8;
+  background: rgba(184, 147, 74, 0.15);
   color: var(--color-gold);
   border-color: var(--color-gold-light);
 }
 
-/* --- Section headings with botanical accent --- */
+/* ============================================================
+   SECTION HEADINGS — botanical accent
+   ============================================================ */
 .section-title {
   font-family: var(--font-heading);
   font-size: var(--text-xl);
@@ -161,6 +238,8 @@ img {
   align-items: center;
   gap: var(--space-3);
   margin-bottom: var(--space-6);
+  padding-bottom: var(--space-2);
+  border-bottom: 3px dotted var(--color-gold-light);
 }
 .section-title::before {
   content: '✦';
@@ -169,9 +248,11 @@ img {
   font-size: var(--text-sm);
 }
 
-/* --- Botanical border utility --- */
+/* ============================================================
+   BOTANICAL BORDER — ornamental frame
+   ============================================================ */
 .border-botanical {
-  border: 1px solid var(--color-gold-light);
+  border: 2px solid var(--color-gold-light);
   position: relative;
 }
 .border-botanical::before,
@@ -181,11 +262,30 @@ img {
   color: var(--color-gold);
   font-size: 1.2rem;
   line-height: 1;
+  background: var(--color-cream);
+  padding: 0 var(--space-2);
 }
 .border-botanical::before { top: -0.6rem; left: 50%; transform: translateX(-50%); }
 .border-botanical::after  { bottom: -0.6rem; left: 50%; transform: translateX(-50%) rotate(180deg); }
 
-/* --- Reduced motion --- */
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes float-gentle {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.4; }
+}
+
+.float-item { animation: float-gentle 5s ease-in-out infinite; }
+
+/* ============================================================
+   ACCESSIBILITY
+   ============================================================ */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -193,7 +293,6 @@ img {
   }
 }
 
-/* --- Focus visible --- */
 :focus-visible {
   outline: 2px solid var(--color-sage);
   outline-offset: 3px;

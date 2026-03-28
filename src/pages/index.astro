@@ -2,245 +2,281 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const allBooks  = await getCollection('books');
-const allPlants = await getCollection('plants');
-const allTravel = await getCollection('travel');
+const allBooks   = await getCollection('books');
+const allPlants  = await getCollection('plants');
+const allTravel  = await getCollection('travel');
 const allRecipes = await getCollection('recipes');
 
 const currentlyReading = allBooks.filter(b => b.data.status === 'reading');
 const featuredBook     = allBooks.find(b => b.data.featured && b.data.status === 'finished');
+const recentBooks      = allBooks.filter(b => b.data.status === 'finished').slice(0, 3);
 const featuredPlant    = allPlants.find(p => p.data.featured);
 const featuredTravel   = allTravel.find(t => t.data.featured);
 const featuredRecipe   = allRecipes.find(r => r.data.featured);
 ---
 
 <BaseLayout title="Home">
-  <div class="home">
 
-    <!-- Welcome -->
-    <section class="welcome-section">
-      <div class="welcome-card border-botanical">
-        <h1>Welcome to my corner</h1>
-        <p>
-          This is where I keep the things I love — the books that changed the way I see,
-          the plants I'm trying not to kill, the places that made me feel something,
-          and the recipes I'll make again and again. Pull up a chair.
-        </p>
-      </div>
-    </section>
+  <!-- Welcome -->
+  <section class="welcome-section">
+    <div class="welcome-card border-botanical">
+      <h1>Welcome to my corner</h1>
+      <p>
+        This is where I keep the things I love — the books that changed the way I see,
+        the plants I'm trying not to kill, the places that made me feel something,
+        and the recipes I'll make again and again.
+      </p>
+      <p class="welcome-sign">— Marihella</p>
+    </div>
+  </section>
 
-    <!-- Currently / Status widgets -->
-    <section class="status-strip">
-      <div class="status-widget">
-        <h5>Currently Reading</h5>
-        {currentlyReading.length > 0 ? (
-          <ul>
-            {currentlyReading.map(book => (
-              <li>
-                <a href={`/books/${book.slug}`}>{book.data.title}</a>
-                {book.data.series && <span class="status-detail">{book.data.series}</span>}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p class="status-empty">between books...</p>
-        )}
-      </div>
-
-      <div class="status-widget">
-        <h5>Currently Growing</h5>
-        {featuredPlant ? (
-          <p>
-            <a href={`/plants`}>{featuredPlant.data.name}</a>
-            <span class="status-detail">— {featuredPlant.data.status}</span>
-          </p>
-        ) : (
-          <p class="status-empty">tending the garden...</p>
-        )}
-      </div>
-
-      <div class="status-widget">
-        <h5>Currently Dreaming Of</h5>
-        {featuredTravel ? (
-          <p><a href={`/travel`}>{featuredTravel.data.destination}</a></p>
-        ) : (
-          <p class="status-empty">somewhere far away...</p>
-        )}
-      </div>
-    </section>
-
-    <!-- Featured sections -->
-    <div class="featured-grid">
-
-      {featuredBook && (
-        <section class="featured-block">
-          <h3 class="section-title">From the Book Diary</h3>
-          <div class="card">
-            <div class="featured-book-header">
-              <div>
-                <h4><a href={`/books/${featuredBook.slug}`}>{featuredBook.data.title}</a></h4>
-                <p class="meta">by {featuredBook.data.author}</p>
-                {featuredBook.data.rating && (
-                  <p class="rating" aria-label={`Rating: ${featuredBook.data.rating} out of 5`}>
-                    {'✦'.repeat(featuredBook.data.rating)}{'✧'.repeat(5 - featuredBook.data.rating)}
-                  </p>
-                )}
+  <!-- Currently reading banner -->
+  {currentlyReading.length > 0 && (
+    <section class="currently-banner">
+      <h3 class="section-title">Currently Reading</h3>
+      <div class="currently-grid">
+        {currentlyReading.map(book => (
+          <a href={`/books/${book.slug}`} class="card currently-card">
+            <div class="currently-cover">
+              {book.data.cover ? (
+                <img src={book.data.cover} alt={book.data.title} loading="lazy" />
+              ) : (
+                <div class="cover-placeholder"><span>{book.data.title.charAt(0)}</span></div>
+              )}
+            </div>
+            <div class="currently-info">
+              <h4>{book.data.title}</h4>
+              <p class="meta">by {book.data.author}</p>
+              {book.data.series && (
+                <p class="series-label">{book.data.series} #{book.data.seriesNumber}</p>
+              )}
+              {book.data.mood && <p class="mood-line">{book.data.mood}</p>}
+              <div class="tag-row">
+                {book.data.tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}
               </div>
             </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <hr class="fancy" />
+
+  <!-- Featured book review -->
+  {featuredBook && (
+    <section class="featured-section">
+      <h3 class="section-title">From the Book Diary</h3>
+      <div class="card featured-book-card">
+        <div class="featured-book-layout">
+          <div class="featured-cover">
+            {featuredBook.data.cover ? (
+              <img src={featuredBook.data.cover} alt={featuredBook.data.title} loading="lazy" />
+            ) : (
+              <div class="cover-placeholder large"><span>{featuredBook.data.title.charAt(0)}</span></div>
+            )}
+          </div>
+          <div class="featured-info">
+            <h4><a href={`/books/${featuredBook.slug}`}>{featuredBook.data.title}</a></h4>
+            <p class="meta">by {featuredBook.data.author}</p>
+            {featuredBook.data.rating && (
+              <p class="rating" aria-label={`Rating: ${featuredBook.data.rating} out of 5`}>
+                {'✦'.repeat(featuredBook.data.rating)}{'✧'.repeat(5 - featuredBook.data.rating)}
+              </p>
+            )}
             {featuredBook.data.mood && <p class="mood-line">{featuredBook.data.mood}</p>}
             {featuredBook.data.favouriteQuote && (
               <blockquote>&ldquo;{featuredBook.data.favouriteQuote}&rdquo;</blockquote>
             )}
-            <p class="see-more"><a href="/books">browse all books &rarr;</a></p>
           </div>
-        </section>
-      )}
+        </div>
+        <p class="see-more"><a href="/books">browse all books &rarr;</a></p>
+      </div>
+    </section>
+  )}
 
-      {featuredTravel && (
-        <section class="featured-block">
-          <h3 class="section-title">Wanderings</h3>
-          <div class="card">
-            <h4><a href="/travel">{featuredTravel.data.title}</a></h4>
-            <p class="meta">{featuredTravel.data.destination}</p>
-            {featuredTravel.data.mood && <p class="mood-line">{featuredTravel.data.mood}</p>}
-            {featuredTravel.data.highlights.length > 0 && (
-              <ul class="highlight-list">
-                {featuredTravel.data.highlights.map(h => <li>{h}</li>)}
-              </ul>
-            )}
-            <p class="see-more"><a href="/travel">see all travels &rarr;</a></p>
+  <div class="divider" aria-hidden="true">✦</div>
+
+  <!-- Featured grid: travel + recipe side by side -->
+  <div class="two-col-grid">
+    {featuredTravel && (
+      <section class="featured-section">
+        <h3 class="section-title">Wanderings</h3>
+        <div class="card">
+          <h4><a href="/travel">{featuredTravel.data.title}</a></h4>
+          <p class="meta">{featuredTravel.data.destination}</p>
+          {featuredTravel.data.mood && <p class="mood-line">{featuredTravel.data.mood}</p>}
+          {featuredTravel.data.highlights.length > 0 && (
+            <ul class="highlight-list">
+              {featuredTravel.data.highlights.map(h => <li>{h}</li>)}
+            </ul>
+          )}
+          <p class="see-more"><a href="/travel">see all travels &rarr;</a></p>
+        </div>
+      </section>
+    )}
+
+    {featuredRecipe && (
+      <section class="featured-section">
+        <h3 class="section-title">From the Recipe Box</h3>
+        <div class="card">
+          <h4><a href="/recipes">{featuredRecipe.data.title}</a></h4>
+          {featuredRecipe.data.rating && (
+            <p class="rating" aria-label={`Rating: ${featuredRecipe.data.rating} out of 5`}>
+              {'✦'.repeat(featuredRecipe.data.rating)}{'✧'.repeat(5 - featuredRecipe.data.rating)}
+            </p>
+          )}
+          <div class="tag-row">
+            {featuredRecipe.data.tags.map(tag => <span class="tag">{tag}</span>)}
           </div>
-        </section>
-      )}
-
-      {featuredRecipe && (
-        <section class="featured-block">
-          <h3 class="section-title">From the Recipe Box</h3>
-          <div class="card">
-            <h4><a href="/recipes">{featuredRecipe.data.title}</a></h4>
-            {featuredRecipe.data.rating && (
-              <p class="rating" aria-label={`Rating: ${featuredRecipe.data.rating} out of 5`}>
-                {'✦'.repeat(featuredRecipe.data.rating)}{'✧'.repeat(5 - featuredRecipe.data.rating)}
-              </p>
-            )}
-            <div class="tag-row">
-              {featuredRecipe.data.tags.map(tag => <span class="tag">{tag}</span>)}
-            </div>
-            <p class="see-more"><a href="/recipes">see all recipes &rarr;</a></p>
-          </div>
-        </section>
-      )}
-
-    </div>
-
+          <p class="see-more"><a href="/recipes">see all recipes &rarr;</a></p>
+        </div>
+      </section>
+    )}
   </div>
+
+  {featuredPlant && (
+    <>
+      <hr class="fancy" />
+      <section class="featured-section">
+        <h3 class="section-title">From the Garden</h3>
+        <div class="card plant-feature-card">
+          <h4><a href="/plants">{featuredPlant.data.name}</a></h4>
+          {featuredPlant.data.botanicalName && <p class="meta"><em>{featuredPlant.data.botanicalName}</em></p>}
+          <span class={`status-pill ${featuredPlant.data.status}`}>{featuredPlant.data.status}</span>
+          {featuredPlant.data.wateringNotes && <p class="care-note">{featuredPlant.data.wateringNotes}</p>}
+          <p class="see-more"><a href="/plants">visit the full garden &rarr;</a></p>
+        </div>
+      </section>
+    </>
+  )}
+
+  <div class="divider" aria-hidden="true">❧</div>
+
+  <!-- Personality badges -->
+  <section class="badges-section">
+    <div class="badges-row">
+      <span class="personality-badge">📚 book hoarder</span>
+      <span class="personality-badge">🌿 plant tender</span>
+      <span class="personality-badge">🐉 dragon enthusiast</span>
+      <span class="personality-badge">☕ tea over coffee</span>
+      <span class="personality-badge">🌙 night reader</span>
+      <span class="personality-badge">🍞 focaccia baker</span>
+      <span class="personality-badge">🏔️ mountain dreamer</span>
+      <span class="personality-badge">✨ fae court survivor</span>
+    </div>
+  </section>
+
 </BaseLayout>
 
 <style>
-  .home {
-    max-width: var(--page-max);
-    margin: 0 auto;
-    padding: var(--space-8) var(--space-6);
-  }
-
   /* --- Welcome --- */
   .welcome-section {
-    text-align: center;
-    margin-bottom: var(--space-12);
-    padding-top: var(--space-4);
+    margin-bottom: var(--space-8);
   }
   .welcome-card {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: var(--space-8);
+    padding: var(--space-6);
     background: var(--color-cream);
     border-radius: var(--radius-md);
+    text-align: center;
   }
   .welcome-card h1 {
     font-size: var(--text-2xl);
     color: var(--color-sage-dark);
-    margin-bottom: var(--space-4);
+    margin-bottom: var(--space-3);
   }
   .welcome-card p {
     max-width: none;
     color: var(--color-ink-soft);
     font-style: italic;
-    margin: 0;
-  }
-
-  /* --- Status strip --- */
-  .status-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--space-4);
-    margin-bottom: var(--space-12);
-  }
-  .status-widget {
-    text-align: center;
-    padding: var(--space-4) var(--space-3);
-    background: var(--color-cream);
-    border: var(--border-thin);
-    border-radius: var(--radius-md);
-  }
-  .status-widget h5 {
-    color: var(--color-gold);
     margin-bottom: var(--space-2);
-    font-size: var(--text-xs);
   }
-  .status-widget ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-  }
-  .status-widget li { margin-bottom: var(--space-1); }
-  .status-widget a {
+  .welcome-sign {
     font-family: var(--font-heading);
-    font-style: italic;
     font-size: var(--text-md);
-    text-decoration: none;
-  }
-  .status-detail {
-    display: block;
-    font-size: var(--text-xs);
-    color: var(--color-ink-soft);
-    font-style: italic;
-  }
-  .status-empty {
-    font-style: italic;
     color: var(--color-gold);
-    font-size: var(--text-sm);
     margin: 0;
   }
 
-  /* --- Featured grid --- */
-  .featured-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--space-8);
+  /* --- Currently reading banner --- */
+  .currently-banner { margin-bottom: var(--space-6); }
+  .currently-grid {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
   }
-
-  .featured-block {}
-
-  .featured-book-header {
+  .currently-card {
     display: flex;
     gap: var(--space-4);
-    margin-bottom: var(--space-3);
-  }
-  .featured-book-header h4 {
-    margin-bottom: var(--space-1);
-  }
-  .featured-book-header h4 a {
     text-decoration: none;
-    color: var(--color-ink);
+    color: inherit;
   }
-  .featured-book-header h4 a:hover { color: var(--color-forest); }
-
+  .currently-cover img,
+  .currently-cover .cover-placeholder {
+    width: 70px;
+    height: 105px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-sm);
+    flex-shrink: 0;
+  }
+  .cover-placeholder {
+    background: linear-gradient(135deg, var(--color-sage-light), var(--color-sage));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-style: italic;
+    color: white;
+  }
+  .cover-placeholder.large {
+    width: 100px;
+    height: 150px;
+  }
+  .currently-info h4 { font-size: var(--text-md); margin-bottom: var(--space-1); }
   .meta {
     font-size: var(--text-sm);
     color: var(--color-ink-soft);
     font-style: italic;
+    margin-bottom: var(--space-1);
+  }
+  .series-label {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-terracotta);
+    margin-bottom: var(--space-1);
+  }
+  .mood-line {
+    font-style: italic;
+    font-size: var(--text-xs);
+    color: var(--color-sage-dark);
     margin-bottom: var(--space-2);
   }
+  .tag-row { display: flex; flex-wrap: wrap; gap: var(--space-1); }
+
+  /* --- Featured sections --- */
+  .featured-section { margin-bottom: var(--space-6); }
+
+  .featured-book-layout {
+    display: flex;
+    gap: var(--space-6);
+    margin-bottom: var(--space-4);
+  }
+  .featured-cover img,
+  .featured-cover .cover-placeholder {
+    width: 100px;
+    height: 150px;
+    object-fit: cover;
+    border-radius: var(--radius-sm);
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+  }
+  .featured-info h4 { margin-bottom: var(--space-1); }
+  .featured-info h4 a { text-decoration: none; color: var(--color-ink); }
+  .featured-info h4 a:hover { color: var(--color-forest); }
 
   .rating {
     color: var(--color-gold);
@@ -249,11 +285,25 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
     margin-bottom: var(--space-2);
   }
 
-  .mood-line {
-    font-style: italic;
-    font-size: var(--text-sm);
-    color: var(--color-sage-dark);
-    margin-bottom: var(--space-3);
+  .see-more {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0;
+    margin-top: var(--space-3);
+  }
+  .see-more a { text-decoration: none; color: var(--color-sage-dark); }
+  .see-more a:hover { color: var(--color-terracotta); }
+
+  /* --- Two column grid --- */
+  .two-col-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-6);
+  }
+  @media (max-width: 600px) {
+    .two-col-grid { grid-template-columns: 1fr; }
   }
 
   .highlight-list {
@@ -275,23 +325,49 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
     font-size: var(--text-xs);
   }
 
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    margin: var(--space-3) 0;
-  }
-
-  .see-more {
+  /* --- Plant feature --- */
+  .status-pill {
+    display: inline-block;
     font-family: var(--font-accent);
-    font-size: var(--text-xs);
+    font-size: 0.65rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin-bottom: 0;
+    padding: 1px var(--space-2);
+    border-radius: 999px;
+    margin-bottom: var(--space-2);
+    background: var(--color-sage-light);
+    color: var(--color-forest);
   }
-  .see-more a {
-    text-decoration: none;
+  .care-note {
+    font-size: var(--text-xs);
+    font-style: italic;
     color: var(--color-sage-dark);
+    margin-bottom: var(--space-2);
   }
-  .see-more a:hover { color: var(--color-terracotta); }
+
+  /* --- Personality badges --- */
+  .badges-section { text-align: center; }
+  .badges-row {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+  .personality-badge {
+    font-family: var(--font-accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: var(--space-1) var(--space-3);
+    border-radius: 999px;
+    background: var(--color-cream);
+    border: 1px dashed var(--color-gold-light);
+    color: var(--color-ink-soft);
+    white-space: nowrap;
+    transition: transform 0.2s;
+  }
+  .personality-badge:hover {
+    transform: translateY(-2px) rotate(1deg);
+    border-color: var(--color-sage);
+  }
 </style>

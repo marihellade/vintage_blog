@@ -1,0 +1,232 @@
+---
+import { getCollection } from 'astro:content';
+
+const navLinks = [
+  { href: '/',         label: 'Home',          icon: '✦' },
+  { href: '/books',    label: 'Book Diary',    icon: '📖' },
+  { href: '/plants',   label: 'Plant Journal', icon: '🌿' },
+  { href: '/travel',   label: 'Travel',        icon: '✧' },
+  { href: '/recipes',  label: 'Recipe Box',    icon: '🍞' },
+  { href: '/about',    label: 'About',         icon: '❧' },
+];
+
+const currentPath = Astro.url.pathname;
+
+const allBooks = await getCollection('books');
+const currentlyReading = allBooks.filter(b => b.data.status === 'reading');
+
+const quotes = [
+  { text: "The cost of progress is always paid by someone.", source: "Blood Over Bright Haven" },
+  { text: "The weakest rider with the strongest dragon still wins.", source: "Fourth Wing" },
+  { text: "I am not afraid of the dark. I am afraid of what hides in it.", source: "" },
+  { text: "Some places are more than places. They are doors.", source: "" },
+];
+const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+---
+
+<aside class="left-sidebar">
+
+  <!-- Navigation widget -->
+  <nav class="widget-box nav-widget" aria-label="Site navigation">
+    <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">❧</span> Navigate</h4>
+    <ul class="nav-list">
+      {navLinks.map(link => (
+        <li>
+          <a
+            href={link.href}
+            class:list={['sidebar-nav-link', { active: currentPath === link.href || (link.href !== '/' && currentPath.startsWith(link.href)) }]}
+          >
+            <span class="nav-icon" aria-hidden="true">{link.icon}</span>
+            {link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+
+  <!-- Currently reading -->
+  {currentlyReading.length > 0 && (
+    <div class="widget-box">
+      <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">📖</span> Reading Now</h4>
+      <ul class="reading-list">
+        {currentlyReading.map(book => (
+          <li>
+            <a href={`/books/${book.slug}`}>{book.data.title}</a>
+            {book.data.series && <span class="reading-series">{book.data.series}</span>}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+
+  <!-- Quote widget -->
+  <div class="widget-box quote-widget">
+    <h4 class="widget-title"><span class="widget-icon twinkle" aria-hidden="true">✦</span> A thought</h4>
+    <blockquote class="sidebar-quote">
+      &ldquo;{randomQuote.text}&rdquo;
+      {randomQuote.source && <cite>— {randomQuote.source}</cite>}
+    </blockquote>
+  </div>
+
+  <!-- Mood badges -->
+  <div class="widget-box">
+    <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">✧</span> Mood</h4>
+    <div class="mood-badges">
+      <span class="mood-badge sage">📚 book hoarder</span>
+      <span class="mood-badge terra">🌿 plant mum</span>
+      <span class="mood-badge gold">☕ tea enjoyer</span>
+      <span class="mood-badge sage">🐉 dragon rider</span>
+      <span class="mood-badge terra">🌙 night reader</span>
+    </div>
+  </div>
+
+</aside>
+
+<style>
+  .left-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    position: sticky;
+    top: 80px;
+  }
+
+  /* --- Nav widget --- */
+  .nav-widget {
+    background: linear-gradient(160deg, #f5ede0 0%, #eef2e8 100%);
+    border-color: var(--color-sage);
+  }
+
+  .nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .nav-list li { margin: 0; }
+
+  .sidebar-nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-2) var(--space-3);
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-ink-soft);
+    border-radius: var(--radius-sm);
+    transition: background 0.15s, color 0.15s;
+  }
+  .sidebar-nav-link:hover,
+  .sidebar-nav-link.active {
+    background: var(--color-sage);
+    color: white;
+  }
+
+  .nav-icon { font-style: normal; font-size: var(--text-sm); }
+
+  /* --- Reading list --- */
+  .reading-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .reading-list li {
+    padding: var(--space-2) 0;
+    border-bottom: 1px dotted var(--color-gold-light);
+    margin: 0;
+  }
+  .reading-list li:last-child { border-bottom: none; }
+  .reading-list a {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: var(--text-base);
+    text-decoration: none;
+    display: block;
+  }
+  .reading-series {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    font-style: italic;
+    display: block;
+  }
+
+  /* --- Quote widget --- */
+  .sidebar-quote {
+    border: none;
+    background: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+  }
+  .sidebar-quote cite {
+    display: block;
+    margin-top: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--color-gold);
+    font-style: normal;
+  }
+
+  .twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+
+  /* --- Mood badges --- */
+  .mood-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .mood-badge {
+    font-family: var(--font-accent);
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px var(--space-2);
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .mood-badge.sage {
+    background: rgba(122, 158, 126, 0.2);
+    color: var(--color-sage-dark);
+    border: 1px solid var(--color-sage-light);
+  }
+  .mood-badge.terra {
+    background: rgba(196, 97, 74, 0.15);
+    color: var(--color-terracotta);
+    border: 1px solid var(--color-terracotta-light);
+  }
+  .mood-badge.gold {
+    background: rgba(184, 147, 74, 0.15);
+    color: var(--color-gold);
+    border: 1px solid var(--color-gold-light);
+  }
+
+  /* --- Responsive --- */
+  @media (max-width: 900px) {
+    .left-sidebar {
+      position: static;
+      order: -1;
+    }
+    .nav-widget {
+      order: -1;
+    }
+    .nav-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-1);
+    }
+    .mood-badges, .quote-widget, .reading-list {
+      /* keep compact on mobile */
+    }
+  }
+</style>

@@ -2,18 +2,21 @@
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Cursor from '../components/Cursor.astro';
+import Sidebar from '../components/Sidebar.astro';
 import '../styles/global.css';
 
 interface Props {
   title: string;
   description?: string;
   image?: string;
+  fullWidth?: boolean;
 }
 
 const {
   title,
   description = "Marihella's personal corner of the internet — books, plants, travel, and recipes.",
   image,
+  fullWidth = false,
 } = Astro.props;
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
@@ -43,10 +46,147 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <Cursor />
     <Header />
 
-    <main id="main-content" tabindex="-1">
-      <slot />
-    </main>
+    <div class:list={['page-wrapper', { 'full-width': fullWidth }]}>
+      {!fullWidth && (
+        <Sidebar />
+      )}
+
+      <main id="main-content" tabindex="-1">
+        <slot />
+      </main>
+
+      {!fullWidth && (
+        <aside class="right-sidebar">
+          <slot name="right-sidebar" />
+
+          <!-- Season widget -->
+          <div class="widget-box">
+            <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">✦</span> This Season</h4>
+            <p class="season-text">
+              Autumn light through the window. Books piling up on the nightstand.
+              The garden is going golden and the air smells like woodsmoke and old leaves.
+            </p>
+          </div>
+
+          <!-- Site updates -->
+          <div class="widget-box">
+            <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">❧</span> Site Updates</h4>
+            <ul class="updates-list">
+              <li><span class="update-date">Mar 2026</span> site launched!</li>
+              <li><span class="update-date">Mar 2026</span> book diary & plant journal added</li>
+              <li><span class="update-date">Mar 2026</span> recipe box opened</li>
+            </ul>
+          </div>
+
+          <!-- Faux hit counter -->
+          <div class="widget-box hit-counter-widget">
+            <p class="hit-counter">
+              <span class="hit-label">visitors</span>
+              <span class="hit-digits">001,247</span>
+            </p>
+          </div>
+        </aside>
+      )}
+    </div>
 
     <Footer />
   </body>
 </html>
+
+<style>
+  .page-wrapper {
+    display: grid;
+    grid-template-columns: 210px 1fr 210px;
+    gap: var(--space-6);
+    max-width: var(--page-max);
+    margin: 0 auto;
+    padding: var(--space-6);
+    align-items: start;
+  }
+
+  .page-wrapper.full-width {
+    display: block;
+    max-width: var(--content-max);
+  }
+
+  main {
+    min-width: 0;
+  }
+
+  /* --- Right sidebar --- */
+  .right-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .season-text {
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+    max-width: none;
+    margin: 0;
+  }
+
+  .updates-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: var(--text-xs);
+  }
+  .updates-list li {
+    padding: var(--space-2) 0;
+    border-bottom: 1px dotted var(--color-gold-light);
+    color: var(--color-ink-soft);
+    margin: 0;
+  }
+  .updates-list li:last-child { border-bottom: none; }
+  .update-date {
+    font-family: var(--font-accent);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-terracotta);
+    margin-right: var(--space-2);
+  }
+
+  /* --- Hit counter --- */
+  .hit-counter-widget { text-align: center; }
+  .hit-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    margin: 0;
+  }
+  .hit-label {
+    font-family: var(--font-accent);
+    font-size: 0.6rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+  .hit-digits {
+    font-family: 'Courier New', monospace;
+    font-size: var(--text-md);
+    letter-spacing: 0.2em;
+    color: var(--color-sage-dark);
+    background: var(--color-parchment);
+    border: 1px solid var(--color-gold-light);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-sm);
+  }
+
+  /* --- Responsive: stack on narrow screens --- */
+  @media (max-width: 900px) {
+    .page-wrapper {
+      grid-template-columns: 1fr;
+    }
+    .right-sidebar {
+      order: 3;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-4);
+    }
+  }
+</style>
