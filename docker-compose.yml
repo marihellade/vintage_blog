@@ -1,21 +1,25 @@
 services:
-  marihella-blog:
+  marihella-vintage:
     build: .
-    container_name: marihella-blog
+    container_name: marihella-vintage
     restart: unless-stopped
     networks:
       - proxy
     labels:
       traefik.enable: "true"
 
-      # ── CHANGE THIS to your actual domain ──
-      traefik.http.routers.marihella.rule: "Host(`marihella.example.com`)"
-      traefik.http.routers.marihella.entrypoints: websecure
-      traefik.http.routers.marihella.tls.certresolver: letsencrypt
+      # ── Router ──────────────────────────────────────────────────────────────
+      traefik.http.routers.marihella-vintage.rule: "Host(`${DOMAIN}`)"
+      traefik.http.routers.marihella-vintage.entrypoints: "websecure"
+      traefik.http.routers.marihella-vintage.tls: "true"
+      traefik.http.routers.marihella-vintage.tls.certresolver: "letsencrypt"
 
-      traefik.http.services.marihella.loadbalancer.server.port: "80"
+      # ── Middlewares ──────────────────────────────────────────────────────────
+      traefik.http.routers.marihella-vintage.middlewares: "sec-headers@file"
+
+      # ── Service ─────────────────────────────────────────────────────────────
+      traefik.http.services.marihella-vintage.loadbalancer.server.port: "80"
 
 networks:
   proxy:
-    name: proxy
     external: true
