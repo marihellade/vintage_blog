@@ -115,6 +115,13 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     top: 80px;
   }
 
+  /* --- Override widget-title for sidebar: match nav link readability --- */
+  .widget-title {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: var(--text-sm);
+  }
+
   /* --- Nav widget --- */
   .nav-widget {
     background: linear-gradient(160deg, #1E1A12 0%, #161A12 100%);
@@ -181,8 +188,9 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     background: none;
     padding: 0;
     margin: 0;
+    font-family: var(--font-body);
     font-size: var(--text-sm);
-    font-style: italic;
+    font-style: normal;
     color: var(--color-ink-soft);
     line-height: 1.6;
   }
@@ -203,8 +211,8 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     gap: var(--space-3);
   }
   .candle-text p {
-    font-family: var(--font-heading);
-    font-style: italic;
+    font-family: var(--font-body);
+    font-style: normal;
     font-size: var(--text-sm);
     color: var(--color-gold);
     margin: 0;
