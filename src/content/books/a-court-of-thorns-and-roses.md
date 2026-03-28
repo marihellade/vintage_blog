@@ -7,6 +7,7 @@ series: "A Court of Thorns and Roses"
 seriesNumber: 1
 mood: "fae courts, beauty and danger, slow transformation"
 tags: ["fantasy", "romantasy", "fae", "series"]
+cover: /images/books/ACOTAR.jpg
 featured: true
 ---
 

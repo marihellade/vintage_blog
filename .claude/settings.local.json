@@ -3,7 +3,8 @@
     "allow": [
       "Bash(git commit:*)",
       "Bash(npm run:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(grep -n \"repeat.*rating\\\\|✦\\\\|✧\" /home/fryzigg/git/marihella/vintage_blog/src/pages/books/index.astro /home/fryzigg/git/marihella/vintage_blog/src/pages/books/[slug].astro /home/fryzigg/git/marihella/vintage_blog/src/pages/index.astro)"
     ]
   }
 }
