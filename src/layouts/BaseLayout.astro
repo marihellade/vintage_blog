@@ -214,200 +214,124 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         <ellipse class="leaf-drift leaf-9"  cx="52"  cy="14"  rx="3"   ry="1.8" fill="#9ABF9E"/>
         <ellipse class="leaf-drift leaf-10" cx="24"  cy="106" rx="3.2" ry="1.9" fill="#6A9A70"/>
 
-        <!-- ═══ READING GIRL — art nouveau profile, right of tree, facing left ═══ -->
-        <defs>
-          <!-- warm parchment skin -->
-          <linearGradient id="rgSkin" x1="70" y1="722" x2="80" y2="762" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#DEC090"/>
-            <stop offset="1" stop-color="#B88A60"/>
-          </linearGradient>
-          <!-- sage-green dress -->
-          <linearGradient id="rgDress" x1="65" y1="754" x2="98" y2="793" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#3A5E4A"/>
-            <stop offset="1" stop-color="#182C20"/>
-          </linearGradient>
-          <!-- warm brown hair -->
-          <linearGradient id="rgHair" x1="78" y1="720" x2="90" y2="793" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#8A5228"/>
-            <stop offset="1" stop-color="#2E1008"/>
-          </linearGradient>
-          <!-- aged-parchment book pages -->
-          <linearGradient id="rgPage" x1="61" y1="771" x2="83" y2="784" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#EDE0C8"/>
-            <stop offset="1" stop-color="#D0BC96"/>
-          </linearGradient>
-          <!-- candlelit glow rising from open pages -->
-          <radialGradient id="rgGlow" cx="72" cy="777" r="13" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stop-color="#EDE0C8" stop-opacity="0.09"/>
-            <stop offset="1" stop-color="#EDE0C8" stop-opacity="0"/>
-          </radialGradient>
-        </defs>
+        <!-- ═══ READING GIRL — loose storybook sketch, nestled in tree base ═══ -->
+        <g class="reading-girl" opacity="0.82">
 
-        <g class="reading-girl" opacity="0.90">
+          <!-- ── HAIR SILHOUETTE — drawn first, behind everything ──
+               One filled shape. Starts at the crown, arcs over the
+               back of the head, flows in a long sweep to the ground.
+               Warm dark brown. No inner detail — just the mass. -->
+          <path d="M 70 739
+                   Q 80 733  90 737
+                   Q 97 744  96 759
+                   Q 94 775  89 786
+                   Q 86 792  82 793
+                   L 68 793
+                   Q 67 779  68 763
+                   Q 69 750  70 739 Z"
+                fill="#6B3C14" opacity="0.68"/>
 
-          <!-- ── 1. LONG HAIR MASS — drawn first, sits behind everything ──
-               One continuous filled shape: starts at the hairline, arcs over
-               the crown and back of skull, then cascades to the ground in an
-               art nouveau sweep. Layered highlight strokes over the top. -->
-          <path d="M 78 722
-                   Q 85 718  92 725
-                   Q 97 734  96 749
-                   Q 95 765  92 780
-                   Q 90 787  88 793
-                   L 73 793
-                   Q 72 778  73 764
-                   Q 74 750  76 738
-                   Q 77 729  78 722 Z"
-                fill="url(#rgHair)"/>
-          <!-- hair sheen — warm highlight stroke along the crown-to-ground flow -->
-          <path d="M 83 719 Q 89 724  93 736 Q 96 749  94 764 Q 92 777  89 791"
-                stroke="#A86A30" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.30"/>
-          <path d="M 80 720 Q 86 726  89 739 Q 91 752  90 765 Q 88 778  85 790"
-                stroke="#C08A40" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.18"/>
+          <!-- ── LOWER BODY / LAP — very soft wash ──
+               Faded-denim suggestion. One knee up toward chest,
+               the other tucked. Mostly negative space. -->
+          <path d="M 63 774
+                   Q 77 765  92 769
+                   Q 103 775  102 787
+                   Q 84 795  62 793
+                   Q 60 784  62 779 Z"
+                fill="#4A5E6A" opacity="0.20"/>
 
-          <!-- ── 2. SKIRT — pools on ground, fans out to the right ── -->
-          <path d="M 70 768
-                   Q 84 770  101 779
-                   Q 109 784  108 791
-                   Q 88  795  64 793
-                   Q 61  789  62 783
-                   Q 64  774  70 768 Z"
-                fill="url(#rgDress)"/>
-          <!-- fabric drape lines — suggest folds, art nouveau curves -->
-          <path d="M 72 770 Q 83 776  97 780" stroke="#4A7858" stroke-width="0.6" fill="none" opacity="0.4"/>
-          <path d="M 67 778 Q 66 785  67 793"  stroke="#1A3020" stroke-width="0.6" fill="none" opacity="0.28"/>
-          <path d="M 100 779 Q 106 786  107 792" stroke="#1A3020" stroke-width="0.5" fill="none" opacity="0.22"/>
-          <!-- gold hem — delicate art nouveau border line -->
-          <path d="M 64 793 Q 86 796  108 791"
-                stroke="#C8984E" stroke-width="0.65" fill="none" opacity="0.38"/>
+          <!-- gestural line — raised-knee silhouette, single confident stroke -->
+          <path d="M 66 777 Q 78 766  90 769 Q 98 771  97 780"
+                stroke="#3A4E5A" stroke-width="4.5" stroke-linecap="round" fill="none" opacity="0.30"/>
 
-          <!-- ── 3. BODICE — fitted, sits above the skirt ── -->
-          <path d="M 67 756
-                   Q 74 752  81 754
-                   Q 87 756  89 763
-                   L 88 769
-                   Q 78 772  67 771
-                   L 65 763 Z"
-                fill="#3A5E4A"/>
-          <!-- shadow on facing side for form -->
-          <path d="M 67 756 L 65 763 Q 66 769  68 771 Q 66 763  67 756"
-                fill="#182C20" opacity="0.42"/>
-          <!-- neckline — delicate arc -->
-          <path d="M 69 754 Q 76 751  85 756"
-                stroke="#5A8862" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.52"/>
-          <!-- shoulder caps -->
-          <path d="M 67 757 Q 64 760  63 765" stroke="#2A4838" stroke-width="3"   stroke-linecap="round" fill="none" opacity="0.72"/>
-          <path d="M 88 758 Q 90 761  90 767" stroke="#2A4838" stroke-width="3"   stroke-linecap="round" fill="none" opacity="0.65"/>
+          <!-- bare feet — soft warm oval, no detail, just a presence -->
+          <ellipse cx="98" cy="782" rx="5.5" ry="2.8"
+                   fill="#C8A070" opacity="0.40" transform="rotate(18 98 782)"/>
+          <path d="M 93 783 Q 98 781  103 784"
+                stroke="#A07848" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.28"/>
 
-          <!-- ── 4. ARMS — reaching down and forward to hold the book ── -->
-          <path d="M 67 762 Q 65 768  63 776"
-                stroke="#C4A070" stroke-width="4" stroke-linecap="round" fill="none"/>
-          <path d="M 87 764 Q 85 769  83 777"
-                stroke="#C4A070" stroke-width="3.5" stroke-linecap="round" fill="none"/>
-          <ellipse cx="63" cy="777" rx="2.6" ry="1.8" fill="#B8906A" transform="rotate(-14 63 777)"/>
-          <ellipse cx="83" cy="778" rx="2.6" ry="1.8" fill="#B8906A" transform="rotate(9 83 778)"/>
+          <!-- ── TORSO — loose sage/denim wash, minimal ── -->
+          <path d="M 64 762
+                   Q 68 756  78 754
+                   Q 87 753  89 761
+                   L 88 773
+                   Q 76 776  64 774 Z"
+                fill="#4A5E6A" opacity="0.26"/>
 
-          <!-- ── 5. OPEN BOOK IN LAP ── -->
-          <path d="M 61 773 Q 72 771  84 773 L 83 785 Q 72 787  61 785 Z"
-                fill="url(#rgPage)"/>
-          <line x1="72" y1="771" x2="72" y2="786" stroke="#C8984E" stroke-width="0.9" opacity="0.55"/>
-          <!-- left page lines -->
-          <line x1="62" y1="775.0" x2="71" y2="774.5" stroke="#9A8870" stroke-width="0.35" opacity="0.52"/>
-          <line x1="62" y1="777.0" x2="71" y2="776.5" stroke="#9A8870" stroke-width="0.35" opacity="0.50"/>
-          <line x1="62" y1="779.0" x2="71" y2="778.5" stroke="#9A8870" stroke-width="0.35" opacity="0.45"/>
-          <line x1="62" y1="781.0" x2="71" y2="780.5" stroke="#9A8870" stroke-width="0.35" opacity="0.40"/>
-          <line x1="62" y1="783.0" x2="70" y2="782.5" stroke="#9A8870" stroke-width="0.35" opacity="0.35"/>
-          <!-- right page lines -->
-          <line x1="73" y1="774.5" x2="82" y2="775.0" stroke="#9A8870" stroke-width="0.35" opacity="0.52"/>
-          <line x1="73" y1="776.5" x2="82" y2="777.0" stroke="#9A8870" stroke-width="0.35" opacity="0.50"/>
-          <line x1="73" y1="778.5" x2="82" y2="779.0" stroke="#9A8870" stroke-width="0.35" opacity="0.45"/>
-          <line x1="73" y1="780.5" x2="81" y2="781.0" stroke="#9A8870" stroke-width="0.35" opacity="0.40"/>
-          <line x1="73" y1="782.5" x2="81" y2="783.0" stroke="#9A8870" stroke-width="0.35" opacity="0.35"/>
-          <path d="M 61 773 Q 72 771  84 773 L 83 785 Q 72 787  61 785 Z"
-                fill="none" stroke="#C8984E" stroke-width="0.65" opacity="0.42"/>
-          <ellipse cx="72" cy="779" rx="14" ry="7" fill="url(#rgGlow)"/>
+          <!-- single fabric fold stroke — gestural, not laboured -->
+          <path d="M 74 754 Q 75 763  74 773"
+                stroke="#3A4E5A" stroke-width="0.55" stroke-linecap="round" fill="none" opacity="0.24"/>
 
-          <!-- ── 6. NECK ── -->
-          <path d="M 73 747 Q 71 750  71 755 Q 71 759  74 760
-                   Q 77 761  79 758 Q 80 754  79 749 Q 77 746  75 746 Z"
-                fill="url(#rgSkin)"/>
+          <!-- ── ARMS — skin tone strokes, reaching toward book ── -->
+          <path d="M 66 765 Q 63 771  61 779"
+                stroke="#C4A070" stroke-width="3.5" stroke-linecap="round" fill="none" opacity="0.58"/>
+          <path d="M 85 764 Q 83 770  80 776"
+                stroke="#C4A070" stroke-width="3.0" stroke-linecap="round" fill="none" opacity="0.52"/>
 
-          <!-- ── 7. HEAD — single profile silhouette path, facing left ──
-               Traces: forehead → nose (furthest-left point) → lips → chin
-               → jaw → skull-back → crown → back to hairline.
-               The nose bump at x≈69.5 is what makes this read as a profile. -->
-          <path d="M 76 724
-                   Q 72 728  70 733
-                   Q 69.5 737  69.5 740
-                   Q 69.5 743  70 745
-                   Q 70.5 747  71 749
-                   Q 72 752  72.5 754
-                   Q 73.5 757  75 758
-                   Q 78 760  82 759
-                   Q 88 757  91 749
-                   Q 93 741  91 733
-                   Q 89 726  84 722
-                   Q 80 720  76 724 Z"
-                fill="url(#rgSkin)"/>
+          <!-- ── OPEN BOOK — parchment, raised up, covering lower face ──
+               The top edge sits at mid-nose height. The face is private.
+               She is absorbed. We don't need to see her expression. -->
+          <path d="M 57 756 Q 69 751  80 754 L 78 770 Q 66 773  55 770 Z"
+                fill="#EDE0C8" opacity="0.87"/>
+          <!-- spine — warm gold, barely there -->
+          <line x1="68" y1="751" x2="66" y2="770" stroke="#C8984E" stroke-width="0.75" opacity="0.42"/>
+          <!-- left page text — faint, gestural -->
+          <line x1="58"  y1="759"   x2="67"  y2="758"   stroke="#9A8870" stroke-width="0.28" opacity="0.50"/>
+          <line x1="58"  y1="761.5" x2="67"  y2="760.5" stroke="#9A8870" stroke-width="0.28" opacity="0.45"/>
+          <line x1="58"  y1="764"   x2="67"  y2="763"   stroke="#9A8870" stroke-width="0.28" opacity="0.40"/>
+          <line x1="58"  y1="766.5" x2="66"  y2="765.5" stroke="#9A8870" stroke-width="0.28" opacity="0.35"/>
+          <!-- right page text -->
+          <line x1="69"  y1="758"   x2="78"  y2="759"   stroke="#9A8870" stroke-width="0.28" opacity="0.50"/>
+          <line x1="69"  y1="760.5" x2="78"  y2="761.5" stroke="#9A8870" stroke-width="0.28" opacity="0.45"/>
+          <line x1="69"  y1="763"   x2="78"  y2="764"   stroke="#9A8870" stroke-width="0.28" opacity="0.40"/>
+          <line x1="69"  y1="765.5" x2="77"  y2="766.5" stroke="#9A8870" stroke-width="0.28" opacity="0.35"/>
+          <!-- book border — single sketchy outline, not perfectly even -->
+          <path d="M 57 756 Q 69 751  80 754 L 78 770 Q 66 773  55 770 Z"
+                fill="none" stroke="#B8A880" stroke-width="0.55" opacity="0.38"/>
 
-          <!-- ── 8. FACE DETAILS ── -->
+          <!-- ── HEAD — round, tilted down and forward into the book ── -->
+          <circle cx="70" cy="746" r="7.5" fill="#D4A870" opacity="0.74"/>
 
-          <!-- eyebrow — elegant arched single stroke -->
-          <path d="M 71.5 731.5 Q 74 729.5  77 731"
-                stroke="#6A3C1C" stroke-width="0.95" stroke-linecap="round" fill="none" opacity="0.78"/>
+          <!-- ── HAIR CURTAIN — falls forward across the face ──
+               This is the key detail. A filled shape covers most of the
+               face from the hairline down past the mouth. We see almost
+               nothing of her expression. She is in her own world. -->
+          <path d="M 63 737
+                   Q 60 744  59 751
+                   Q 58 758  60 764
+                   Q 63 763  65 756
+                   Q 66 748  66 741 Z"
+                fill="#6B3C14" opacity="0.76"/>
 
-          <!-- eye socket shadow — gives depth to the profile -->
-          <ellipse cx="74" cy="734.5" rx="3.2" ry="2" fill="#6A3C1C" opacity="0.12"/>
+          <!-- one or two loose strands within the curtain — organic, not precise -->
+          <path d="M 63 737 Q 61 746  61 754 Q 61 760  63 764"
+                stroke="#5A3010" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.48"/>
+          <path d="M 65 738 Q 64 746  64 753"
+                stroke="#9A6030" stroke-width="0.6" stroke-linecap="round" fill="none" opacity="0.28"/>
 
-          <!-- iris — profile shows a sliver, downcast (she is reading) -->
-          <ellipse cx="72.5" cy="735" rx="1.6" ry="1.9" fill="#1E0E08" opacity="0.90"/>
+          <!-- ── HAIR ON HEAD — crown mass, drawn over head circle ── -->
+          <ellipse cx="71" cy="741" rx="9.5" ry="6.0" fill="#6B3C14" opacity="0.78"/>
 
-          <!-- upper eyelid — clean art nouveau line -->
-          <path d="M 70.5 733.5 Q 72.8 732  75.5 733.8"
-                stroke="#2A1808" stroke-width="0.85" stroke-linecap="round" fill="none" opacity="0.82"/>
-          <!-- lower lid -->
-          <path d="M 70.8 736 Q 72.8 737  74.8 736.2"
-                stroke="#7A4828" stroke-width="0.4" stroke-linecap="round" fill="none" opacity="0.42"/>
+          <!-- crown light — the only hair highlight, very faint -->
+          <path d="M 66 736 Q 72 733  79 736"
+                stroke="#A06030" stroke-width="1.3" stroke-linecap="round" fill="none" opacity="0.28"/>
 
-          <!-- nose — bridge indent then tip bump, key profile landmark -->
-          <path d="M 70.5 737 Q 70 739.5  70.5 742"
-                stroke="#C4A070" stroke-width="0.55" fill="none" opacity="0.38"/>
-          <path d="M 70.5 742 Q 69.5 744.5  70 747"
-                stroke="#B8906A" stroke-width="0.85" stroke-linecap="round" fill="none" opacity="0.58"/>
-          <path d="M 70 747 Q 71 749  72.5 748.5"
-                stroke="#A07850" stroke-width="0.65" stroke-linecap="round" fill="none" opacity="0.42"/>
+          <!-- a few loose strands slipping over the shoulder, alive and natural -->
+          <path d="M 78 737 Q 83 744  85 754 Q 86 763  84 769"
+                stroke="#8A5228" stroke-width="1.4" stroke-linecap="round" fill="none" opacity="0.40"/>
+          <path d="M 80 737 Q 85 745  86 756 Q 86 765  84 771"
+                stroke="#5A3010" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.26"/>
 
-          <!-- lips — art nouveau softness -->
-          <path d="M 71.5 751 Q 73 749.5  74.5 750.5"
-                stroke="#C49A78" stroke-width="1.0" stroke-linecap="round" fill="none" opacity="0.62"/>
-          <path d="M 71.5 751 Q 73 753.5  74.5 752.5"
-                stroke="#C49A78" stroke-width="1.2" stroke-linecap="round" fill="none" opacity="0.55"/>
-          <path d="M 74.5 751.5 Q 75 752.2  74.5 752.8"
-                stroke="#A07850" stroke-width="0.45" fill="none" opacity="0.38"/>
-
-          <!-- chin -->
-          <path d="M 74.5 753 Q 74.8 756  76 758"
-                stroke="#C4A070" stroke-width="0.5" fill="none" opacity="0.28"/>
-
-          <!-- cheek warmth — very faint, restraint per style guide -->
-          <ellipse cx="75.5" cy="740.5" rx="4" ry="2.5" fill="#D4853A" opacity="0.07"/>
-
-          <!-- ear — far side, partially visible -->
-          <ellipse cx="84.5" cy="736.5" rx="1.8" ry="2.3" fill="#B8906A" opacity="0.52"/>
-          <path d="M 84 735 Q 83.4 736.5  84 738"
-                stroke="#9A7050" stroke-width="0.5" fill="none" opacity="0.28"/>
-
-          <!-- ── 9. FRONT HAIR WISPS — drawn last, over the face ──
-               Soft strands framing the forehead in the art nouveau manner.
-               Layered opacity gives them depth without weight. -->
-          <path d="M 79 722 Q 76 727  74.5 732 Q 73.5 736  73 740"
-                stroke="#7A4820" stroke-width="1.8" stroke-linecap="round" fill="none" opacity="0.72"/>
-          <path d="M 78 722 Q 75 728  73.5 734 Q 72.5 738  72.5 742"
-                stroke="#5A3010" stroke-width="1.1" stroke-linecap="round" fill="none" opacity="0.52"/>
-          <path d="M 80 723 Q 77.5 729  76 734 Q 75 738  74.5 742"
-                stroke="#9A6030" stroke-width="0.7" stroke-linecap="round" fill="none" opacity="0.32"/>
-          <path d="M 79 724 Q 77 730  76.5 736"
-                stroke="#C09050" stroke-width="0.55" stroke-linecap="round" fill="none" opacity="0.22"/>
+          <!-- ── FACE — barely visible below the hair and above the book ──
+               A small strip of face is all that shows: cheek, the shadow
+               under the eye, and the softest lip hint. That is enough.
+               She is not performing — she is reading. -->
+          <!-- cheekbone warmth, very subtle -->
+          <ellipse cx="65" cy="749" rx="3.5" ry="2" fill="#D4853A" opacity="0.07"/>
+          <!-- chin/jaw edge — single faint stroke -->
+          <path d="M 62 756 Q 64 759  67 758"
+                stroke="#C4A070" stroke-width="0.5" fill="none" opacity="0.26"/>
 
         </g>
       </svg>
