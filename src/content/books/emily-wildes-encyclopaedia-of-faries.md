@@ -9,6 +9,3 @@ seriesNumber: 1
 series: "Emily Wilde"
 featured: false
 ---
-
-Your review text goes here. You can write paragraphs,
-use *italics*, **bold**, and > quotes.

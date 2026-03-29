@@ -18,6 +18,7 @@ const books = defineCollection({
     series: z.string().optional(),         // e.g. "A Court of Thorns and Roses"
     seriesNumber: z.number().optional(),   // e.g. 1
     favouriteQuote: z.string().optional(),
+    thoughts: z.string().optional(),       // notes whilst reading, before review
     mood: z.string().optional(),           // e.g. "fae courts, slow burn, devastating"
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false),

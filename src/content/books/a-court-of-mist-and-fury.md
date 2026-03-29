@@ -11,6 +11,3 @@ mood: "favourite"
 dateFinished: 2016-06-07
 dateReread: 2025-08-19
 ---
-
-Your review text goes here. You can write paragraphs,
-use *italics*, **bold**, and > quotes.

@@ -88,8 +88,28 @@ const statusLabels: Record<string, string> = {
       </div>
     )}
 
-    <div class="review-body">
-      <Content />
+    <div class="book-sections">
+
+      <section class="book-section-panel">
+        <h3 class="panel-title">✎ Thoughts whilst reading</h3>
+        {d.thoughts ? (
+          <div class="panel-body thoughts-body">
+            {d.thoughts.split('\n').filter((l: string) => l.trim()).map((para: string) => (
+              <p>{para}</p>
+            ))}
+          </div>
+        ) : (
+          <p class="panel-empty">No reading notes yet.</p>
+        )}
+      </section>
+
+      <section class="book-section-panel">
+        <h3 class="panel-title">✦ Review</h3>
+        <div class="panel-body review-body">
+          <Content />
+        </div>
+      </section>
+
     </div>
 
     <footer class="book-footer">
@@ -215,10 +235,12 @@ const statusLabels: Record<string, string> = {
   /* --- Quote --- */
   .favourite-quote {
     padding: var(--space-6);
-    background: var(--color-cream);
+    background: linear-gradient(160deg, #201A12 0%, #181310 100%);
+    border: 1px solid var(--color-gold-light);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-8);
     text-align: center;
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.55);
   }
   .favourite-quote h5 {
     margin-bottom: var(--space-3);
@@ -234,12 +256,65 @@ const statusLabels: Record<string, string> = {
     color: var(--color-ink);
   }
 
-  /* --- Review body --- */
-  .review-body {
+  /* --- Book sections --- */
+  .book-sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
     margin-bottom: var(--space-8);
   }
-  .review-body :global(p) {
+
+  .book-section-panel {
+    background: linear-gradient(160deg, #201A12 0%, #181310 100%);
+    border: 1px solid var(--color-gold-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(200, 152, 78, 0.07);
+    position: relative;
+  }
+  /* Inner dashed border — old letter / grimoire effect */
+  .book-section-panel::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(200, 152, 78, 0.15);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .panel-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-md);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-sage-dark);
     margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px dotted var(--color-gold-light);
+  }
+
+  .panel-body :global(p) {
+    margin-bottom: var(--space-4);
+    color: var(--color-ink);
+  }
+  .panel-body :global(p:last-child) {
+    margin-bottom: 0;
+  }
+
+  .thoughts-body {
+    font-style: italic;
+    color: var(--color-ink-soft);
+  }
+  .thoughts-body p {
+    color: var(--color-ink-soft);
+  }
+
+  .panel-empty {
+    font-style: italic;
+    color: var(--color-ink-soft);
+    opacity: 0.5;
+    font-size: var(--text-sm);
+    margin: 0;
   }
 
   /* --- Footer --- */
