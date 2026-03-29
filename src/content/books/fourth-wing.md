@@ -1,6 +1,7 @@
 ---
 title: "Fourth Wing"
 author: "Rebecca Yarros"
+cover: "/images/books/Fourth-Wing.jpg"
 rating: 4
 status: finished
 series: "The Empyrean"

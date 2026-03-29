@@ -2,10 +2,13 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 
-const allPlants = await getCollection('plants');
-const current  = allPlants.filter(p => p.data.status !== 'wishlist' && p.data.status !== 'rip');
-const wishlist = allPlants.filter(p => p.data.status === 'wishlist');
-const rip      = allPlants.filter(p => p.data.status === 'rip');
+const allPlants  = await getCollection('plants');
+const active     = allPlants.filter(p => p.data.status !== 'wishlist' && p.data.status !== 'rip');
+const natives    = active.filter(p => p.data.category === 'native');
+const vegetables = active.filter(p => p.data.category === 'vegetable');
+const general    = active.filter(p => p.data.category !== 'native' && p.data.category !== 'vegetable');
+const wishlist   = allPlants.filter(p => p.data.status === 'wishlist');
+const rip        = allPlants.filter(p => p.data.status === 'rip');
 ---
 
 <BaseLayout title="Plant Journal" description="Everything growing (or dramatically not growing) in Marihella's garden.">
@@ -14,16 +17,15 @@ const rip      = allPlants.filter(p => p.data.status === 'rip');
     <header class="page-header">
       <h1>Plant Journal</h1>
       <p class="page-intro">
-        Everything growing in my garden and on my windowsills — the thriving, the dramatic,
-        and the ones I'm quietly babying back to life.
+        Everything growing in my garden I'll try include here — I am mostly growing Australian natives because the weather here likes to be dramatic and kill everything come summer. 
       </p>
     </header>
 
-    {current.length > 0 && (
-      <section class="plant-section">
-        <h2 class="section-title">Current Garden</h2>
+    <section class="plant-section">
+      <h2 class="section-title">Natives I'm Growing</h2>
+      {natives.length > 0 ? (
         <div class="plant-grid">
-          {current.map(plant => (
+          {natives.map(plant => (
             <div class="plant-card card">
               {plant.data.photo ? (
                 <img src={plant.data.photo} alt={plant.data.name} class="plant-photo" loading="lazy" />
@@ -41,7 +43,73 @@ const rip      = allPlants.filter(p => p.data.status === 'rip');
                 {plant.data.location && <p class="location">{plant.data.location}</p>}
                 {plant.data.wateringNotes && <p class="care-note">{plant.data.wateringNotes}</p>}
                 <div class="tag-row">
-                  {plant.data.tags.map(tag => <span class="tag">{tag}</span>)}
+                  {plant.data.tags.map((tag: string) => <span class="tag">{tag}</span>)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="empty-section">No natives added yet — they're coming soon ✦</p>
+      )}
+    </section>
+
+    <section class="plant-section">
+      <h2 class="section-title">Vegetable Garden</h2>
+      {vegetables.length > 0 ? (
+        <div class="plant-grid">
+          {vegetables.map(plant => (
+            <div class="plant-card card">
+              {plant.data.photo ? (
+                <img src={plant.data.photo} alt={plant.data.name} class="plant-photo" loading="lazy" />
+              ) : (
+                <div class="plant-photo-placeholder vegetable">
+                  <span aria-hidden="true">🥦</span>
+                </div>
+              )}
+              <div class="plant-info">
+                <h4>{plant.data.name}</h4>
+                {plant.data.botanicalName && (
+                  <p class="botanical"><em>{plant.data.botanicalName}</em></p>
+                )}
+                <span class={`status-pill ${plant.data.status}`}>{plant.data.status}</span>
+                {plant.data.location && <p class="location">{plant.data.location}</p>}
+                {plant.data.wateringNotes && <p class="care-note">{plant.data.wateringNotes}</p>}
+                <div class="tag-row">
+                  {plant.data.tags.map((tag: string) => <span class="tag">{tag}</span>)}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <p class="empty-section">Nothing planted yet — watch this space ✦</p>
+      )}
+    </section>
+
+    {general.length > 0 && (
+      <section class="plant-section">
+        <h2 class="section-title">The Rest of the Garden</h2>
+        <div class="plant-grid">
+          {general.map(plant => (
+            <div class="plant-card card">
+              {plant.data.photo ? (
+                <img src={plant.data.photo} alt={plant.data.name} class="plant-photo" loading="lazy" />
+              ) : (
+                <div class="plant-photo-placeholder">
+                  <span aria-hidden="true">🌿</span>
+                </div>
+              )}
+              <div class="plant-info">
+                <h4>{plant.data.name}</h4>
+                {plant.data.botanicalName && (
+                  <p class="botanical"><em>{plant.data.botanicalName}</em></p>
+                )}
+                <span class={`status-pill ${plant.data.status}`}>{plant.data.status}</span>
+                {plant.data.location && <p class="location">{plant.data.location}</p>}
+                {plant.data.wateringNotes && <p class="care-note">{plant.data.wateringNotes}</p>}
+                <div class="tag-row">
+                  {plant.data.tags.map((tag: string) => <span class="tag">{tag}</span>)}
                 </div>
               </div>
             </div>
@@ -107,6 +175,12 @@ const rip      = allPlants.filter(p => p.data.status === 'rip');
 
   .plant-section { margin-bottom: var(--space-12); }
 
+  .empty-section {
+    font-style: italic;
+    color: var(--color-ink-soft);
+    font-size: var(--text-sm);
+  }
+
   .plant-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -139,6 +213,9 @@ const rip      = allPlants.filter(p => p.data.status === 'rip');
   }
   .plant-photo-placeholder.wishlist {
     background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
+  }
+  .plant-photo-placeholder.vegetable {
+    background: linear-gradient(135deg, #4A7A3A, #2A5520);
   }
 
   .plant-info h4 { margin-bottom: var(--space-1); }

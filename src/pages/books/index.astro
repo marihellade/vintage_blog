@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { starsHtml, starsLabel } from '../../utils/stars';
+import { bookCoverGradient } from '../../utils/bookColor';
 
 const allBooks = await getCollection('books');
 
@@ -58,7 +59,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               {book.data.cover ? (
                 <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
               ) : (
-                <div class="book-cover-placeholder">
+                <div class="book-cover-placeholder" style={`background: ${bookCoverGradient(book.data.title)}`}>
                   <span>{book.data.title.charAt(0)}</span>
                 </div>
               )}
@@ -114,7 +115,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               {book.data.cover ? (
                 <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
               ) : (
-                <div class="book-cover-placeholder">
+                <div class="book-cover-placeholder" style={`background: ${bookCoverGradient(book.data.title)}`}>
                   <span>{book.data.title.charAt(0)}</span>
                 </div>
               )}
@@ -147,7 +148,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               {book.data.cover ? (
                 <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
               ) : (
-                <div class="book-cover-placeholder dnf">
+                <div class="book-cover-placeholder dnf" style={`background: ${bookCoverGradient(book.data.title)}`}>
                   <span>{book.data.title.charAt(0)}</span>
                 </div>
               )}
@@ -169,7 +170,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
         <div class="book-grid">
           {wantToRead.map(book => (
             <a href={`/books/${book.slug}`} class="book-card card">
-              <div class="book-cover-placeholder wishlist">
+              <div class="book-cover-placeholder wishlist" style={`background: ${bookCoverGradient(book.data.title)}`}>
                 <span>{book.data.title.charAt(0)}</span>
               </div>
               <div class="book-info">

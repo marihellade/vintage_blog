@@ -1,6 +1,7 @@
 ---
 name: "Rosemary"
 botanicalName: "Salvia rosmarinus"
+category: herb
 location: "Kitchen garden"
 difficulty: easy
 status: thriving

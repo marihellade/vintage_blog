@@ -6,6 +6,7 @@ import StarIcon from '../components/icons/StarIcon.astro';
 import CandleIcon from '../components/icons/CandleIcon.astro';
 import { getCollection } from 'astro:content';
 import { starsHtml, starsLabel } from '../utils/stars';
+import { bookCoverGradient } from '../utils/bookColor';
 
 const allBooks   = await getCollection('books');
 const allPlants  = await getCollection('plants');
@@ -43,7 +44,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   <!-- Currently reading banner -->
   {currentlyReading.length > 0 && (
     <section class="currently-banner">
-      <h3 class="section-title"><BookIcon class="icon-sm" /> Currently Reading</h3>
+      <h3 class="section-title"><BookIcon /> Currently Reading</h3>
       <div class="currently-grid">
         {currentlyReading.map(book => (
           <a href={`/books/${book.slug}`} class="card currently-card">
@@ -51,7 +52,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
               {book.data.cover ? (
                 <img src={book.data.cover} alt={book.data.title} loading="lazy" />
               ) : (
-                <div class="cover-placeholder"><span>{book.data.title.charAt(0)}</span></div>
+                <div class="cover-placeholder" style={`background: ${bookCoverGradient(book.data.title)}`}><span>{book.data.title.charAt(0)}</span></div>
               )}
             </div>
             <div class="currently-info">
@@ -76,14 +77,14 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   <!-- Featured book review -->
   {featuredBook && (
     <section class="featured-section">
-      <h3 class="section-title"><BookIcon class="icon-sm" /> From the Book Diary</h3>
+      <h3 class="section-title"><BookIcon /> In My Book Library</h3>
       <div class="card featured-book-card">
         <div class="featured-book-layout">
           <div class="featured-cover">
             {featuredBook.data.cover ? (
               <img src={featuredBook.data.cover} alt={featuredBook.data.title} loading="lazy" />
             ) : (
-              <div class="cover-placeholder large"><span>{featuredBook.data.title.charAt(0)}</span></div>
+              <div class="cover-placeholder large" style={`background: ${bookCoverGradient(featuredBook.data.title)}`}><span>{featuredBook.data.title.charAt(0)}</span></div>
             )}
           </div>
           <div class="featured-info">

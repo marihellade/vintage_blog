@@ -1,7 +1,8 @@
 ---
 title: "Blood Over Bright Haven"
 author: "M.L. Wang"
-rating: 5
+cover: "/images/books/Blood-Over-Bright-Haven.jpg"
+rating: 4
 status: finished
 mood: "magic systems, moral reckoning, academia, devastating"
 tags: ["fantasy", "dark academia", "magic", "political"]

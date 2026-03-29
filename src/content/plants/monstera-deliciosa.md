@@ -1,6 +1,7 @@
 ---
 name: "Monstera Deliciosa"
 botanicalName: "Monstera deliciosa"
+category: indoor
 location: "Living room, near the window"
 difficulty: moderate
 status: thriving

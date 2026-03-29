@@ -13,6 +13,7 @@ const books = defineCollection({
     rating: z.number().min(0.5).max(5).multipleOf(0.5).optional(),
     dateStarted: z.coerce.date().optional(),
     dateFinished: z.coerce.date().optional(),
+    dateReread: z.coerce.date().optional(),  // most recent re-read date
     status: z.enum(['reading', 'finished', 'dnf', 'want-to-read']).default('finished'),
     series: z.string().optional(),         // e.g. "A Court of Thorns and Roses"
     seriesNumber: z.number().optional(),   // e.g. 1
@@ -35,6 +36,7 @@ const plants = defineCollection({
     photo: z.string().optional(),          // path like /images/plants/monstera.jpg
     location: z.string().optional(),       // e.g. "living room window", "front garden"
     dateAcquired: z.coerce.date().optional(),
+    category: z.enum(['native', 'vegetable', 'indoor', 'herb', 'outdoor']).default('outdoor'),
     difficulty: z.enum(['easy', 'moderate', 'dramatic', 'indestructible']).optional(),
     status: z.enum(['thriving', 'growing', 'recovering', 'dramatic', 'babying', 'wishlist', 'rip']).default('growing'),
     wateringNotes: z.string().optional(),

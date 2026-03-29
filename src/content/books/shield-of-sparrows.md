@@ -1,9 +1,10 @@
 ---
 title: "Shield of Sparrows"
 author: "Mary Frame"
+cover: "/images/books/Shield-of-Sparrows.jpg"
 rating: 4
 status: finished
-tags: ["fantasy","romance"]
+tags: ["fantasy","romance", "ebook"]
 featured: false
 seriesNumber: 1
 series: "Shield of Sparrows"

@@ -55,12 +55,17 @@ const statusLabels: Record<string, string> = {
             {d.status && <span class={`status-badge ${d.status}`}>{statusLabels[d.status] ?? d.status}</span>}
             {d.dateStarted && (
               <span class="date-info">
-                started {d.dateStarted.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+                started {d.dateStarted.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
             )}
             {d.dateFinished && (
               <span class="date-info">
-                finished {d.dateFinished.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+                finished {d.dateFinished.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </span>
+            )}
+            {d.dateReread && (
+              <span class="date-info reread">
+                re-read {d.dateReread.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
               </span>
             )}
           </div>
@@ -188,6 +193,9 @@ const statusLabels: Record<string, string> = {
     font-size: var(--text-xs);
     color: var(--color-ink-soft);
     font-style: italic;
+  }
+  .date-info.reread {
+    color: var(--color-gold);
   }
 
   .mood-display {

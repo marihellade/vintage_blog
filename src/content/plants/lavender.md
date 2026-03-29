@@ -1,6 +1,7 @@
 ---
 name: "Lavender"
 botanicalName: "Lavandula angustifolia"
+category: outdoor
 location: "Front garden border"
 difficulty: easy
 status: growing
