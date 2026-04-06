@@ -7,6 +7,7 @@
   /* --- Palette --- */
   --color-parchment:    #0E0C09;   /* aged leather dark — body bg */
   --color-surface:      #1C1610;   /* dark amber panel — widgets, cards */
+  --color-surface-quote: #1A1410;  /* inset note / blockquote background */
   --color-cream:        #EDE0C8;   /* warm ivory — text on dark, ornaments */
   --color-ink:          #DDD2BC;   /* primary text — warm parchment */
   --color-ink-soft:     #9A8570;   /* secondary text — warm mid-tone */
@@ -21,6 +22,52 @@
 
   --color-gold:         #C8984E;   /* candlelight gold */
   --color-gold-light:   #6A4E28;   /* dark amber — borders, dividers */
+
+  /* Repeated interface colors live here. Illustration-heavy SVG palettes stay local. */
+  --color-surface-warm: #201A12;
+  --color-surface-warm-deep: #181310;
+  --color-surface-card: #1E1812;
+  --color-surface-card-deep: #17130F;
+  --color-surface-nav: #1E1A12;
+  --color-surface-nav-deep: #161A12;
+  --color-surface-footer-moss: #0A1208;
+  --color-surface-footer-moss-mid: #0E1008;
+  --color-surface-footer-moss-deep: #130E0A;
+
+  --color-badge-reading: #3A1810;
+  --color-badge-finished: #1A301A;
+  --color-badge-dnf: #2A1A06;
+  --color-badge-dnf-text: #D4953A;
+  --color-badge-want: #2A1E08;
+  --color-badge-format: #1A1A2E;
+  --color-badge-format-text: #B8A9C9;
+
+  --color-status-growing: #D4E8C2;
+  --color-status-recovering: #FDE8C4;
+  --color-status-recovering-text: #8B6914;
+  --color-status-babying: #F3D9E8;
+  --color-status-babying-text: #9B4D7A;
+
+  --color-cursor-gold-soft: #D6C18D;
+  --color-cursor-cream-soft: #F5E9C8;
+  --color-cursor-gold-muted: #DEC48A;
+  --color-vegetable-cover: #4A7A3A;
+  --color-vegetable-cover-deep: #2A5520;
+  --color-dnf-cover: #6A3A10;
+  --color-dnf-cover-deep: #3A2006;
+
+  --gradient-surface-warm: linear-gradient(160deg, var(--color-surface-warm) 0%, var(--color-surface-warm-deep) 100%);
+  --gradient-surface-card: linear-gradient(160deg, var(--color-surface-card) 0%, var(--color-surface-card-deep) 100%);
+  --gradient-surface-card-soft: linear-gradient(160deg, var(--color-surface-card) 0%, var(--color-surface-warm-deep) 100%);
+  --gradient-surface-nav: linear-gradient(160deg, var(--color-surface-nav) 0%, var(--color-surface-nav-deep) 100%);
+  --gradient-footer-surface: linear-gradient(
+    135deg,
+    var(--color-surface-footer-moss) 0%,
+    var(--color-surface-footer-moss-mid) 50%,
+    var(--color-surface-footer-moss-deep) 100%
+  );
+  --gradient-vegetable-cover: linear-gradient(135deg, var(--color-vegetable-cover), var(--color-vegetable-cover-deep));
+  --gradient-dnf-cover: linear-gradient(135deg, var(--color-dnf-cover), var(--color-dnf-cover-deep));
 
   /* --- Typography --- */
   --font-heading:  'Cormorant Garamond', 'IM Fell English', Georgia, serif;

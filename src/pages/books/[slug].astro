@@ -211,10 +211,10 @@ const statusLabels: Record<string, string> = {
     padding: 2px var(--space-3);
     border-radius: 999px;
   }
-  .status-badge.reading { background: #3A1810; color: var(--color-terracotta); }
-  .status-badge.finished { background: #1A301A; color: var(--color-sage-dark); }
-  .status-badge.dnf { background: #2A1A06; color: #D4953A; }
-  .status-badge.want-to-read { background: #2A1E08; color: var(--color-gold); }
+  .status-badge.reading { background: var(--color-badge-reading); color: var(--color-terracotta); }
+  .status-badge.finished { background: var(--color-badge-finished); color: var(--color-sage-dark); }
+  .status-badge.dnf { background: var(--color-badge-dnf); color: var(--color-badge-dnf-text); }
+  .status-badge.want-to-read { background: var(--color-badge-want); color: var(--color-gold); }
 
   .date-info {
     font-size: var(--text-xs);
@@ -253,15 +253,15 @@ const statusLabels: Record<string, string> = {
     text-transform: uppercase;
     padding: 2px var(--space-2);
     border-radius: 999px;
-    background: #1A1A2E;
-    color: #B8A9C9;
+    background: var(--color-badge-format);
+    color: var(--color-badge-format-text);
     border: 1px solid rgba(184, 169, 201, 0.25);
   }
 
   /* --- Quote --- */
   .favourite-quote {
     padding: var(--space-6);
-    background: linear-gradient(160deg, #201A12 0%, #181310 100%);
+    background: var(--gradient-surface-warm);
     border: 1px solid var(--color-gold-light);
     border-radius: var(--radius-md);
     margin-bottom: var(--space-8);
@@ -291,7 +291,7 @@ const statusLabels: Record<string, string> = {
   }
 
   .book-section-panel {
-    background: linear-gradient(160deg, #201A12 0%, #181310 100%);
+    background: var(--gradient-surface-warm);
     border: 1px solid var(--color-gold-light);
     border-radius: var(--radius-md);
     padding: var(--space-6);

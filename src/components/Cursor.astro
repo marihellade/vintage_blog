@@ -19,7 +19,7 @@
     position: fixed;
     width: 10px;
     height: 10px;
-    background: radial-gradient(circle, #EDE0C8 30%, #C8984E 100%);
+    background: radial-gradient(circle, var(--color-cream) 30%, var(--color-gold) 100%);
     border-radius: 50%;
     pointer-events: none;
     z-index: 10000;
@@ -32,7 +32,7 @@
   #cursor-dot.hovering {
     width: 14px;
     height: 14px;
-    background: radial-gradient(circle, #fff 20%, var(--color-terracotta) 100%);
+    background: radial-gradient(circle, white 20%, var(--color-terracotta) 100%);
     box-shadow: 0 0 10px rgba(212, 107, 82, 0.8), 0 0 20px rgba(212, 107, 82, 0.3);
   }
 
@@ -65,13 +65,24 @@
 </style>
 
 <script>
-  const dot       = document.getElementById('cursor-dot')!;
-  const sparkBox  = document.getElementById('spark-container')!;;
+  const dot = document.getElementById('cursor-dot')!;
+  const sparkBox = document.getElementById('spark-container')!;
+  const rootStyles = getComputedStyle(document.documentElement);
+  const readToken = (name: string) => rootStyles.getPropertyValue(name).trim();
 
   // Star/sparkle character set — visually distinct, small
   const SHAPES = ['✦', '✧', '★', '⋆', '✫', '✬', '✭', '✮', '✯', '✦', '✧', '⋆'];
   // Warm gold / sage / cream palette
-  const COLORS = ['#EDE0C8', '#C8984E', '#D6C18D', '#9ABF9E', '#F5E9C8', '#D4853A', '#DEC48A', '#fff'];
+  const COLORS = [
+    readToken('--color-cream'),
+    readToken('--color-gold'),
+    readToken('--color-cursor-gold-soft'),
+    readToken('--color-sage-dark'),
+    readToken('--color-cursor-cream-soft'),
+    readToken('--color-terracotta'),
+    readToken('--color-cursor-gold-muted'),
+    'white',
+  ];
 
   const INTERVAL = 35; // ms between sparks — denser trail
   let lastSpawn = 0;
