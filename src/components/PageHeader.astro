@@ -9,36 +9,101 @@ const { title, intro, stats } = Astro.props;
 ---
 
 <header class="page-header">
-  <h1>{title}</h1>
-  {intro && <p class="page-intro">{intro}</p>}
-  {stats && <p class="page-stats">{stats}</p>}
-  <slot />
+  <div class="page-header-frame">
+    <div class="page-header-ornament" aria-hidden="true">❧</div>
+    <h1>{title}</h1>
+    {intro && <p class="page-intro">{intro}</p>}
+    {stats && <p class="page-stats">{stats}</p>}
+    <slot />
+  </div>
 </header>
 
 <style>
   .page-header {
-    text-align: center;
     margin-bottom: var(--space-12);
+    padding: var(--space-8) var(--space-6);
+    border: 1px solid var(--color-gold-light);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-warm);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(200, 152, 78, 0.07);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .page-header::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(200, 152, 78, 0.15);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .page-header-frame {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: var(--space-3);
+    text-align: center;
+  }
+
+  .page-header-ornament {
+    color: var(--color-gold);
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: var(--text-lg);
+    line-height: 1;
   }
 
   .page-header h1 {
-    color: var(--color-sage-dark);
-    margin-bottom: var(--space-3);
+    margin: 0;
+    color: var(--color-cream);
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-style: italic;
+    line-height: 0.95;
   }
 
   .page-intro {
     max-width: 560px;
-    margin: 0 auto;
+    margin: 0;
     color: var(--color-ink-soft);
     font-style: italic;
   }
 
   .page-stats {
-    margin: var(--space-3) 0 0;
+    margin: 0;
     color: var(--color-ink-soft);
     font-family: var(--font-accent);
     font-size: var(--text-xs);
     letter-spacing: 0.1em;
     text-transform: uppercase;
+  }
+
+  @media (max-width: 720px) {
+    .page-header {
+      padding: var(--space-4);
+    }
+
+    .page-header::before {
+      content: none;
+    }
+
+    .page-header-frame {
+      gap: var(--space-2);
+    }
+
+    .page-header h1 {
+      font-size: var(--text-2xl);
+    }
+
+    .page-intro {
+      max-width: none;
+    }
+
+    .page-stats {
+      letter-spacing: 0.08em;
+    }
   }
 </style>
