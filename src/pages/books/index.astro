@@ -89,6 +89,7 @@ const reviewedBooksJson = JSON.stringify(reviewedBooksData).replace(/</g, '\\u00
 // The client script reuses the same data for sorting and pagination afterward.
 const initialReviewedBooks = reviewedBooksData.slice(0, BOOKS_PER_PAGE);
 const initialReviewedPageCount = Math.ceil(reviewedBooksData.length / BOOKS_PER_PAGE);
+const reviewedTags = [...new Set(reviewedBooksData.flatMap((book) => book.tags))].sort();
 
 // Group by series
 const seriesMap = new Map<string, typeof allBooks>();
@@ -180,19 +181,40 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
       <section class="book-section reviewed-section">
         <h2 class="section-title">Reviewed</h2>
         <div class="reviewed-controls" aria-label="Reviewed books controls">
-          <div class="reviewed-year-pills" role="group" aria-label="Filter reviewed books by year">
-            <button type="button" class="reviewed-pill is-active" data-year-filter="all" aria-pressed="true">All</button>
-            {reviewedYears.map((year) => (
-              <button
-                type="button"
-                class="reviewed-pill"
-                data-year-filter={String(year)}
-                aria-pressed="false"
-              >
-                {year}
-              </button>
-            ))}
+          <div class="reviewed-filter-block">
+            <span class="reviewed-filter-label">Year</span>
+            <div class="reviewed-year-pills" role="group" aria-label="Filter reviewed books by year">
+              <button type="button" class="reviewed-pill is-active" data-year-filter="all" aria-pressed="true">All</button>
+              {reviewedYears.map((year) => (
+                <button
+                  type="button"
+                  class="reviewed-pill"
+                  data-year-filter={String(year)}
+                  aria-pressed="false"
+                >
+                  {year}
+                </button>
+              ))}
+            </div>
           </div>
+          {reviewedTags.length > 0 && (
+            <div class="reviewed-filter-block">
+              <span class="reviewed-filter-label">Mood</span>
+              <div class="reviewed-tag-pills" role="group" aria-label="Filter reviewed books by tag">
+                <button type="button" class="reviewed-pill reviewed-pill--tag is-active" data-tag-filter="all" aria-pressed="true">All moods</button>
+                {reviewedTags.map((tag) => (
+                  <button
+                    type="button"
+                    class="reviewed-pill reviewed-pill--tag"
+                    data-tag-filter={tag}
+                    aria-pressed="false"
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           <div class="reviewed-sort-group" role="group" aria-label="Sort reviewed books">
             <span class="reviewed-sort-label">Sort:</span>
             <button type="button" class="reviewed-sort-option is-active" data-sort="date" aria-pressed="true">Date</button>
@@ -287,6 +309,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
             const emptyState = document.querySelector('#reviewed-empty');
             const pagination = document.querySelector('#reviewed-pagination');
             const yearButtons = Array.from(document.querySelectorAll('[data-year-filter]'));
+            const tagButtons = Array.from(document.querySelectorAll('[data-tag-filter]'));
             const sortButtons = Array.from(document.querySelectorAll('[data-sort]'));
 
             if (!(dataElement instanceof HTMLScriptElement) || !(grid instanceof HTMLElement) || !(emptyState instanceof HTMLElement) || !(pagination instanceof HTMLElement)) {
@@ -297,6 +320,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
             const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
             let currentYear = 'all';
+            let currentTag = 'all';
             let currentSort = 'date';
             let currentPage = 1;
             let renderVersion = 0;
@@ -389,6 +413,16 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
                 button.setAttribute('aria-pressed', String(isActive));
               });
 
+              tagButtons.forEach((button) => {
+                if (!(button instanceof HTMLButtonElement)) {
+                  return;
+                }
+
+                const isActive = button.dataset.tagFilter === currentTag;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+              });
+
               sortButtons.forEach((button) => {
                 if (!(button instanceof HTMLButtonElement)) {
                   return;
@@ -454,7 +488,10 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               const filteredBooks = currentYear === 'all'
                 ? books
                 : books.filter((book: ReviewedBook) => String(book.year) === currentYear);
-              const sortedBooks = [...filteredBooks].sort(currentSort === 'rating' ? compareByRating : compareByDate);
+              const tagFilteredBooks = currentTag === 'all'
+                ? filteredBooks
+                : filteredBooks.filter((book: ReviewedBook) => book.tags.includes(currentTag));
+              const sortedBooks = [...tagFilteredBooks].sort(currentSort === 'rating' ? compareByRating : compareByDate);
               const totalPages = Math.max(1, Math.ceil(sortedBooks.length / booksPerPage));
 
               if (currentPage > totalPages) {
@@ -467,6 +504,9 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
               updateControls();
               updatePagination(sortedBooks.length === 0 ? 0 : totalPages);
+              emptyState.textContent = currentYear === 'all' && currentTag === 'all'
+                ? 'No books tucked onto this shelf yet.'
+                : 'No books match this shelf filter yet.';
               emptyState.hidden = sortedBooks.length !== 0;
 
               if (!animate || prefersReducedMotion) {
@@ -498,6 +538,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
             document.addEventListener('click', (event) => {
               const target = event.target instanceof Element ? event.target : null;
               const yearButton = target?.closest('[data-year-filter]');
+              const tagButton = target?.closest('[data-tag-filter]');
               const sortButton = target?.closest('[data-sort]');
               const pageButton = target?.closest('[data-page]');
 
@@ -509,6 +550,19 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
                 }
 
                 currentYear = nextYear;
+                currentPage = 1;
+                void render({ animate: true });
+                return;
+              }
+
+              if (tagButton instanceof HTMLButtonElement) {
+                const nextTag = tagButton.dataset.tagFilter;
+
+                if (!nextTag || nextTag === currentTag) {
+                  return;
+                }
+
+                currentTag = nextTag;
                 currentPage = 1;
                 void render({ animate: true });
                 return;
@@ -644,6 +698,26 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     gap: var(--space-2);
   }
 
+  .reviewed-tag-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .reviewed-filter-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .reviewed-filter-label {
+    font-family: var(--font-accent);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
   .reviewed-pill {
     appearance: none;
     border: 1px solid var(--color-sage);
@@ -669,6 +743,18 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
   .reviewed-pill.is-active {
     background: var(--color-sage-dark);
     border-color: var(--color-sage-dark);
+    color: var(--color-parchment);
+  }
+
+  .reviewed-pill--tag:hover,
+  .reviewed-pill--tag:focus-visible {
+    background: rgba(212, 133, 58, 0.12);
+    border-color: var(--color-terracotta);
+  }
+
+  .reviewed-pill--tag.is-active {
+    background: var(--color-terracotta);
+    border-color: var(--color-terracotta);
     color: var(--color-parchment);
   }
 
