@@ -10,6 +10,11 @@ const sorted = allRecipes.sort((a, b) => {
   const db = b.data.dateTried?.getTime() ?? 0;
   return db - da;
 });
+const makeAgainCount = sorted.filter((recipe) => recipe.data.wouldMakeAgain).length;
+const ratedRecipes = sorted.filter((recipe) => typeof recipe.data.rating === 'number');
+const averageRating = ratedRecipes.length > 0
+  ? (ratedRecipes.reduce((sum, recipe) => sum + (recipe.data.rating ?? 0), 0) / ratedRecipes.length).toFixed(1)
+  : null;
 ---
 
 <BaseLayout title="Recipe Box" description="Recipes Marihella has tried, loved, and scribbled notes on.">
@@ -22,6 +27,24 @@ const sorted = allRecipes.sort((a, b) => {
         and whether I'd make them again. No aesthetic food photography — just real opinions.
       </p>
     </header>
+
+    <section class="kitchen-notes" aria-label="Kitchen notes">
+      <article class="kitchen-note card">
+        <p class="kitchen-note-label">Tried so far</p>
+        <p class="kitchen-note-value">{sorted.length}</p>
+        <p class="kitchen-note-copy">recipes that made it out of the tab pile and into the actual kitchen</p>
+      </article>
+      <article class="kitchen-note card">
+        <p class="kitchen-note-label">Would make again</p>
+        <p class="kitchen-note-value">{makeAgainCount}</p>
+        <p class="kitchen-note-copy">keepers worth scribbling into the permanent recipe notebook</p>
+      </article>
+      <article class="kitchen-note card">
+        <p class="kitchen-note-label">Average delight</p>
+        <p class="kitchen-note-value">{averageRating ? `${averageRating}/5` : 'pending'}</p>
+        <p class="kitchen-note-copy">an unscientific measurement of how likely I am to make a second batch</p>
+      </article>
+    </section>
 
     <div class="recipe-feed">
       {sorted.map((recipe) => (
@@ -91,10 +114,88 @@ const sorted = allRecipes.sort((a, b) => {
     font-style: italic;
   }
 
+  .kitchen-notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-10, 2.5rem);
+  }
+
+  .kitchen-note {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kitchen-note::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(212, 133, 58, 0.12), transparent 58%);
+    pointer-events: none;
+  }
+
+  .kitchen-note-label,
+  .kitchen-note-value,
+  .kitchen-note-copy {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+  }
+
+  .kitchen-note-label {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin: 0 0 var(--space-2);
+  }
+
+  .kitchen-note-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-style: italic;
+    color: var(--color-sage-dark);
+    margin: 0 0 var(--space-2);
+  }
+
+  .kitchen-note-copy {
+    color: var(--color-ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
   .recipe-feed {
     display: flex;
     flex-direction: column;
     gap: var(--space-8);
+  }
+
+  .recipe-entry {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .recipe-entry::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 1px dashed rgba(200, 152, 78, 0.15);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .recipe-entry::after {
+    content: 'kitchen note';
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-4);
+    font-family: var(--font-accent);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(200, 152, 78, 0.45);
+    pointer-events: none;
   }
 
   .recipe-header {
@@ -162,5 +263,11 @@ const sorted = allRecipes.sort((a, b) => {
     letter-spacing: 0.08em;
     text-transform: uppercase;
     text-decoration: none;
+  }
+
+  @media (max-width: 720px) {
+    .kitchen-notes {
+      grid-template-columns: 1fr;
+    }
   }
 </style>

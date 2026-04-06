@@ -9,6 +9,7 @@ const sorted = allTravel.sort((a, b) => {
   const db = b.data.date?.getTime() ?? 0;
   return db - da;
 });
+const latestTrip = sorted[0];
 ---
 
 <BaseLayout title="Travel" description="Places Marihella has wandered and wants to remember.">
@@ -21,6 +22,24 @@ const sorted = allTravel.sort((a, b) => {
         Part vision board, part scrapbook.
       </p>
     </header>
+
+    <section class="travel-stats" aria-label="Travel notes">
+      <article class="travel-stat card">
+        <p class="travel-stat-label">Trips logged</p>
+        <p class="travel-stat-value">{sorted.length}</p>
+        <p class="travel-stat-copy">little archives of walks, views, and places worth remembering</p>
+      </article>
+      <article class="travel-stat card">
+        <p class="travel-stat-label">Latest stop</p>
+        <p class="travel-stat-value">{latestTrip?.data.destination ?? 'Soon'}</p>
+        <p class="travel-stat-copy">the most recent page tucked into the scrapbook</p>
+      </article>
+      <article class="travel-stat card">
+        <p class="travel-stat-label">Always chasing</p>
+        <p class="travel-stat-value">cafes + mist</p>
+        <p class="travel-stat-copy">quiet corners, old streets, and weather that makes everything cinematic</p>
+      </article>
+    </section>
 
     <div class="travel-feed">
       {sorted.map((trip) => (
@@ -92,10 +111,107 @@ const sorted = allTravel.sort((a, b) => {
     font-style: italic;
   }
 
+  .travel-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-10, 2.5rem);
+  }
+
+  .travel-stat {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .travel-stat::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, rgba(200, 152, 78, 0.1), transparent 60%);
+    pointer-events: none;
+  }
+
+  .travel-stat-label,
+  .travel-stat-value,
+  .travel-stat-copy {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+  }
+
+  .travel-stat-label {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin: 0 0 var(--space-2);
+  }
+
+  .travel-stat-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-xl);
+    font-style: italic;
+    color: var(--color-sage-dark);
+    margin: 0 0 var(--space-2);
+    max-width: none;
+  }
+
+  .travel-stat-copy {
+    color: var(--color-ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
   .travel-feed {
     display: flex;
     flex-direction: column;
     gap: var(--space-8);
+  }
+
+  .travel-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .travel-card:nth-child(odd) {
+    transform: rotate(-0.35deg);
+  }
+
+  .travel-card:nth-child(even) {
+    transform: rotate(0.35deg);
+  }
+
+  .travel-card:hover {
+    transform: translateY(-3px) rotate(0deg);
+  }
+
+  .travel-card::before {
+    content: 'postcard note';
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-4);
+    font-family: var(--font-accent);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(200, 152, 78, 0.45);
+    pointer-events: none;
+  }
+
+  .travel-card::after {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 32px;
+    width: 72px;
+    height: 20px;
+    background: linear-gradient(180deg, rgba(237, 224, 200, 0.32), rgba(237, 224, 200, 0.06));
+    border: 1px solid rgba(237, 224, 200, 0.16);
+    border-radius: 3px;
+    transform: rotate(-5deg);
+    opacity: 0.7;
+    pointer-events: none;
   }
 
   .travel-card-layout {
@@ -112,6 +228,7 @@ const sorted = allTravel.sort((a, b) => {
     border-radius: var(--radius-md);
     flex-shrink: 0;
     box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(237, 224, 200, 0.12);
   }
 
   .travel-thumb-placeholder {
@@ -212,6 +329,15 @@ const sorted = allTravel.sort((a, b) => {
   }
 
   @media (max-width: 700px) {
+    .travel-stats {
+      grid-template-columns: 1fr;
+    }
+
+    .travel-card:nth-child(odd),
+    .travel-card:nth-child(even) {
+      transform: none;
+    }
+
     .travel-card-layout {
       flex-direction: column;
     }
