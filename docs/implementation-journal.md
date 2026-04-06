@@ -129,3 +129,64 @@ Phase 4 reduced layout sprawl, made the repo easier to maintain, added the light
 - The roadmap’s “no hardcoded hex colours outside tokens.css” goal was adapted to repeated interface colours. Illustration-heavy SVG palettes in files like `src/components/DecorativeTrees.astro` and `src/components/Header.astro` remain local because they function more like artwork than reusable UI tokens
 - One non-blocking Astro hint remains in `src/content/config.ts` for the deprecated `z.string().url()` helper
 - The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
+
+## Phase 5 — Selective delight and expansion
+
+### Intent
+Phase 5 added the roadmap’s next layer of personality and usability polish: better filtering for the book diary, lower-overhead cursor behavior, more legible secondary text, richer non-book section presentation, and new personal pages that expand the site’s sense of self.
+
+### Work completed
+- Added reviewed-book tag filtering to `src/pages/books/index.astro`, alongside the existing year and sort controls
+- Slowed the cursor sparkle spawn interval in `src/components/Cursor.astro` from 35ms to 55ms to reduce DOM churn while keeping the trail visually continuous
+- Brightened `--color-ink-soft` in `src/styles/tokens.css` to improve secondary text readability site-wide
+- Added an `extras` content collection in `src/content/config.ts`
+- Added `src/content/extras/now.md` and `src/pages/now.astro` for a content-backed Now page
+- Added `src/content/extras/links.md` and `src/pages/links.astro` for a content-backed Links page
+- Added the new pages to sidebar and footer navigation
+- Updated `docs/how-to-edit-content.md` and `README.md` so the new pages and their editing locations are documented
+- Enriched the plant, travel, and recipe index pages with atmosphere-forward stat strips, section notes, and warmer card treatments
+
+### Validation
+- Ran `npm run check` after each major Phase 5 slice and again during final acceptance; result: `0 errors`, `0 warnings`, `1 hint`
+- Ran `npm run build` after each major Phase 5 slice and again during final acceptance; result: passed
+- Verified the build now generates `/now/` and `/links/`
+- Confirmed the final build produces 20 static pages
+
+### Git
+- Branch: `feature/phase5-delight`
+- Key commits:
+  - `76fbac5` `feat: add book tag filtering`
+  - `ca3d0e8` `perf: tune cursor trail and secondary text`
+  - `eabc34f` `feat: add now and links pages`
+  - `0c773b7` `style: enrich secondary section pages`
+- Merge result: merged into `main` with `merge: complete phase 5 delight`
+
+### Notes
+- The roadmap requirement for “at least 2 new pages from the spec” is satisfied by the new `Now` and `Links` pages
+- A dedicated gallery / cute-things page is still a strong follow-up candidate if the site wants an additional decorative expansion later
+- The same non-blocking Astro hint remains in `src/content/config.ts` for the deprecated `z.string().url()` helper
+- The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
+
+## Final Snapshot
+
+### Completed phases
+- Phase 1 — Stabilise and remove drag
+- Phase 2 — Content architecture completion
+- Phase 3 — Astro upgrade
+- Phase 4 — Code organisation refactor
+- Phase 5 — Selective delight and expansion
+
+### Repo-level impact
+- The site now has clean travel and recipe detail routes, a current Astro version, a smaller and more maintainable layout structure, a built-in `npm run check` command, filterable reviewed books, gentler cursor behavior, richer collection pages, and two new personal pages
+
+### Validation summary
+- Final repo validation: `npm run check` passed with `0 errors`, `0 warnings`, `1 hint`
+- Final repo validation: `npm run build` passed and generated 20 static pages
+
+### Remaining follow-ups
+- Replace the deprecated `z.string().url()` call in `src/content/config.ts` with Astro 6’s preferred URL validation helper when convenient
+- Consider adding a dedicated gallery / cute-things page if the site wants another round of personality-focused expansion
+
+### Manual review suggestions
+- Give the updated plant, travel, and recipe index pages a quick visual pass on desktop and mobile
+- Click through the new `/now/` and `/links/` routes to confirm the tone and content feel right for the owner
