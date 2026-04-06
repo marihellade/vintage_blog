@@ -5,9 +5,6 @@
 
 @import './tokens.css';
 
-/* --- Google Fonts --- */
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400;1,500&family=Cormorant+SC:wght@400;500&family=Crimson+Text:ital,wght@0,400;0,600;1,400;1,600&display=swap');
-
 /* --- Reset & Base --- */
 *, *::before, *::after {
   box-sizing: border-box;
@@ -46,6 +43,24 @@ body {
     );
   min-height: 100vh;
   cursor: none;
+}
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: var(--space-3);
+  z-index: 10001;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-gold);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-cream);
+  text-decoration: none;
+  box-shadow: var(--shadow-sm);
+}
+
+.skip-link:focus {
+  left: var(--space-4);
 }
 
 /* Restore default cursor on touch devices */
