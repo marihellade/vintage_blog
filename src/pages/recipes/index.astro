@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { starsHtml, starsLabel } from '../../utils/stars';
+import { contentSlugFromId } from '../../utils/contentSlug';
 
 const allRecipes = await getCollection('recipes');
 const sorted = allRecipes.sort((a, b) => {
@@ -28,7 +29,7 @@ const sorted = allRecipes.sort((a, b) => {
           <div class="recipe-header">
             <div class="recipe-heading">
               <h2>
-                <a href={`/recipes/${recipe.slug}`}>{recipe.data.title}</a>
+                <a href={`/recipes/${contentSlugFromId(recipe.id)}`}>{recipe.data.title}</a>
               </h2>
               <div class="recipe-meta">
                 {recipe.data.source && (
@@ -64,7 +65,7 @@ const sorted = allRecipes.sort((a, b) => {
           )}
 
           <p class="recipe-link">
-            <a href={`/recipes/${recipe.slug}`}>read the full notes &rarr;</a>
+            <a href={`/recipes/${contentSlugFromId(recipe.id)}`}>read the full notes &rarr;</a>
           </p>
         </article>
       ))}

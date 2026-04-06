@@ -2,7 +2,7 @@
 
 ## What you need
 
-- **Node.js** version 18 or higher — [download here](https://nodejs.org)
+- **Node.js** version 22.12.0 or higher — [download here](https://nodejs.org)
 - A terminal (Terminal on Mac, or any command line tool)
 
 To check if you have Node installed, run:
@@ -11,7 +11,7 @@ To check if you have Node installed, run:
 node --version
 ```
 
-If it prints a version number like `v20.x.x`, you're good.
+If it prints a version number like `v22.12.0` or newer, you're good.
 
 ## First time setup
 

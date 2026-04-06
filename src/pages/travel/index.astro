@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
+import { contentSlugFromId } from '../../utils/contentSlug';
 
 const allTravel = await getCollection('travel');
 const sorted = allTravel.sort((a, b) => {
@@ -36,7 +37,7 @@ const sorted = allTravel.sort((a, b) => {
             <div class="travel-content">
               <div class="travel-heading">
                 <h2>
-                  <a href={`/travel/${trip.slug}`}>{trip.data.title}</a>
+                  <a href={`/travel/${contentSlugFromId(trip.id)}`}>{trip.data.title}</a>
                 </h2>
                 <div class="travel-meta">
                   <span class="destination">{trip.data.destination}</span>
@@ -63,7 +64,7 @@ const sorted = allTravel.sort((a, b) => {
               )}
 
               <p class="travel-link">
-                <a href={`/travel/${trip.slug}`}>read the full entry &rarr;</a>
+                <a href={`/travel/${contentSlugFromId(trip.id)}`}>read the full entry &rarr;</a>
               </p>
             </div>
           </div>

@@ -7,6 +7,7 @@ import CandleIcon from '../components/icons/CandleIcon.astro';
 import { getCollection } from 'astro:content';
 import { starsHtml, starsLabel } from '../utils/stars';
 import { bookCoverGradient } from '../utils/bookColor';
+import { contentSlugFromId } from '../utils/contentSlug';
 
 const allBooks   = await getCollection('books');
 const allPlants  = await getCollection('plants');
@@ -47,7 +48,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
       <h2 class="section-title"><BookIcon /> Currently Reading</h2>
       <div class="currently-grid">
         {currentlyReading.map(book => (
-          <a href={`/books/${book.slug}`} class="card currently-card">
+          <a href={`/books/${contentSlugFromId(book.id)}`} class="card currently-card">
             <div class="currently-cover">
               {book.data.cover ? (
                 <img src={book.data.cover} alt={book.data.title} loading="lazy" />
@@ -88,7 +89,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
             )}
           </div>
           <div class="featured-info">
-            <h4><a href={`/books/${featuredBook.slug}`}>{featuredBook.data.title}</a></h4>
+            <h4><a href={`/books/${contentSlugFromId(featuredBook.id)}`}>{featuredBook.data.title}</a></h4>
             <p class="meta">by {featuredBook.data.author}</p>
             {featuredBook.data.rating && (
               <p class="rating" aria-label={starsLabel(featuredBook.data.rating)}>
