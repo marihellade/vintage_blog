@@ -99,6 +99,11 @@ dateFinished: 2026-03-20
 
 1. Create a new file in `src/content/travel/`
 2. Name it like `blue-mountains.md`
+3. Add your frontmatter and write the full travel story in Markdown below it
+
+Each travel entry now appears in two places automatically:
+- a summary card on `/travel`
+- a dedicated detail page at `/travel/your-file-name`
 
 ### Travel frontmatter fields
 
@@ -117,6 +122,11 @@ dateFinished: 2026-03-20
 
 1. Create a new file in `src/content/recipes/`
 2. Name it like `rosemary-focaccia.md`
+3. Add your frontmatter and write your notes in Markdown below it
+
+Each recipe entry now appears in two places automatically:
+- a summary card on `/recipes`
+- a dedicated detail page at `/recipes/your-file-name`
 
 ### Recipe frontmatter fields
 
@@ -154,3 +164,5 @@ Images placed in the `public/` folder are served at the same path. For example:
 ## Previewing your changes
 
 After editing any file, make sure the dev server is running (`npm run dev`) and check your browser. Changes appear automatically.
+
+For travel and recipe entries, it is worth checking both the collection page and the individual entry page after you add something new.
