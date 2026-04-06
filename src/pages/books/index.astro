@@ -5,6 +5,25 @@ import { starsHtml, starsLabel } from '../../utils/stars';
 import { bookCoverGradient } from '../../utils/bookColor';
 
 const allBooks = await getCollection('books');
+const BOOKS_PER_PAGE = 6;
+const UNDATED_YEAR = 'Undated';
+
+const compareByDateFinishedDesc = (a: typeof allBooks[number], b: typeof allBooks[number]) => {
+  const aTime = a.data.dateFinished?.getTime();
+  const bTime = b.data.dateFinished?.getTime();
+
+  if (typeof aTime === 'number' && typeof bTime === 'number') {
+    if (bTime !== aTime) {
+      return bTime - aTime;
+    }
+  } else if (typeof aTime === 'number') {
+    return -1;
+  } else if (typeof bTime === 'number') {
+    return 1;
+  }
+
+  return a.data.title.localeCompare(b.data.title);
+};
 
 // Status labels — MSN-era emoji vibe
 const statusLabels: Record<string, string> = {
@@ -16,9 +35,57 @@ const statusLabels: Record<string, string> = {
 
 // Group by status
 const reading    = allBooks.filter(b => b.data.status === 'reading');
-const finished   = allBooks.filter(b => b.data.status === 'finished');
+const finished   = allBooks
+  .filter(book => book.data.status === 'finished')
+  .sort(compareByDateFinishedDesc);
 const dnf        = allBooks.filter(b => b.data.status === 'dnf');
 const wantToRead = allBooks.filter(b => b.data.status === 'want-to-read');
+
+type ReviewedBook = {
+  slug: string;
+  title: string;
+  author: string;
+  cover: string | null;
+  rating: number | null;
+  mood: string | null;
+  tags: string[];
+  year: number | 'Undated';
+  dateFinished: string | null;
+  coverGradient: string;
+  ratingText: string | null;
+  ratingLabel: string | null;
+};
+
+const reviewedBooksData: ReviewedBook[] = finished.map((book) => ({
+  slug: book.slug,
+  title: book.data.title,
+  author: book.data.author,
+  cover: book.data.cover ?? null,
+  rating: book.data.rating ?? null,
+  mood: book.data.mood ?? null,
+  tags: book.data.tags,
+  year: book.data.dateFinished ? book.data.dateFinished.getFullYear() : UNDATED_YEAR,
+  dateFinished: book.data.dateFinished?.toISOString() ?? null,
+  coverGradient: bookCoverGradient(book.data.title),
+  ratingText: book.data.rating ? starsHtml(book.data.rating) : null,
+  ratingLabel: book.data.rating ? starsLabel(book.data.rating) : null,
+}));
+
+const reviewedYearsNumeric = [...new Set(
+  reviewedBooksData
+    .map((book) => typeof book.year === 'number' ? book.year : null)
+    .filter((year): year is number => year !== null),
+)].sort((a, b) => b - a);
+
+const reviewedYears: Array<number | 'Undated'> = [...reviewedYearsNumeric];
+
+if (reviewedBooksData.some((book) => book.year === UNDATED_YEAR)) {
+  reviewedYears.push(UNDATED_YEAR);
+}
+
+const reviewedBooksJson = JSON.stringify(reviewedBooksData).replace(/</g, '\\u003c');
+const initialReviewedBooks = reviewedBooksData.slice(0, BOOKS_PER_PAGE);
+const initialReviewedPageCount = Math.ceil(reviewedBooksData.length / BOOKS_PER_PAGE);
 
 // Group by series
 const seriesMap = new Map<string, typeof allBooks>();
@@ -107,34 +174,362 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
     <!-- All reviewed -->
     {finished.length > 0 && (
-      <section class="book-section">
+      <section class="book-section reviewed-section">
         <h2 class="section-title">Reviewed</h2>
-        <div class="book-grid">
-          {finished.map(book => (
+        <div class="reviewed-controls" aria-label="Reviewed books controls">
+          <div class="reviewed-year-pills" role="group" aria-label="Filter reviewed books by year">
+            <button type="button" class="reviewed-pill is-active" data-year-filter="all" aria-pressed="true">All</button>
+            {reviewedYears.map((year) => (
+              <button
+                type="button"
+                class="reviewed-pill"
+                data-year-filter={String(year)}
+                aria-pressed="false"
+              >
+                {year}
+              </button>
+            ))}
+          </div>
+          <div class="reviewed-sort-group" role="group" aria-label="Sort reviewed books">
+            <span class="reviewed-sort-label">Sort:</span>
+            <button type="button" class="reviewed-sort-option is-active" data-sort="date" aria-pressed="true">Date</button>
+            <button type="button" class="reviewed-sort-option" data-sort="rating" aria-pressed="false">Rating</button>
+          </div>
+        </div>
+        <div id="reviewed-grid" class="book-grid reviewed-grid">
+          {initialReviewedBooks.map((book) => (
             <a href={`/books/${book.slug}`} class="book-card card">
-              {book.data.cover ? (
-                <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
+              {book.cover ? (
+                <img src={book.cover} alt={`Cover of ${book.title}`} class="book-cover" loading="lazy" />
               ) : (
-                <div class="book-cover-placeholder" style={`background: ${bookCoverGradient(book.data.title)}`}>
-                  <span>{book.data.title.charAt(0)}</span>
+                <div class="book-cover-placeholder" style={`background: ${book.coverGradient}`}>
+                  <span>{book.title.charAt(0)}</span>
                 </div>
               )}
               <div class="book-info">
-                <h4>{book.data.title}</h4>
-                <p class="meta">{book.data.author}</p>
-                {book.data.rating && (
-                  <p class="rating" aria-label={starsLabel(book.data.rating)}>
-                    {starsHtml(book.data.rating)}
+                <h4>{book.title}</h4>
+                <p class="meta">{book.author}</p>
+                {book.rating && (
+                  <p class="rating" aria-label={book.ratingLabel ?? starsLabel(book.rating)}>
+                    {book.ratingText ?? starsHtml(book.rating)}
                   </p>
                 )}
-                {book.data.mood && <p class="mood-line">{book.data.mood}</p>}
+                {book.mood && <p class="mood-line">{book.mood}</p>}
                 <div class="tag-row">
-                  {book.data.tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}
+                  {book.tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
                 </div>
               </div>
             </a>
           ))}
         </div>
+        <p id="reviewed-empty" class="reviewed-empty" hidden>No books tucked onto this shelf yet.</p>
+        <nav
+          id="reviewed-pagination"
+          class="reviewed-pagination"
+          aria-label="Reviewed books pages"
+          hidden={initialReviewedPageCount <= 1}
+        >
+          <button
+            type="button"
+            class="reviewed-page-control reviewed-page-arrow"
+            data-page="0"
+            aria-label="Previous page"
+            disabled
+          >
+            &lt;
+          </button>
+          {Array.from({ length: initialReviewedPageCount }, (_, index) => {
+            const page = index + 1;
+            return (
+              <button
+                type="button"
+                class={`reviewed-page-control ${page === 1 ? 'is-active' : ''}`}
+                data-page={String(page)}
+                aria-current={page === 1 ? 'page' : undefined}
+              >
+                {page}
+              </button>
+            );
+          })}
+          <button
+            type="button"
+            class="reviewed-page-control reviewed-page-arrow"
+            data-page="2"
+            aria-label="Next page"
+            disabled={initialReviewedPageCount <= 1}
+          >
+            &gt;
+          </button>
+        </nav>
+        <script id="reviewed-books-data" type="application/json" set:html={reviewedBooksJson}></script>
+        <script>
+          const initReviewedBooks = () => {
+            const dataElement = document.querySelector('#reviewed-books-data');
+            const grid = document.querySelector('#reviewed-grid');
+            const emptyState = document.querySelector('#reviewed-empty');
+            const pagination = document.querySelector('#reviewed-pagination');
+            const yearButtons = Array.from(document.querySelectorAll('[data-year-filter]'));
+            const sortButtons = Array.from(document.querySelectorAll('[data-sort]'));
+
+            if (!(dataElement instanceof HTMLScriptElement) || !(grid instanceof HTMLElement) || !(emptyState instanceof HTMLElement) || !(pagination instanceof HTMLElement)) {
+              return;
+            }
+
+            const booksPerPage = 6;
+            const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+            let currentYear = 'all';
+            let currentSort = 'date';
+            let currentPage = 1;
+            let renderVersion = 0;
+
+            const books = JSON.parse(dataElement.textContent || '[]');
+
+            const escapeHtml = (value) => String(value)
+              .replaceAll('&', '&amp;')
+              .replaceAll('<', '&lt;')
+              .replaceAll('>', '&gt;')
+              .replaceAll('"', '&quot;')
+              .replaceAll("'", '&#39;');
+
+            const starsForRating = (rating) => {
+              const full = Math.floor(rating);
+              const half = rating % 1 >= 0.5 ? 1 : 0;
+              const empty = 5 - full - half;
+              return '✦'.repeat(full) + (half ? '✩' : '') + '✧'.repeat(empty);
+            };
+
+            const compareByDate = (a, b) => {
+              const aTime = a.dateFinished ? new Date(a.dateFinished).getTime() : null;
+              const bTime = b.dateFinished ? new Date(b.dateFinished).getTime() : null;
+
+              if (aTime !== null && bTime !== null) {
+                if (bTime !== aTime) {
+                  return bTime - aTime;
+                }
+              } else if (aTime !== null) {
+                return -1;
+              } else if (bTime !== null) {
+                return 1;
+              }
+
+              return a.title.localeCompare(b.title);
+            };
+
+            const compareByRating = (a, b) => {
+              const aRating = typeof a.rating === 'number' ? a.rating : Number.NEGATIVE_INFINITY;
+              const bRating = typeof b.rating === 'number' ? b.rating : Number.NEGATIVE_INFINITY;
+
+              if (bRating !== aRating) {
+                return bRating - aRating;
+              }
+
+              return compareByDate(a, b);
+            };
+
+            const renderCard = (book) => {
+              const firstLetter = escapeHtml((book.title || '').charAt(0) || '?');
+              const coverMarkup = book.cover
+                ? `<img src="${escapeHtml(book.cover)}" alt="Cover of ${escapeHtml(book.title)}" class="book-cover" loading="lazy" />`
+                : `<div class="book-cover-placeholder" style="background: ${escapeHtml(book.coverGradient)}"><span>${firstLetter}</span></div>`;
+              const ratingMarkup = typeof book.rating === 'number'
+                ? `<p class="rating" aria-label="${escapeHtml(book.ratingLabel || `Rating: ${book.rating} out of 5`)}">${escapeHtml(book.ratingText || starsForRating(book.rating))}</p>`
+                : '';
+              const moodMarkup = book.mood
+                ? `<p class="mood-line">${escapeHtml(book.mood)}</p>`
+                : '';
+              const tagMarkup = (book.tags || [])
+                .slice(0, 3)
+                .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
+                .join('');
+
+              return `
+                <a href="/books/${escapeHtml(book.slug)}" class="book-card card">
+                  ${coverMarkup}
+                  <div class="book-info">
+                    <h4>${escapeHtml(book.title)}</h4>
+                    <p class="meta">${escapeHtml(book.author)}</p>
+                    ${ratingMarkup}
+                    ${moodMarkup}
+                    <div class="tag-row">${tagMarkup}</div>
+                  </div>
+                </a>
+              `;
+            };
+
+            const wait = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
+            const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
+
+            const updateControls = () => {
+              yearButtons.forEach((button) => {
+                if (!(button instanceof HTMLButtonElement)) {
+                  return;
+                }
+
+                const isActive = button.dataset.yearFilter === currentYear;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+              });
+
+              sortButtons.forEach((button) => {
+                if (!(button instanceof HTMLButtonElement)) {
+                  return;
+                }
+
+                const isActive = button.dataset.sort === currentSort;
+                button.classList.toggle('is-active', isActive);
+                button.setAttribute('aria-pressed', String(isActive));
+              });
+            };
+
+            const updatePagination = (totalPages) => {
+              if (totalPages <= 1) {
+                pagination.hidden = true;
+                pagination.innerHTML = '';
+                return;
+              }
+
+              pagination.hidden = false;
+
+              const pageButtons = Array.from({ length: totalPages }, (_, index) => {
+                const page = index + 1;
+                const isActive = page === currentPage;
+                return `
+                  <button
+                    type="button"
+                    class="reviewed-page-control ${isActive ? 'is-active' : ''}"
+                    data-page="${page}"
+                    ${isActive ? 'aria-current="page"' : ''}
+                  >
+                    ${page}
+                  </button>
+                `;
+              }).join('');
+
+              pagination.innerHTML = `
+                <button
+                  type="button"
+                  class="reviewed-page-control reviewed-page-arrow"
+                  data-page="${currentPage - 1}"
+                  aria-label="Previous page"
+                  ${currentPage === 1 ? 'disabled' : ''}
+                >
+                  &lt;
+                </button>
+                ${pageButtons}
+                <button
+                  type="button"
+                  class="reviewed-page-control reviewed-page-arrow"
+                  data-page="${currentPage + 1}"
+                  aria-label="Next page"
+                  ${currentPage === totalPages ? 'disabled' : ''}
+                >
+                  &gt;
+                </button>
+              `;
+            };
+
+            const render = async ({ animate = false } = {}) => {
+              renderVersion += 1;
+              const version = renderVersion;
+
+              const filteredBooks = currentYear === 'all'
+                ? books
+                : books.filter((book) => String(book.year) === currentYear);
+              const sortedBooks = [...filteredBooks].sort(currentSort === 'rating' ? compareByRating : compareByDate);
+              const totalPages = Math.max(1, Math.ceil(sortedBooks.length / booksPerPage));
+
+              if (currentPage > totalPages) {
+                currentPage = 1;
+              }
+
+              const startIndex = (currentPage - 1) * booksPerPage;
+              const pageBooks = sortedBooks.slice(startIndex, startIndex + booksPerPage);
+              const cardsMarkup = pageBooks.map(renderCard).join('');
+
+              updateControls();
+              updatePagination(sortedBooks.length === 0 ? 0 : totalPages);
+              emptyState.hidden = sortedBooks.length !== 0;
+
+              if (!animate || prefersReducedMotion) {
+                grid.classList.remove('flipping-out', 'flipping-in');
+                grid.innerHTML = cardsMarkup;
+                return;
+              }
+
+              grid.classList.remove('flipping-in');
+              grid.classList.add('flipping-out');
+              await wait(150);
+
+              if (version !== renderVersion) {
+                return;
+              }
+
+              grid.innerHTML = cardsMarkup;
+              grid.classList.remove('flipping-out');
+              grid.classList.add('flipping-in');
+              await nextFrame();
+
+              if (version !== renderVersion) {
+                return;
+              }
+
+              grid.classList.remove('flipping-in');
+            };
+
+            document.addEventListener('click', (event) => {
+              const target = event.target instanceof Element ? event.target : null;
+              const yearButton = target?.closest('[data-year-filter]');
+              const sortButton = target?.closest('[data-sort]');
+              const pageButton = target?.closest('[data-page]');
+
+              if (yearButton instanceof HTMLButtonElement) {
+                const nextYear = yearButton.dataset.yearFilter;
+
+                if (!nextYear || nextYear === currentYear) {
+                  return;
+                }
+
+                currentYear = nextYear;
+                currentPage = 1;
+                void render({ animate: true });
+                return;
+              }
+
+              if (sortButton instanceof HTMLButtonElement) {
+                const nextSort = sortButton.dataset.sort;
+
+                if (!nextSort || nextSort === currentSort) {
+                  return;
+                }
+
+                currentSort = nextSort;
+                currentPage = 1;
+                void render({ animate: true });
+                return;
+              }
+
+              if (pageButton instanceof HTMLButtonElement && pagination.contains(pageButton) && !pageButton.disabled) {
+                const nextPage = Number(pageButton.dataset.page);
+
+                if (!Number.isFinite(nextPage) || nextPage < 1 || nextPage === currentPage) {
+                  return;
+                }
+
+                currentPage = nextPage;
+                void render({ animate: true });
+              }
+            });
+
+            void render();
+          };
+
+          if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initReviewedBooks, { once: true });
+          } else {
+            initReviewedBooks();
+          }
+        </script>
       </section>
     )}
 
@@ -218,11 +613,109 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
   .book-section { margin-bottom: var(--space-12); }
 
+  .reviewed-controls {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin-bottom: var(--space-6);
+  }
+
+  .reviewed-year-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .reviewed-pill {
+    appearance: none;
+    border: 1px solid var(--color-sage);
+    background: rgba(95, 128, 101, 0.18);
+    color: var(--color-sage-dark);
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px var(--space-3);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .reviewed-pill:hover,
+  .reviewed-pill:focus-visible {
+    background: rgba(154, 191, 158, 0.15);
+    border-color: var(--color-sage-dark);
+    outline: none;
+  }
+
+  .reviewed-pill.is-active {
+    background: var(--color-sage-dark);
+    border-color: var(--color-sage-dark);
+    color: var(--color-parchment);
+  }
+
+  .reviewed-sort-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+    color: var(--color-ink-soft);
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .reviewed-sort-label {
+    color: var(--color-ink-soft);
+  }
+
+  .reviewed-sort-option {
+    appearance: none;
+    border: none;
+    border-bottom: 1px solid transparent;
+    background: none;
+    color: inherit;
+    cursor: pointer;
+    font: inherit;
+    letter-spacing: inherit;
+    text-transform: inherit;
+    padding: 0;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .reviewed-sort-option:hover,
+  .reviewed-sort-option:focus-visible {
+    color: var(--color-cream);
+    outline: none;
+  }
+
+  .reviewed-sort-option.is-active {
+    color: var(--color-gold);
+    border-color: currentColor;
+  }
+
   /* --- Book grid --- */
   .book-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: var(--space-6);
+  }
+
+  .reviewed-grid {
+    transform-origin: center left;
+    transition: opacity 0.15s ease, transform 0.15s ease;
+    will-change: opacity, transform;
+  }
+
+  .reviewed-grid.flipping-out {
+    opacity: 0;
+    transform: perspective(800px) rotateY(-8deg);
+  }
+
+  .reviewed-grid.flipping-in {
+    opacity: 0;
+    transform: perspective(800px) rotateY(8deg);
   }
 
   .book-card {
@@ -370,6 +863,81 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
   }
   .dnf-card { opacity: 0.8; }
 
+  .reviewed-empty {
+    margin: 0;
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--color-ink-soft);
+    font-style: italic;
+    border: 1px dotted var(--color-gold-light);
+    border-radius: var(--radius-md);
+    background: rgba(26, 20, 16, 0.45);
+  }
+
+  .reviewed-pagination {
+    margin-top: var(--space-6);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-2);
+  }
+
+  .reviewed-page-control {
+    appearance: none;
+    min-width: 2.25rem;
+    border: 1px solid var(--color-gold-light);
+    border-radius: 999px;
+    background: rgba(28, 22, 16, 0.7);
+    color: var(--color-ink-soft);
+    cursor: pointer;
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    padding: 0.35rem 0.7rem;
+    text-transform: uppercase;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+  }
+
+  .reviewed-page-control:hover:not(:disabled),
+  .reviewed-page-control:focus-visible {
+    color: var(--color-cream);
+    border-color: var(--color-gold);
+    outline: none;
+  }
+
+  .reviewed-page-control.is-active {
+    color: var(--color-cream);
+    border-color: var(--color-gold);
+    background: rgba(200, 152, 78, 0.16);
+  }
+
+  .reviewed-page-control:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .reviewed-page-arrow {
+    padding-inline: 0.8rem;
+  }
+
   .tags-section { text-align: center; }
   .tags-section .tag-row { justify-content: center; }
+
+  @media (max-width: 720px) {
+    .reviewed-controls {
+      gap: var(--space-3);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reviewed-grid {
+      transition: none;
+    }
+
+    .reviewed-grid.flipping-out,
+    .reviewed-grid.flipping-in {
+      opacity: 1;
+      transform: none;
+    }
+  }
 </style>
