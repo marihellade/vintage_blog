@@ -2,6 +2,8 @@
 
 A personal indie-web style website — books, plants, travel, and recipes. Built with Astro, designed to feel like a beautifully kept grimoire.
 
+Requires Node.js `22.12.0+`.
+
 ## Quick start
 
 ```bash
