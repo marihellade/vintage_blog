@@ -22,39 +22,53 @@ const sorted = allTravel.sort((a, b) => {
     </header>
 
     <div class="travel-feed">
-      {sorted.map(async (trip) => {
-        const { Content } = await trip.render();
-        return (
-          <article class="travel-entry card">
-            {trip.data.cover && (
-              <img src={trip.data.cover} alt={trip.data.destination} class="travel-cover" loading="lazy" />
-            )}
-            <div class="travel-content">
-              <h2>{trip.data.title}</h2>
-              <div class="travel-meta">
-                <span class="destination">{trip.data.destination}</span>
-                {trip.data.date && (
-                  <span class="travel-date">
-                    {trip.data.date.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
-                  </span>
-                )}
+      {sorted.map((trip) => (
+        <article class="travel-card card">
+          <div class="travel-card-layout">
+            {trip.data.cover ? (
+              <img src={trip.data.cover} alt={`Photo from ${trip.data.title}`} class="travel-thumb" loading="lazy" />
+            ) : (
+              <div class="travel-thumb-placeholder">
+                <span>{trip.data.destination.charAt(0)}</span>
               </div>
+            )}
+
+            <div class="travel-content">
+              <div class="travel-heading">
+                <h2>
+                  <a href={`/travel/${trip.slug}`}>{trip.data.title}</a>
+                </h2>
+                <div class="travel-meta">
+                  <span class="destination">{trip.data.destination}</span>
+                  {trip.data.date && (
+                    <span class="travel-date">
+                      {trip.data.date.toLocaleDateString('en-AU', { month: 'long', year: 'numeric' })}
+                    </span>
+                  )}
+                </div>
+              </div>
+
               {trip.data.mood && <p class="mood-line">{trip.data.mood}</p>}
-              <div class="travel-body"><Content /></div>
+
               {trip.data.highlights.length > 0 && (
                 <ul class="highlight-list">
-                  {trip.data.highlights.map(h => <li>{h}</li>)}
+                  {trip.data.highlights.slice(0, 2).map((highlight) => <li>{highlight}</li>)}
                 </ul>
               )}
+
               {trip.data.tags.length > 0 && (
                 <div class="tag-row">
-                  {trip.data.tags.map(tag => <span class="tag">{tag}</span>)}
+                  {trip.data.tags.map((tag) => <span class="tag">{tag}</span>)}
                 </div>
               )}
+
+              <p class="travel-link">
+                <a href={`/travel/${trip.slug}`}>read the full entry &rarr;</a>
+              </p>
             </div>
-          </article>
-        );
-      })}
+          </div>
+        </article>
+      ))}
     </div>
 
   </div>
@@ -83,23 +97,49 @@ const sorted = allTravel.sort((a, b) => {
     gap: var(--space-8);
   }
 
-  .travel-entry {
-    overflow: hidden;
+  .travel-card-layout {
+    display: flex;
+    gap: var(--space-4);
+    align-items: flex-start;
   }
 
-  .travel-cover {
-    width: 100%;
-    height: 260px;
+  .travel-thumb,
+  .travel-thumb-placeholder {
+    width: 150px;
+    height: 200px;
     object-fit: cover;
-    border-radius: var(--radius-md) var(--radius-md) 0 0;
-    margin: calc(-1 * var(--space-6));
-    margin-bottom: var(--space-4);
-    width: calc(100% + var(--space-6) * 2);
+    border-radius: var(--radius-md);
+    flex-shrink: 0;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .travel-thumb-placeholder {
+    background: linear-gradient(135deg, var(--color-sage-light), var(--color-sage));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-style: italic;
+    color: var(--color-cream);
+  }
+
+  .travel-heading {
+    margin-bottom: var(--space-3);
   }
 
   .travel-content h2 {
     color: var(--color-ink);
     margin-bottom: var(--space-2);
+  }
+
+  .travel-content h2 a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .travel-content h2 a:hover {
+    color: var(--color-terracotta);
   }
 
   .travel-meta {
@@ -131,13 +171,10 @@ const sorted = allTravel.sort((a, b) => {
     margin-bottom: var(--space-3);
   }
 
-  .travel-body { margin-bottom: var(--space-4); }
-  .travel-body :global(p) { margin-bottom: var(--space-3); }
-
   .highlight-list {
     list-style: none;
     padding: 0;
-    margin: var(--space-3) 0;
+    margin: 0 0 var(--space-4);
   }
   .highlight-list li {
     font-size: var(--text-sm);
@@ -158,6 +195,31 @@ const sorted = allTravel.sort((a, b) => {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
-    margin-top: var(--space-3);
+  }
+
+  .travel-link {
+    margin: var(--space-4) 0 0;
+    max-width: none;
+  }
+
+  .travel-link a {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  @media (max-width: 700px) {
+    .travel-card-layout {
+      flex-direction: column;
+    }
+
+    .travel-thumb,
+    .travel-thumb-placeholder {
+      width: 100%;
+      max-width: 320px;
+      height: 220px;
+    }
   }
 </style>

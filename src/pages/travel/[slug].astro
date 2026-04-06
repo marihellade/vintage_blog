@@ -1,0 +1,268 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+export async function getStaticPaths() {
+  const travelEntries = await getCollection('travel');
+  return travelEntries.map((trip) => ({
+    params: { slug: trip.slug },
+    props: { trip },
+  }));
+}
+
+interface Props {
+  trip: CollectionEntry<'travel'>;
+}
+
+const { trip } = Astro.props;
+const { Content } = await trip.render();
+const d = trip.data;
+---
+
+<BaseLayout
+  title={d.title}
+  description={`${d.title} in ${d.destination} — travel notes by Marihella.`}
+>
+  <article class="travel-entry-page">
+    <header class="travel-header">
+      <div class="travel-header-content">
+        {d.cover ? (
+          <img src={d.cover} alt={`Photo from ${d.title}`} class="cover-large" />
+        ) : (
+          <div class="cover-placeholder-large">
+            <span>{d.destination.charAt(0)}</span>
+          </div>
+        )}
+
+        <div class="travel-meta-block">
+          <p class="entry-kicker">Travel notes</p>
+          <h1>{d.title}</h1>
+          <p class="destination">{d.destination}</p>
+
+          {d.date && (
+            <p class="date-info">
+              {d.date.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
+            </p>
+          )}
+
+          {d.mood && <p class="mood-display">{d.mood}</p>}
+
+          {d.tags.length > 0 && (
+            <div class="tag-row">
+              {d.tags.map((tag) => <span class="tag">{tag}</span>)}
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <div class="travel-sections">
+      {d.highlights.length > 0 && (
+        <section class="travel-section-panel">
+          <h2 class="panel-title">✦ Little things I want to remember</h2>
+          <ul class="highlight-list">
+            {d.highlights.map((highlight) => <li>{highlight}</li>)}
+          </ul>
+        </section>
+      )}
+
+      <section class="travel-section-panel">
+        <h2 class="panel-title">❧ The full entry</h2>
+        <div class="panel-body">
+          <Content />
+        </div>
+      </section>
+    </div>
+
+    <footer class="travel-footer">
+      <a href="/travel">&larr; back to wanderings</a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .travel-entry-page {
+    padding: var(--space-4) 0;
+  }
+
+  .travel-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .travel-header-content {
+    display: flex;
+    gap: var(--space-8);
+    align-items: flex-start;
+  }
+
+  .cover-large {
+    width: 180px;
+    height: 240px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+  }
+
+  .cover-placeholder-large {
+    width: 180px;
+    height: 240px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--color-sage-light), var(--color-sage));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-style: italic;
+    color: var(--color-cream);
+    box-shadow: var(--shadow-md);
+  }
+
+  .entry-kicker {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin-bottom: var(--space-2);
+  }
+
+  .travel-meta-block h1 {
+    margin-bottom: var(--space-2);
+  }
+
+  .destination {
+    font-style: italic;
+    color: var(--color-sage-dark);
+    font-size: var(--text-md);
+    margin-bottom: var(--space-2);
+  }
+
+  .date-info {
+    font-size: var(--text-xs);
+    color: var(--color-ink-soft);
+    font-style: italic;
+    margin-bottom: var(--space-3);
+  }
+
+  .mood-display {
+    font-style: italic;
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    margin-bottom: var(--space-3);
+    max-width: none;
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .travel-sections {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .travel-section-panel {
+    background: linear-gradient(160deg, #201A12 0%, #181310 100%);
+    border: 1px solid var(--color-gold-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(200, 152, 78, 0.07);
+    position: relative;
+  }
+
+  .travel-section-panel::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(200, 152, 78, 0.15);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .panel-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-md);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px dotted var(--color-gold-light);
+  }
+
+  .highlight-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .highlight-list li {
+    padding-left: var(--space-4);
+    position: relative;
+    color: var(--color-ink-soft);
+    margin-bottom: var(--space-2);
+  }
+
+  .highlight-list li::before {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    font-size: var(--text-xs);
+  }
+
+  .highlight-list li:last-child {
+    margin-bottom: 0;
+  }
+
+  .panel-body :global(p),
+  .panel-body :global(ul),
+  .panel-body :global(ol) {
+    margin-bottom: var(--space-4);
+  }
+
+  .panel-body :global(p:last-child),
+  .panel-body :global(ul:last-child),
+  .panel-body :global(ol:last-child) {
+    margin-bottom: 0;
+  }
+
+  .travel-footer {
+    padding-top: var(--space-6);
+    border-top: var(--border-thin);
+  }
+
+  .travel-footer a {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-sage-dark);
+  }
+
+  .travel-footer a:hover {
+    color: var(--color-terracotta);
+  }
+
+  @media (max-width: 700px) {
+    .travel-header-content {
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .cover-large,
+    .cover-placeholder-large {
+      width: 100%;
+      max-width: 320px;
+      height: 220px;
+    }
+  }
+</style>
