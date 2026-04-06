@@ -1,0 +1,295 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import { starsHtml, starsLabel } from '../../utils/stars';
+
+export async function getStaticPaths() {
+  const recipeEntries = await getCollection('recipes');
+  return recipeEntries.map((recipe) => ({
+    params: { slug: recipe.slug },
+    props: { recipe },
+  }));
+}
+
+interface Props {
+  recipe: CollectionEntry<'recipes'>;
+}
+
+const { recipe } = Astro.props;
+const { Content } = await recipe.render();
+const d = recipe.data;
+---
+
+<BaseLayout
+  title={d.title}
+  description={`${d.title} — recipe notes from Marihella's recipe box.`}
+>
+  <article class="recipe-entry-page">
+    <header class="recipe-header">
+      <div class="recipe-header-content">
+        {d.photo ? (
+          <img src={d.photo} alt={`Photo of ${d.title}`} class="photo-large" />
+        ) : (
+          <div class="photo-placeholder-large">
+            <span>{d.title.charAt(0)}</span>
+          </div>
+        )}
+
+        <div class="recipe-meta-block">
+          <p class="entry-kicker">From the recipe box</p>
+          <h1>{d.title}</h1>
+
+          <div class="meta-details">
+            {d.source && (
+              <span class="source-info">
+                {d.sourceUrl ? (
+                  <a href={d.sourceUrl} target="_blank" rel="noopener noreferrer">
+                    {d.source}
+                  </a>
+                ) : (
+                  d.source
+                )}
+              </span>
+            )}
+
+            {d.dateTried && (
+              <span class="date-info">
+                tried {d.dateTried.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </span>
+            )}
+          </div>
+
+          <div class="badge-row">
+            {d.rating && (
+              <p class="rating" aria-label={starsLabel(d.rating)}>
+                {starsHtml(d.rating)}
+              </p>
+            )}
+
+            <span class:list={['recipe-badge', { 'recipe-badge--alt': !d.wouldMakeAgain }]}>
+              {d.wouldMakeAgain ? 'would make again' : 'once was enough'}
+            </span>
+          </div>
+
+          {d.tags.length > 0 && (
+            <div class="tag-row">
+              {d.tags.map((tag) => <span class="tag">{tag}</span>)}
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+
+    <section class="recipe-section-panel">
+      <h2 class="panel-title">✦ Kitchen notes</h2>
+      <div class="panel-body">
+        <Content />
+      </div>
+    </section>
+
+    <footer class="recipe-footer">
+      <a href="/recipes">&larr; back to the recipe box</a>
+    </footer>
+  </article>
+</BaseLayout>
+
+<style>
+  .recipe-entry-page {
+    padding: var(--space-4) 0;
+  }
+
+  .recipe-header {
+    margin-bottom: var(--space-8);
+  }
+
+  .recipe-header-content {
+    display: flex;
+    gap: var(--space-8);
+    align-items: flex-start;
+  }
+
+  .photo-large {
+    width: 180px;
+    height: 220px;
+    object-fit: cover;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    flex-shrink: 0;
+  }
+
+  .photo-placeholder-large {
+    width: 180px;
+    height: 220px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, var(--color-gold-light), var(--color-terracotta));
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-size: var(--text-3xl);
+    font-style: italic;
+    color: var(--color-cream);
+    box-shadow: var(--shadow-md);
+  }
+
+  .entry-kicker {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin-bottom: var(--space-2);
+  }
+
+  .recipe-meta-block h1 {
+    margin-bottom: var(--space-3);
+  }
+
+  .meta-details {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+  }
+
+  .source-info,
+  .date-info {
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+  }
+
+  .source-info a {
+    color: inherit;
+  }
+
+  .date-info {
+    font-style: italic;
+  }
+
+  .badge-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-3);
+  }
+
+  .rating {
+    color: var(--color-gold);
+    letter-spacing: 0.15em;
+    font-size: var(--text-md);
+    margin: 0;
+    max-width: none;
+  }
+
+  .recipe-badge {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px var(--space-3);
+    border-radius: 999px;
+    background: rgba(95, 128, 101, 0.18);
+    color: var(--color-sage-dark);
+    border: 1px solid var(--color-sage);
+  }
+
+  .recipe-badge--alt {
+    background: rgba(212, 107, 82, 0.15);
+    color: var(--color-terracotta);
+    border-color: var(--color-terracotta);
+  }
+
+  .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .recipe-section-panel {
+    background: linear-gradient(160deg, #201A12 0%, #181310 100%);
+    border: 1px solid var(--color-gold-light);
+    border-radius: var(--radius-md);
+    padding: var(--space-6);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(200, 152, 78, 0.07);
+    position: relative;
+    margin-bottom: var(--space-8);
+  }
+
+  .recipe-section-panel::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(200, 152, 78, 0.15);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .panel-title {
+    font-family: var(--font-heading);
+    font-size: var(--text-md);
+    font-style: italic;
+    font-weight: 400;
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px dotted var(--color-gold-light);
+  }
+
+  .panel-body :global(h2) {
+    font-size: var(--text-md);
+    margin-top: var(--space-6);
+    margin-bottom: var(--space-3);
+    color: var(--color-sage-dark);
+  }
+
+  .panel-body :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .panel-body :global(p),
+  .panel-body :global(ul),
+  .panel-body :global(ol) {
+    margin-bottom: var(--space-4);
+  }
+
+  .panel-body :global(p:last-child),
+  .panel-body :global(ul:last-child),
+  .panel-body :global(ol:last-child) {
+    margin-bottom: 0;
+  }
+
+  .recipe-footer {
+    padding-top: var(--space-6);
+    border-top: var(--border-thin);
+  }
+
+  .recipe-footer a {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--color-sage-dark);
+  }
+
+  .recipe-footer a:hover {
+    color: var(--color-terracotta);
+  }
+
+  @media (max-width: 700px) {
+    .recipe-header-content {
+      flex-direction: column;
+      gap: var(--space-4);
+    }
+
+    .photo-large,
+    .photo-placeholder-large {
+      width: 100%;
+      max-width: 320px;
+      height: 220px;
+    }
+  }
+</style>
