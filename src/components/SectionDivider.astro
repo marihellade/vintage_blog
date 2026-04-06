@@ -1,0 +1,59 @@
+---
+interface Props {
+  variant?: 'botanical' | 'simple' | 'dots';
+}
+
+const { variant = 'botanical' } = Astro.props;
+const ornament = variant === 'dots' ? '· · ·' : '❧';
+---
+
+{variant === 'simple' ? (
+  <div class="section-divider section-divider--simple" aria-hidden="true"></div>
+) : (
+  <div class:list={['section-divider', `section-divider--${variant}`]} aria-hidden="true">
+    <span class="section-divider-ornament">{ornament}</span>
+  </div>
+)}
+
+<style>
+  .section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-4);
+    margin: var(--space-8) 0;
+    color: var(--color-gold);
+  }
+
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    flex: 1;
+    border-top: 1px solid var(--color-gold-light);
+    opacity: 0.75;
+  }
+
+  .section-divider-ornament {
+    font-family: var(--font-heading);
+    font-style: italic;
+    font-size: var(--text-lg);
+    line-height: 1;
+  }
+
+  .section-divider--simple {
+    display: block;
+    width: 100%;
+    border-top: 1px solid var(--color-gold-light);
+    opacity: 0.75;
+  }
+
+  .section-divider--simple::before,
+  .section-divider--simple::after {
+    content: none;
+  }
+
+  .section-divider--dots .section-divider-ornament {
+    font-size: var(--text-base);
+    letter-spacing: 0.35em;
+  }
+</style>

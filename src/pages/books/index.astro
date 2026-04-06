@@ -1,5 +1,8 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BookCard from '../../components/BookCard.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionDivider from '../../components/SectionDivider.astro';
 import { getCollection } from 'astro:content';
 import { starsHtml, starsLabel } from '../../utils/stars';
 import { bookCoverGradient } from '../../utils/bookColor';
@@ -46,6 +49,9 @@ const toRomanNumeral = (value: number) => {
 const formatRomanPageCount = (currentPage: number, totalPages: number) => totalPages > 0
   ? `${toRomanNumeral(currentPage)} / ${toRomanNumeral(totalPages)}`
   : '— / —';
+
+const pageIntro = `Every book I've read, reviewed, and loved — or at least survived. I track my series,
+my favourites, and the ones that made me sit in silence for ten minutes after finishing.`;
 
 const compareByDateFinishedDesc = (a: typeof allBooks[number], b: typeof allBooks[number]) => {
   const aTime = a.data.dateFinished?.getTime();
@@ -149,52 +155,48 @@ for (const [, books] of seriesMap) {
 
 // All unique tags
 const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
+const hasReading = reading.length > 0;
+const hasSeries = seriesMap.size > 0;
+const hasReviewed = finished.length > 0;
+const hasDnf = dnf.length > 0;
+const hasWantToRead = wantToRead.length > 0;
+const hasTags = allTags.length > 0;
 ---
 
 <BaseLayout title="Book Diary" description="Every book I've read, reviewed, and loved — or at least survived.">
   <div class="book-archive">
 
-    <header class="page-header">
-      <h1>Book Diary</h1>
-      <p class="page-intro">
-        Every book I've read, reviewed, and loved — or at least survived. I track my series,
-        my favourites, and the ones that made me sit in silence for ten minutes after finishing.
-      </p>
-    </header>
+    <PageHeader title="Book Diary" intro={pageIntro} />
 
     <!-- Currently reading -->
-    {reading.length > 0 && (
+    {hasReading && (
       <section class="book-section">
         <h2 class="section-title">Currently Reading</h2>
         <div class="book-grid">
           {reading.map(book => (
-            <a href={`/books/${contentSlugFromId(book.id)}`} class="book-card card">
-              {book.data.cover ? (
-                <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
-              ) : (
-                <div class="book-cover-placeholder" style={`background: ${bookCoverGradient(book.data.title)}`}>
-                  <span>{book.data.title.charAt(0)}</span>
-                </div>
-              )}
-              <div class="book-info">
-                <h4>{book.data.title}</h4>
-                <p class="meta">{book.data.author}</p>
-                {book.data.series && (
-                  <p class="series-label">{book.data.series} #{book.data.seriesNumber}</p>
-                )}
-                {book.data.mood && <p class="mood-line">{book.data.mood}</p>}
-                <div class="tag-row">
-                  {book.data.tags.slice(0, 3).map(tag => <span class="tag">{tag}</span>)}
-                </div>
-              </div>
-            </a>
+            <BookCard
+              title={book.data.title}
+              author={book.data.author}
+              cover={book.data.cover ?? null}
+              coverGradient={bookCoverGradient(book.data.title)}
+              slug={contentSlugFromId(book.id)}
+              variant="reading"
+              mood={book.data.mood ?? null}
+              tags={book.data.tags}
+              series={book.data.series}
+              seriesNumber={book.data.seriesNumber}
+            />
           ))}
         </div>
       </section>
     )}
 
+    {hasReading && (hasSeries || hasReviewed || hasDnf || hasWantToRead || hasTags) && (
+      <SectionDivider variant="simple" />
+    )}
+
     <!-- Series tracker -->
-    {seriesMap.size > 0 && (
+    {hasSeries && (
       <section class="book-section">
         <h2 class="section-title">Series I'm Following</h2>
         <div class="series-grid">
@@ -218,8 +220,12 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
       </section>
     )}
 
+    {hasSeries && (hasReviewed || hasDnf || hasWantToRead || hasTags) && (
+      <SectionDivider variant="simple" />
+    )}
+
     <!-- All reviewed -->
-    {finished.length > 0 && (
+    {hasReviewed && (
       <section class="book-section reviewed-section">
         <div class="reviewed-section-header">
           <div class="reviewed-heading-block">
@@ -304,46 +310,19 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
               <div id="reviewed-grid" class="book-grid reviewed-grid">
                 {initialReviewedBooks.map((book) => (
-                  <a href={`/books/${book.slug}`} class="book-card card reviewed-card">
-                    <div class="reviewed-card-figure">
-                      {book.cover ? (
-                        <img
-                          src={book.cover}
-                          alt={`Cover of ${book.title}`}
-                          class="book-cover reviewed-book-cover"
-                          loading="lazy"
-                        />
-                      ) : (
-                        <div class="book-cover-placeholder reviewed-book-cover-placeholder" style={`background: ${book.coverGradient}`}>
-                          <span>{book.title.charAt(0)}</span>
-                        </div>
-                      )}
-                    </div>
-                    <div class="book-info reviewed-card-copy">
-                      <h3 class="reviewed-card-title">{book.title}</h3>
-                      <p class="meta reviewed-card-author">{book.author}</p>
-                      <div class="reviewed-card-line">
-                        {book.rating && (
-                          <>
-                            <span
-                              class="reviewed-card-rating"
-                              role="img"
-                              aria-label={book.ratingLabel ?? starsLabel(book.rating)}
-                            >
-                              {book.ratingText ?? starsHtml(book.rating)}
-                            </span>
-                            <span class="reviewed-card-divider" aria-hidden="true">·</span>
-                          </>
-                        )}
-                        <span class="reviewed-card-status">{book.finishedLabel}</span>
-                      </div>
-                      {book.tags.length > 0 && (
-                        <div class="tag-row reviewed-tag-row">
-                          {book.tags.slice(0, 2).map((tag) => <span class="tag">{tag}</span>)}
-                        </div>
-                      )}
-                    </div>
-                  </a>
+                  <BookCard
+                    title={book.title}
+                    author={book.author}
+                    cover={book.cover}
+                    coverGradient={book.coverGradient}
+                    slug={book.slug}
+                    variant="reviewed"
+                    rating={book.rating}
+                    ratingText={book.ratingText}
+                    ratingLabel={book.ratingLabel}
+                    finishedLabel={book.finishedLabel}
+                    tags={book.tags}
+                  />
                 ))}
               </div>
 
@@ -799,53 +778,55 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
       </section>
     )}
 
+    {hasReviewed && (hasDnf || hasWantToRead || hasTags) && (
+      <SectionDivider variant="simple" />
+    )}
+
     <!-- DNF -->
-    {dnf.length > 0 && (
+    {hasDnf && (
       <section class="book-section">
         <h2 class="section-title">💔 DNF</h2>
         <div class="book-grid">
           {dnf.map(book => (
-            <a href={`/books/${contentSlugFromId(book.id)}`} class="book-card card dnf-card">
-              {book.data.cover ? (
-                <img src={book.data.cover} alt={`Cover of ${book.data.title}`} class="book-cover" loading="lazy" />
-              ) : (
-                <div class="book-cover-placeholder dnf" style={`background: ${bookCoverGradient(book.data.title)}`}>
-                  <span>{book.data.title.charAt(0)}</span>
-                </div>
-              )}
-              <div class="book-info">
-                <h4>{book.data.title}</h4>
-                <p class="meta">{book.data.author}</p>
-                {book.data.mood && <p class="mood-line">{book.data.mood}</p>}
-              </div>
-            </a>
+            <BookCard
+              title={book.data.title}
+              author={book.data.author}
+              cover={book.data.cover ?? null}
+              coverGradient={bookCoverGradient(book.data.title)}
+              slug={contentSlugFromId(book.id)}
+              variant="dnf"
+              mood={book.data.mood ?? null}
+            />
           ))}
         </div>
       </section>
     )}
 
+    {hasDnf && (hasWantToRead || hasTags) && <SectionDivider variant="simple" />}
+
     <!-- Want to read -->
-    {wantToRead.length > 0 && (
+    {hasWantToRead && (
       <section class="book-section">
         <h2 class="section-title">Want to Read</h2>
         <div class="book-grid">
           {wantToRead.map(book => (
-            <a href={`/books/${contentSlugFromId(book.id)}`} class="book-card card">
-              <div class="book-cover-placeholder wishlist" style={`background: ${bookCoverGradient(book.data.title)}`}>
-                <span>{book.data.title.charAt(0)}</span>
-              </div>
-              <div class="book-info">
-                <h4>{book.data.title}</h4>
-                <p class="meta">{book.data.author}</p>
-              </div>
-            </a>
+            <BookCard
+              title={book.data.title}
+              author={book.data.author}
+              cover={book.data.cover ?? null}
+              coverGradient={bookCoverGradient(book.data.title)}
+              slug={contentSlugFromId(book.id)}
+              variant="wishlist"
+            />
           ))}
         </div>
       </section>
     )}
 
+    {hasWantToRead && hasTags && <SectionDivider variant="simple" />}
+
     <!-- Tags -->
-    {allTags.length > 0 && (
+    {hasTags && (
       <section class="book-section tags-section">
         <h2 class="section-title">Browse by mood</h2>
         <div class="tag-row">
@@ -862,22 +843,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     padding: var(--space-4) 0;
   }
 
-  .page-header {
-    text-align: center;
-    margin-bottom: var(--space-12);
-  }
-  .page-header h1 {
-    color: var(--color-sage-dark);
-    margin-bottom: var(--space-3);
-  }
-  .page-intro {
-    max-width: 560px;
-    margin: 0 auto;
-    color: var(--color-ink-soft);
-    font-style: italic;
-  }
-
-  .book-section { margin-bottom: var(--space-12); }
+  .book-section { margin-bottom: 0; }
 
   .reviewed-section {
     position: relative;
@@ -1077,158 +1043,6 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     transform: perspective(800px) rotateY(8deg);
   }
 
-  .book-card {
-    display: flex;
-    gap: var(--space-4);
-    text-decoration: none;
-    color: inherit;
-  }
-
-  .book-cover {
-    width: 80px;
-    height: 120px;
-    object-fit: cover;
-    border-radius: var(--radius-sm);
-    flex-shrink: 0;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .book-cover-placeholder {
-    width: 80px;
-    height: 120px;
-    flex-shrink: 0;
-    background: linear-gradient(135deg, var(--color-sage-light), var(--color-sage));
-    border-radius: var(--radius-sm);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-heading);
-    font-size: var(--text-xl);
-    font-style: italic;
-    color: white;
-    box-shadow: var(--shadow-sm);
-  }
-  .book-cover-placeholder.wishlist {
-    background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
-  }
-
-  .reviewed-card {
-    --reviewed-cover-width: 56px;
-    --reviewed-cover-height: 84px;
-    align-items: flex-start;
-    gap: var(--space-3);
-    padding: var(--space-4);
-    min-height: 100%;
-  }
-
-  .reviewed-card-figure {
-    flex-shrink: 0;
-  }
-
-  .reviewed-book-cover,
-  .reviewed-book-cover-placeholder {
-    width: var(--reviewed-cover-width);
-    height: var(--reviewed-cover-height);
-    border: 1px solid rgba(200, 152, 78, 0.14);
-  }
-
-  .reviewed-book-cover-placeholder {
-    font-size: 1.9rem;
-  }
-
-  .reviewed-card-copy {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    gap: 0.25rem;
-    min-width: 0;
-  }
-
-  .reviewed-card-title {
-    margin: 0;
-    font-size: 1.25rem;
-    line-height: 1.06;
-    color: var(--color-ink);
-    font-style: normal;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .reviewed-card-author {
-    margin: 0;
-    font-style: normal;
-  }
-
-  .reviewed-card-line {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.35rem;
-    margin: 0;
-    font-family: var(--font-accent);
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--color-ink-soft);
-  }
-
-  .reviewed-card-rating {
-    color: var(--color-gold);
-    letter-spacing: 0.14em;
-  }
-
-  .reviewed-card-divider {
-    color: rgba(200, 152, 78, 0.6);
-  }
-
-  .reviewed-tag-row {
-    margin-top: auto;
-    padding-top: var(--space-2);
-  }
-
-  .book-info h4 {
-    font-size: var(--text-md);
-    margin-bottom: var(--space-1);
-  }
-
-  .meta {
-    font-size: var(--text-sm);
-    color: var(--color-ink-soft);
-    font-style: italic;
-    margin-bottom: var(--space-1);
-  }
-
-  .rating {
-    color: var(--color-gold);
-    letter-spacing: 0.15em;
-    font-size: var(--text-sm);
-    margin-bottom: var(--space-1);
-  }
-
-  .mood-line {
-    font-style: italic;
-    font-size: var(--text-xs);
-    color: var(--color-sage-dark);
-    margin-bottom: var(--space-2);
-  }
-
-  .series-label {
-    font-family: var(--font-accent);
-    font-size: var(--text-xs);
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--color-terracotta);
-    margin-bottom: var(--space-1);
-  }
-
-  .tag-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-1);
-  }
-
   /* --- Series --- */
   .series-grid {
     display: grid;
@@ -1291,12 +1105,6 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     background: var(--color-badge-want);
     color: var(--color-gold);
   }
-
-  .book-cover-placeholder.dnf {
-    background: var(--gradient-dnf-cover);
-    opacity: 1;
-  }
-  .dnf-card { opacity: 0.8; }
 
   .reviewed-empty {
     position: relative;
@@ -1406,7 +1214,12 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
   }
 
   .tags-section { text-align: center; }
-  .tags-section .tag-row { justify-content: center; }
+  .tags-section .tag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+    justify-content: center;
+  }
 
   @media (max-width: 900px) {
     .reviewed-sort-group {
@@ -1441,11 +1254,6 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
     .reviewed-grid {
       grid-template-columns: 1fr;
-    }
-
-    .reviewed-card {
-      --reviewed-cover-width: 60px;
-      --reviewed-cover-height: 90px;
     }
 
     .reviewed-side-nav {
