@@ -492,6 +492,20 @@ The project is complete when:
 
 ---
 
+For any task that changes visible UI, always run the visual review workflow.
+
+@docs/ai/ui-review-playbook.md
+
+## Required behaviour
+- Use the `ui-review` skill for UI-facing work.
+- Use `npm run ui:review` for deterministic screenshot review.
+- Use port 4174 for agent-driven review.
+- Do not attach to my manually running local dev server.
+- Do not leave background processes running after review.
+- In your final summary, state what pages were visually checked and what changed.
+
+---
+
 ## Final design principle
 
 Modern underneath.

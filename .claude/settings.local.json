@@ -5,7 +5,14 @@
       "Bash(npm run:*)",
       "Bash(git add:*)",
       "Bash(grep -n \"repeat.*rating\\\\|✦\\\\|✧\" /home/fryzigg/git/marihella/vintage_blog/src/pages/books/index.astro /home/fryzigg/git/marihella/vintage_blog/src/pages/books/[slug].astro /home/fryzigg/git/marihella/vintage_blog/src/pages/index.astro)",
-      "Bash(python3 -:*)"
+      "Bash(python3 -:*)",
+      "Bash(find /home/fryzigg/git/marihella/vintage_blog/public -type f -exec wc -l {} +)",
+      "Bash(git -C /home/fryzigg/git/marihella/vintage_blog log --oneline -10)",
+      "Bash(npm outdated:*)",
+      "Bash(npx playwright:*)",
+      "Bash(npm install:*)",
+      "Bash(npm ls:*)",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
