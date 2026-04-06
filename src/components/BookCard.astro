@@ -1,5 +1,10 @@
 ---
-import { starsHtml, starsLabel } from '../utils/stars';
+import {
+  formatReviewedCardRating,
+  hasReviewedCardField,
+  normalizeReviewedCardConfig,
+  type ReviewedCardConfigInput,
+} from '../utils/reviewedCardConfig';
 
 type BookCardVariant = 'reading' | 'reviewed' | 'dnf' | 'wishlist';
 
@@ -11,13 +16,15 @@ interface Props {
   slug: string;
   variant: BookCardVariant;
   rating?: number | null;
-  ratingText?: string | null;
-  ratingLabel?: string | null;
   mood?: string | null;
   tags?: string[];
   series?: string;
   seriesNumber?: number;
   finishedLabel?: string;
+  statusText?: string;
+  year?: number | string | null;
+  viewMoreHref?: string;
+  reviewedCardConfig?: ReviewedCardConfigInput;
 }
 
 const {
@@ -28,13 +35,15 @@ const {
   slug,
   variant,
   rating = null,
-  ratingText = null,
-  ratingLabel = null,
   mood = null,
   tags = [],
   series,
   seriesNumber,
   finishedLabel,
+  statusText = finishedLabel ?? 'Finished',
+  year = null,
+  viewMoreHref,
+  reviewedCardConfig: reviewedCardConfigProp = {},
 } = Astro.props;
 
 const TitleTag = variant === 'reviewed' ? 'h3' : 'h4';
@@ -53,93 +62,238 @@ const placeholderClasses = [
   variant === 'dnf' && 'dnf',
 ];
 const shouldUseImage = variant !== 'wishlist' && Boolean(cover);
-const displayedRatingText = typeof rating === 'number'
-  ? ratingText ?? starsHtml(rating)
-  : null;
-const displayedRatingLabel = typeof rating === 'number'
-  ? ratingLabel ?? starsLabel(rating)
-  : null;
+const reviewedCardConfig = normalizeReviewedCardConfig(reviewedCardConfigProp);
+const reviewedRating = formatReviewedCardRating(rating, reviewedCardConfig.ratingVariant);
+const cardIdSuffix = slug.replace(/[^a-z0-9_-]/gi, '-');
+const flipInstructionId = `reviewed-card-help-${cardIdSuffix}`;
+const resolvedViewMoreHref = viewMoreHref ?? reviewedCardConfig.viewMoreHref;
+
+const showFrontCover = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'cover');
+const showFrontRating = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'rating') && Boolean(reviewedRating);
+const showFrontTitle = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'title');
+const showFrontAuthor = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'author');
+const showFrontStatus = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'status') && Boolean(statusText);
+const showFrontYear = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'year') && Boolean(year);
+const showFrontMood = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'mood') && Boolean(mood);
+const showFrontTags = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.frontFields, 'tags') && tags.length > 0;
+const showFrontCopy = showFrontTitle || showFrontAuthor || showFrontStatus || showFrontYear || showFrontMood || showFrontTags;
+
+const showBackTitle = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'title');
+const showBackAuthor = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'author');
+const showBackStatus = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'status') && Boolean(statusText);
+const showBackYear = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'year') && Boolean(year);
+const showBackMood = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'mood') && Boolean(mood);
+const showBackRating = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'rating') && Boolean(reviewedRating);
+const showBackTags = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'tags') && tags.length > 0;
+const showBackCta = variant === 'reviewed' && hasReviewedCardField(reviewedCardConfig.backFields, 'cta');
+const showBackMeta = showBackStatus || showBackYear || showBackMood || showBackRating;
 ---
 
-<a href={`/books/${slug}`} class:list={cardClasses}>
-  {variant === 'reviewed' ? (
-    <>
-      <div class="reviewed-card-figure">
-        {shouldUseImage ? (
-          <img
-            src={cover ?? undefined}
-            alt={`Cover of ${title}`}
-            class="book-cover reviewed-book-cover"
-            style={`width: ${coverWidth}; height: ${coverHeight};`}
-            loading="lazy"
-          />
-        ) : (
-          <div class:list={placeholderClasses} style={`background: ${coverGradient}; width: ${coverWidth}; height: ${coverHeight};`}>
-            <span>{title.charAt(0)}</span>
-          </div>
-        )}
-      </div>
-      <div class="book-info reviewed-card-copy">
-        <TitleTag class="reviewed-card-title">{title}</TitleTag>
-        <p class="meta reviewed-card-author">{author}</p>
-        {mood && <p class="mood-line reviewed-card-mood">{mood}</p>}
-        <div class="reviewed-card-line">
-          {displayedRatingText && (
-            <>
-              <span
-                class="reviewed-card-rating"
-                role="img"
-                aria-label={displayedRatingLabel ?? undefined}
-              >
-                {displayedRatingText}
-              </span>
-              <span class="reviewed-card-divider" aria-hidden="true">·</span>
-            </>
+{variant === 'reviewed' ? (
+  <article
+    class:list={cardClasses}
+    data-reviewed-card
+    data-card-title={title}
+    data-flipped="false"
+    data-flip-enabled={String(reviewedCardConfig.enableFlip)}
+  >
+    <div
+      class:list={[
+        'reviewed-card-shell',
+        reviewedCardConfig.enableFlip && 'is-interactive',
+      ]}
+      role={reviewedCardConfig.enableFlip ? 'button' : undefined}
+      tabindex={reviewedCardConfig.enableFlip ? 0 : undefined}
+      aria-pressed={reviewedCardConfig.enableFlip ? 'false' : undefined}
+      aria-label={reviewedCardConfig.enableFlip ? `Show details for ${title}` : undefined}
+      aria-describedby={reviewedCardConfig.enableFlip ? flipInstructionId : undefined}
+      data-reviewed-card-toggle={reviewedCardConfig.enableFlip ? 'true' : undefined}
+    >
+      {reviewedCardConfig.enableFlip && (
+        <span id={flipInstructionId} class="reviewed-card-sr-only">
+          Press Enter or Space to flip this book card.
+        </span>
+      )}
+
+      <div
+        class="reviewed-card-face reviewed-card-face--front"
+        data-reviewed-face="front"
+        aria-hidden="false"
+      >
+        <div class="reviewed-card-surface reviewed-card-surface--front">
+          {showFrontCover && (
+            <div class="reviewed-card-figure reviewed-card-figure--front">
+              {shouldUseImage ? (
+                <img
+                  src={cover ?? undefined}
+                  alt={`Cover of ${title}`}
+                  class="book-cover reviewed-book-cover"
+                  style={`width: ${coverWidth}; height: ${coverHeight};`}
+                  loading="lazy"
+                />
+              ) : (
+                <div
+                  class:list={placeholderClasses}
+                  style={`background: ${coverGradient}; width: ${coverWidth}; height: ${coverHeight};`}
+                >
+                  <span>{title.charAt(0)}</span>
+                </div>
+              )}
+            </div>
           )}
-          <span class="reviewed-card-status">{finishedLabel}</span>
+
+          {(showFrontCopy || showFrontRating) && (
+            <div class="reviewed-card-front-footer">
+              {showFrontCopy && (
+                <div class="reviewed-card-front-copy">
+                  {showFrontTitle && <TitleTag class="reviewed-card-title reviewed-card-title--front">{title}</TitleTag>}
+                  {showFrontAuthor && <p class="reviewed-card-author reviewed-card-author--front">{author}</p>}
+
+                  {(showFrontStatus || showFrontYear || showFrontMood) && (
+                    <p class="reviewed-card-line">
+                      {showFrontStatus && <span class="reviewed-card-status">{statusText}</span>}
+                      {showFrontStatus && (showFrontYear || showFrontMood) && (
+                        <span class="reviewed-card-divider" aria-hidden="true">·</span>
+                      )}
+                      {showFrontYear && <span class="reviewed-card-status">{year}</span>}
+                      {showFrontYear && showFrontMood && (
+                        <span class="reviewed-card-divider" aria-hidden="true">·</span>
+                      )}
+                      {showFrontMood && <span class="reviewed-card-status">{mood}</span>}
+                    </p>
+                  )}
+
+                  {showFrontTags && (
+                    <div class="tag-row reviewed-tag-row reviewed-tag-row--front">
+                      {tags.map((tag) => (
+                        <button
+                          type="button"
+                          class="tag reviewed-card-tag"
+                          data-tag-filter={tag}
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {showFrontRating && reviewedRating && (
+                <span
+                  class="reviewed-card-rating-accent"
+                  role="img"
+                  aria-label={reviewedRating.label}
+                >
+                  {reviewedRating.text}
+                </span>
+              )}
+            </div>
+          )}
         </div>
-        {tags.length > 0 && (
-          <div class="tag-row reviewed-tag-row">
-            {tags.slice(0, 2).map((tag) => (
-              <button
-                type="button"
-                class="tag reviewed-card-tag"
-                data-tag-filter={tag}
-              >
-                {tag}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
-    </>
-  ) : (
-    <>
-      {shouldUseImage ? (
-        <img src={cover ?? undefined} alt={`Cover of ${title}`} class="book-cover" loading="lazy" />
-      ) : (
-        <div class:list={placeholderClasses} style={`background: ${coverGradient}`}>
-          <span>{title.charAt(0)}</span>
+
+      <div
+        class="reviewed-card-face reviewed-card-face--back"
+        data-reviewed-face="back"
+        aria-hidden={reviewedCardConfig.enableFlip ? 'true' : 'false'}
+      >
+        <div class="reviewed-card-surface reviewed-card-surface--back">
+          {(showBackTitle || showBackAuthor) && (
+            <div class="reviewed-card-back-header">
+              {showBackTitle && <TitleTag class="reviewed-card-title">{title}</TitleTag>}
+              {showBackAuthor && <p class="reviewed-card-author">{author}</p>}
+            </div>
+          )}
+
+          {showBackMeta && (
+            <dl class="reviewed-card-meta-grid">
+              {showBackStatus && (
+                <>
+                  <dt>Status</dt>
+                  <dd>{statusText}</dd>
+                </>
+              )}
+
+              {showBackYear && (
+                <>
+                  <dt>Year</dt>
+                  <dd>{year}</dd>
+                </>
+              )}
+
+              {showBackMood && (
+                <>
+                  <dt>Mood</dt>
+                  <dd>{mood}</dd>
+                </>
+              )}
+
+              {showBackRating && reviewedRating && (
+                <>
+                  <dt>Rating</dt>
+                  <dd>
+                    <span role="img" aria-label={reviewedRating.label}>
+                      {reviewedRating.text}
+                    </span>
+                  </dd>
+                </>
+              )}
+            </dl>
+          )}
+
+          {showBackTags && (
+            <div class="reviewed-card-tag-block">
+              <p class="reviewed-card-section-label">Labels</p>
+              <div class="tag-row reviewed-tag-row">
+                {tags.map((tag) => (
+                  <button
+                    type="button"
+                    class="tag reviewed-card-tag"
+                    data-tag-filter={tag}
+                  >
+                    {tag}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {showBackCta && (
+            <div class="reviewed-card-actions">
+              <a href={resolvedViewMoreHref} class="reviewed-card-view-more">View more</a>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  </article>
+) : (
+  <a href={`/books/${slug}`} class:list={cardClasses}>
+    {shouldUseImage ? (
+      <img src={cover ?? undefined} alt={`Cover of ${title}`} class="book-cover" loading="lazy" />
+    ) : (
+      <div class:list={placeholderClasses} style={`background: ${coverGradient}`}>
+        <span>{title.charAt(0)}</span>
+      </div>
+    )}
+    <div class="book-info">
+      <TitleTag>{title}</TitleTag>
+      <p class="meta">{author}</p>
+      {variant === 'reading' && series && (
+        <p class="series-label">{series} #{seriesNumber}</p>
+      )}
+      {(variant === 'reading' || variant === 'dnf') && mood && <p class="mood-line">{mood}</p>}
+      {variant === 'reading' && tags.length > 0 && (
+        <div class="tag-row">
+          {tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
         </div>
       )}
-      <div class="book-info">
-        <TitleTag>{title}</TitleTag>
-        <p class="meta">{author}</p>
-        {variant === 'reading' && series && (
-          <p class="series-label">{series} #{seriesNumber}</p>
-        )}
-        {(variant === 'reading' || variant === 'dnf') && mood && <p class="mood-line">{mood}</p>}
-        {variant === 'reading' && tags.length > 0 && (
-          <div class="tag-row">
-            {tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
-          </div>
-        )}
-      </div>
-    </>
-  )}
-</a>
+    </div>
+  </a>
+)}
 
-<style>
+<style is:global>
   .book-card {
     display: flex;
     gap: var(--space-4);
@@ -181,26 +335,26 @@ const displayedRatingLabel = typeof rating === 'number'
     opacity: 1;
   }
 
-  .book-info h4 {
+  .book-card .book-info h4 {
     font-size: var(--text-md);
     margin-bottom: var(--space-1);
   }
 
-  .meta {
+  .book-card .meta {
     font-size: var(--text-sm);
     color: var(--color-ink-soft);
     font-style: italic;
     margin-bottom: var(--space-1);
   }
 
-  .mood-line {
+  .book-card .mood-line {
     font-style: italic;
     font-size: var(--text-xs);
     color: var(--color-sage-dark);
     margin-bottom: var(--space-2);
   }
 
-  .series-label {
+  .book-card .series-label {
     font-family: var(--font-accent);
     font-size: var(--text-xs);
     letter-spacing: 0.06em;
@@ -209,22 +363,22 @@ const displayedRatingLabel = typeof rating === 'number'
     margin-bottom: var(--space-1);
   }
 
-  .tag-row {
+  .book-card .tag-row {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-1);
   }
 
   .reviewed-card {
-    --reviewed-cover-width: 130px;
-    --reviewed-cover-height: 195px;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--space-4);
-    padding: var(--space-4);
-    min-height: 100%;
+    --reviewed-cover-width: clamp(10.8rem, 41vw, 12.25rem);
+    --reviewed-cover-height: calc(var(--reviewed-cover-width) * 1.5);
+    display: block;
+    height: 100%;
+    padding: 0;
+    overflow: hidden;
     text-align: left;
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transform-origin: center bottom;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   }
 
   .reviewed-card:hover {
@@ -233,15 +387,119 @@ const displayedRatingLabel = typeof rating === 'number'
     border-color: var(--color-gold);
   }
 
+  .reviewed-card-shell {
+    position: relative;
+    display: grid;
+    grid-template-areas: 'stack';
+    min-height: 100%;
+    height: 100%;
+  }
+
+  .reviewed-card-shell.is-interactive {
+    cursor: pointer;
+  }
+
+  .reviewed-card-shell.is-interactive:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 2px rgba(200, 152, 78, 0.42);
+  }
+
+  .reviewed-card-sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .reviewed-card-face {
+    grid-area: stack;
+    min-height: 100%;
+    backface-visibility: hidden;
+    transition: transform 0.52s ease, opacity 0.24s ease;
+    transform-style: preserve-3d;
+    pointer-events: none;
+  }
+
+  .reviewed-card-face--front {
+    opacity: 1;
+    pointer-events: auto;
+    transform: perspective(1200px) rotateY(0deg);
+  }
+
+  .reviewed-card-face--back {
+    opacity: 0;
+    transform: perspective(1200px) rotateY(180deg);
+  }
+
+  .reviewed-card[data-flipped='true'] .reviewed-card-face--front {
+    opacity: 0;
+    pointer-events: none;
+    transform: perspective(1200px) rotateY(-180deg);
+  }
+
+  .reviewed-card[data-flipped='true'] .reviewed-card-face--back {
+    opacity: 1;
+    pointer-events: auto;
+    transform: perspective(1200px) rotateY(0deg);
+  }
+
+  .reviewed-card-shell:not(.is-interactive) {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .reviewed-card-shell:not(.is-interactive) .reviewed-card-face {
+    grid-area: auto;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .reviewed-card-shell:not(.is-interactive) .reviewed-card-face--back {
+    margin-top: var(--space-3);
+  }
+
+  .reviewed-card-surface {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    min-height: 100%;
+    padding: var(--space-4);
+  }
+
+  .reviewed-card-surface--front {
+    justify-content: space-between;
+    background:
+      radial-gradient(circle at top, rgba(200, 152, 78, 0.08), transparent 55%),
+      linear-gradient(180deg, rgba(44, 34, 26, 0.94), rgba(27, 21, 16, 0.98));
+  }
+
+  .reviewed-card-surface--back {
+    background:
+      linear-gradient(180deg, rgba(49, 38, 29, 0.98), rgba(29, 22, 18, 0.98));
+  }
+
   .reviewed-card-figure {
     width: 100%;
     display: flex;
     justify-content: center;
+    align-items: center;
+    min-height: 0;
+  }
+
+  .reviewed-card-figure--front {
+    flex: 1;
+    padding-top: var(--space-2);
   }
 
   .reviewed-book-cover,
   .reviewed-book-cover-placeholder {
-    width: var(--reviewed-cover-width);
+    width: min(100%, var(--reviewed-cover-width));
     height: var(--reviewed-cover-height);
     border: 1px solid rgba(200, 152, 78, 0.14);
     border-radius: var(--radius-sm);
@@ -251,9 +509,25 @@ const displayedRatingLabel = typeof rating === 'number'
 
   .reviewed-book-cover-placeholder {
     font-size: 1.9rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-style: italic;
+    color: white;
   }
 
-  .reviewed-card-copy {
+  .reviewed-card-front-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--space-3);
+    min-height: 2.5rem;
+    width: 100%;
+  }
+
+  .reviewed-card-front-copy {
     display: flex;
     flex-direction: column;
     gap: 0.35rem;
@@ -261,10 +535,18 @@ const displayedRatingLabel = typeof rating === 'number'
     width: 100%;
   }
 
+  .reviewed-card-back-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid rgba(200, 152, 78, 0.14);
+  }
+
   .reviewed-card-title {
     margin: 0;
-    font-size: 1.25rem;
-    line-height: 1.06;
+    font-size: 1.15rem;
+    line-height: 1.08;
     color: var(--color-ink);
     font-style: normal;
     display: -webkit-box;
@@ -273,21 +555,19 @@ const displayedRatingLabel = typeof rating === 'number'
     overflow: hidden;
   }
 
-  .reviewed-card-author {
-    margin: 0;
-    font-style: normal;
+  .reviewed-card-title--front {
+    font-size: 1rem;
   }
 
-  .reviewed-card-mood {
+  .reviewed-card-author {
     margin: 0;
-    font-style: italic;
-    font-size: 0.82rem;
-    line-height: 1.3;
+    font-size: 0.92rem;
     color: var(--color-ink-soft);
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    font-style: italic;
+  }
+
+  .reviewed-card-author--front {
+    font-size: 0.85rem;
   }
 
   .reviewed-card-line {
@@ -296,37 +576,127 @@ const displayedRatingLabel = typeof rating === 'number'
     align-items: center;
     gap: 0.35rem;
     margin: 0;
-    margin-top: auto;
     font-family: var(--font-accent);
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     color: var(--color-ink-soft);
   }
 
-  .reviewed-card-rating {
-    color: var(--color-gold);
-    letter-spacing: 0.14em;
+  .reviewed-card-status {
+    margin: 0;
   }
 
   .reviewed-card-divider {
-    color: rgba(200, 152, 78, 0.6);
+    color: rgba(200, 152, 78, 0.56);
+  }
+
+  .reviewed-card-rating-accent {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: min(100%, var(--reviewed-cover-width));
+    padding: 0.3rem 0.6rem;
+    border: 1px solid rgba(200, 152, 78, 0.28);
+    border-radius: 999px;
+    background: rgba(20, 16, 12, 0.78);
+    color: var(--color-gold);
+    font-family: var(--font-accent);
+    font-size: 0.74rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  }
+
+  .reviewed-card-meta-grid {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.45rem 0.9rem;
+    margin: 0;
+  }
+
+  .reviewed-card-meta-grid dt {
+    margin: 0;
+    font-family: var(--font-accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .reviewed-card-meta-grid dd {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    color: var(--color-cream);
+  }
+
+  .reviewed-card-tag-block {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+  }
+
+  .reviewed-card-section-label {
+    margin: 0;
+    font-family: var(--font-accent);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
   }
 
   .reviewed-tag-row {
-    padding-top: var(--space-2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .reviewed-tag-row--front {
+    padding-top: var(--space-1);
   }
 
   .reviewed-card-tag {
     appearance: none;
     cursor: pointer;
-    transition: color 0.2s ease, border-color 0.2s ease;
+    background: rgba(95, 128, 101, 0.12);
+    color: rgba(154, 191, 158, 0.88);
+    border-color: rgba(95, 128, 101, 0.42);
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
   }
 
   .reviewed-card-tag:hover,
   .reviewed-card-tag:focus-visible {
     color: var(--color-cream);
     border-color: var(--color-gold);
+    background: rgba(200, 152, 78, 0.12);
+    outline: none;
+  }
+
+  .reviewed-card-actions {
+    margin-top: auto;
+    display: flex;
+    justify-content: flex-end;
+    padding-top: var(--space-2);
+    border-top: 1px dotted rgba(200, 152, 78, 0.14);
+  }
+
+  .reviewed-card-view-more {
+    color: var(--color-gold);
+    font-family: var(--font-accent);
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .reviewed-card-view-more:hover,
+  .reviewed-card-view-more:focus-visible {
+    color: var(--color-cream);
+    text-decoration: underline;
+    text-decoration-color: rgba(200, 152, 78, 0.45);
+    text-underline-offset: 0.24em;
     outline: none;
   }
 
@@ -336,13 +706,35 @@ const displayedRatingLabel = typeof rating === 'number'
 
   @media (max-width: 720px) {
     .reviewed-card {
-      --reviewed-cover-width: 100px;
-      --reviewed-cover-height: 150px;
+      --reviewed-cover-width: clamp(9.6rem, 54vw, 10.8rem);
     }
   }
 
   @media (prefers-reduced-motion: reduce) {
+    .reviewed-card {
+      transition: none;
+    }
+
     .reviewed-card:hover {
+      transform: none;
+    }
+
+    .reviewed-card-face {
+      transition: opacity 0.16s ease;
+      transform: none;
+    }
+
+    .reviewed-card-face--back {
+      opacity: 0;
+    }
+
+    .reviewed-card[data-flipped='true'] .reviewed-card-face--front {
+      opacity: 0;
+      transform: none;
+    }
+
+    .reviewed-card[data-flipped='true'] .reviewed-card-face--back {
+      opacity: 1;
       transform: none;
     }
   }

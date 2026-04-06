@@ -4,12 +4,12 @@ import BookCard from '../../components/BookCard.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import SectionDivider from '../../components/SectionDivider.astro';
 import { getCollection } from 'astro:content';
-import { starsHtml, starsLabel } from '../../utils/stars';
 import { bookCoverGradient } from '../../utils/bookColor';
 import { contentSlugFromId } from '../../utils/contentSlug';
+import { normalizeReviewedCardConfig } from '../../utils/reviewedCardConfig';
 
 const allBooks = await getCollection('books');
-const BOOKS_PER_PAGE = 6;
+const BOOKS_PER_PAGE = 4;
 const UNDATED_YEAR = 'Undated';
 const VISIBLE_REVIEWED_TAG_FILTERS = 6;
 const ROMAN_NUMERALS = [
@@ -97,28 +97,36 @@ type ReviewedBook = {
   year: number | 'Undated';
   dateFinished: string | null;
   coverGradient: string;
-  ratingText: string | null;
-  ratingLabel: string | null;
-  finishedLabel: string;
+  statusText: string;
+  viewMoreHref: string;
 };
 
-const reviewedBooksData: ReviewedBook[] = finished.map((book) => ({
-  slug: contentSlugFromId(book.id),
-  title: book.data.title,
-  author: book.data.author,
-  cover: book.data.cover ?? null,
-  rating: book.data.rating ?? null,
-  mood: book.data.mood ?? null,
-  tags: book.data.tags,
-  year: book.data.dateFinished ? book.data.dateFinished.getFullYear() : UNDATED_YEAR,
-  dateFinished: book.data.dateFinished?.toISOString() ?? null,
-  coverGradient: bookCoverGradient(book.data.title),
-  ratingText: book.data.rating ? starsHtml(book.data.rating) : null,
-  ratingLabel: book.data.rating ? starsLabel(book.data.rating) : null,
-  finishedLabel: book.data.dateFinished
-    ? `finished ${book.data.dateFinished.getFullYear()}`
-    : 'finished',
-}));
+const reviewedCardConfig = normalizeReviewedCardConfig({
+  frontFields: ['cover', 'rating'],
+  backFields: ['title', 'author', 'status', 'tags', 'year', 'cta'],
+  enableFlip: true,
+  ratingVariant: 'stars',
+  viewMoreHref: '/books',
+});
+
+const reviewedBooksData: ReviewedBook[] = finished.map((book) => {
+  const slug = contentSlugFromId(book.id);
+
+  return {
+    slug,
+    title: book.data.title,
+    author: book.data.author,
+    cover: book.data.cover ?? null,
+    rating: book.data.rating ?? null,
+    mood: book.data.mood ?? null,
+    tags: book.data.tags,
+    year: book.data.dateFinished ? book.data.dateFinished.getFullYear() : UNDATED_YEAR,
+    dateFinished: book.data.dateFinished?.toISOString() ?? null,
+    coverGradient: bookCoverGradient(book.data.title),
+    statusText: 'Finished',
+    viewMoreHref: `/books/${slug}`,
+  };
+});
 
 const reviewedYearsNumeric = [...new Set(
   reviewedBooksData
@@ -133,6 +141,7 @@ if (reviewedBooksData.some((book) => book.year === UNDATED_YEAR)) {
 }
 
 const reviewedBooksJson = JSON.stringify(reviewedBooksData).replace(/</g, '\\u003c');
+const reviewedCardConfigJson = JSON.stringify(reviewedCardConfig).replace(/</g, '\\u003c');
 // Keep the first shelf server-rendered for no-JS browsing and instant paint.
 // The client script reuses the same data for sorting and pagination afterward.
 const initialReviewedBooks = reviewedBooksData.slice(0, BOOKS_PER_PAGE);
@@ -229,9 +238,9 @@ const showDnfDivider = hasDnf && hasWantToRead;
 
                 {reviewedTags.length > 0 && (
                   <div class="reviewed-filter-block">
-                    <span class="reviewed-filter-label">Mood</span>
-                    <div id="reviewed-tag-pills" class="reviewed-tag-pills" role="group" aria-label="Filter reviewed books by tag">
-                      <button type="button" class="reviewed-pill reviewed-pill--tag is-active" data-tag-filter="all" aria-pressed="true">All moods</button>
+                    <span class="reviewed-filter-label">Labels</span>
+                    <div id="reviewed-tag-pills" class="reviewed-tag-pills" role="group" aria-label="Filter reviewed books by label">
+                      <button type="button" class="reviewed-pill reviewed-pill--tag is-active" data-tag-filter="all" aria-pressed="true">All labels</button>
                       {reviewedTags.map((tag, index) => (
                         <button
                           type="button"
@@ -268,19 +277,6 @@ const showDnfDivider = hasDnf && hasWantToRead;
             </div>
 
             <div id="reviewed-browser" class="reviewed-browser">
-              <button
-                id="reviewed-prev-button"
-                type="button"
-                class="reviewed-side-nav reviewed-side-nav--prev"
-                aria-label="Previous shelf page"
-                aria-controls="reviewed-grid"
-                disabled
-                hidden={initialReviewedPageCount <= 1}
-              >
-                <span class="reviewed-side-nav-symbol" aria-hidden="true">‹</span>
-                <span class="reviewed-side-nav-label">prev</span>
-              </button>
-
               <div id="reviewed-grid" class="book-grid reviewed-grid">
                 {initialReviewedBooks.map((book) => (
                   <BookCard
@@ -290,17 +286,42 @@ const showDnfDivider = hasDnf && hasWantToRead;
                     coverGradient={book.coverGradient}
                     slug={book.slug}
                     variant="reviewed"
-                    mood={book.mood}
                     rating={book.rating}
-                    ratingText={book.ratingText}
-                    ratingLabel={book.ratingLabel}
-                    finishedLabel={book.finishedLabel}
+                    mood={book.mood}
+                    statusText={book.statusText}
                     tags={book.tags}
+                    year={book.year}
+                    viewMoreHref={book.viewMoreHref}
+                    reviewedCardConfig={reviewedCardConfig}
                   />
                 ))}
               </div>
 
               <p id="reviewed-empty" class="reviewed-empty" hidden>No books tucked onto this shelf yet.</p>
+            </div>
+
+            <div
+              id="reviewed-pagination"
+              class="reviewed-pagination"
+            >
+              <button
+                id="reviewed-prev-button"
+                type="button"
+                class="reviewed-side-nav reviewed-side-nav--prev"
+                aria-label="Previous shelf page"
+                aria-controls="reviewed-grid"
+                disabled={initialReviewedPageCount <= 1}
+              >
+                <span class="reviewed-side-nav-symbol" aria-hidden="true">‹</span>
+                <span class="reviewed-side-nav-label">prev</span>
+              </button>
+
+              <p class="reviewed-page-indicator" aria-live="polite" aria-atomic="true">
+                <span class="reviewed-page-indicator-label">page</span>
+                <span id="reviewed-page-indicator-value" class="reviewed-page-indicator-value">
+                  {formatRomanPageCount(1, initialReviewedPageCount)}
+                </span>
+              </p>
 
               <button
                 id="reviewed-next-button"
@@ -309,29 +330,16 @@ const showDnfDivider = hasDnf && hasWantToRead;
                 aria-label="Next shelf page"
                 aria-controls="reviewed-grid"
                 disabled={initialReviewedPageCount <= 1}
-                hidden={initialReviewedPageCount <= 1}
               >
                 <span class="reviewed-side-nav-label">next</span>
                 <span class="reviewed-side-nav-symbol" aria-hidden="true">›</span>
               </button>
             </div>
-
-            <div
-              id="reviewed-pagination"
-              class="reviewed-pagination"
-              hidden={initialReviewedPageCount <= 1}
-            >
-              <p class="reviewed-page-indicator" aria-live="polite" aria-atomic="true">
-                <span class="reviewed-page-indicator-label">page</span>
-                <span id="reviewed-page-indicator-value" class="reviewed-page-indicator-value">
-                  {formatRomanPageCount(1, initialReviewedPageCount)}
-                </span>
-              </p>
-            </div>
           </div>
         </div>
 
         <script id="reviewed-books-data" type="application/json" is:inline set:html={reviewedBooksJson}></script>
+        <script id="reviewed-card-config" type="application/json" is:inline set:html={reviewedCardConfigJson}></script>
         <script src="../../scripts/reviewed-shelf.ts"></script>
       </section>
     )}
@@ -639,7 +647,7 @@ const showDnfDivider = hasDnf && hasWantToRead;
   .reviewed-grid {
     position: relative;
     z-index: 1;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--space-6);
     align-content: start;
     transform-origin: center top;
@@ -651,16 +659,6 @@ const showDnfDivider = hasDnf && hasWantToRead;
     .reviewed-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
-  }
-
-  .reviewed-grid--measure {
-    position: absolute;
-    inset: 0 auto auto 0;
-    visibility: hidden;
-    pointer-events: none;
-    min-height: 0 !important;
-    transform: none !important;
-    transition: none !important;
   }
 
   .reviewed-grid.flipping-out {
@@ -751,7 +749,6 @@ const showDnfDivider = hasDnf && hasWantToRead;
 
   .reviewed-browser {
     position: relative;
-    padding-inline: 3rem;
     min-height: 0;
   }
 
@@ -760,18 +757,15 @@ const showDnfDivider = hasDnf && hasWantToRead;
     z-index: 1;
     margin-top: var(--space-4);
     padding-top: var(--space-4);
-    display: flex;
+    border-top: 1px solid rgba(200, 152, 78, 0.18);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    justify-content: center;
     gap: var(--space-3);
   }
 
   .reviewed-side-nav {
     appearance: none;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 3;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -787,15 +781,15 @@ const showDnfDivider = hasDnf && hasWantToRead;
     padding: 0.4rem 0.85rem;
     cursor: pointer;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease, transform 0.2s ease;
+    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
   }
 
   .reviewed-side-nav--prev {
-    left: 0;
+    justify-self: start;
   }
 
   .reviewed-side-nav--next {
-    right: 0;
+    justify-self: end;
   }
 
   .reviewed-side-nav:hover:not(:disabled),
@@ -803,7 +797,7 @@ const showDnfDivider = hasDnf && hasWantToRead;
     color: var(--color-cream);
     border-color: var(--color-gold);
     outline: none;
-    transform: translateY(-50%) scale(1.02);
+    background: rgba(40, 31, 22, 0.82);
   }
 
   .reviewed-side-nav:disabled {
@@ -847,21 +841,6 @@ const showDnfDivider = hasDnf && hasWantToRead;
     .reviewed-sort-group {
       margin-left: 0;
     }
-
-    .reviewed-browser {
-      padding-inline: 2.5rem;
-    }
-
-    .reviewed-side-nav {
-      top: auto;
-      bottom: 100%;
-      transform: none;
-    }
-
-    .reviewed-side-nav:hover:not(:disabled),
-    .reviewed-side-nav:focus-visible {
-      transform: scale(1.02);
-    }
   }
 
   @media (max-width: 720px) {
@@ -879,23 +858,8 @@ const showDnfDivider = hasDnf && hasWantToRead;
       gap: var(--space-4);
     }
 
-    .reviewed-side-nav {
-      position: static;
-      transform: none;
-      margin-top: var(--space-3);
-      width: calc(50% - var(--space-2));
-    }
-
-    .reviewed-side-nav:hover:not(:disabled),
-    .reviewed-side-nav:focus-visible {
-      transform: none;
-    }
-
-    .reviewed-browser {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-3);
-      padding-inline: 0;
+    .reviewed-pagination {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .reviewed-grid,
@@ -904,6 +868,7 @@ const showDnfDivider = hasDnf && hasWantToRead;
     }
 
     .reviewed-page-indicator {
+      grid-column: 1 / -1;
       justify-content: center;
     }
   }
@@ -916,11 +881,6 @@ const showDnfDivider = hasDnf && hasWantToRead;
     .reviewed-grid.flipping-out,
     .reviewed-grid.flipping-in {
       opacity: 1;
-      transform: none;
-    }
-
-    .reviewed-side-nav:hover:not(:disabled),
-    .reviewed-side-nav:focus-visible {
       transform: none;
     }
   }

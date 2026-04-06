@@ -13,6 +13,16 @@ canvas[data-volatile] {
   visibility: hidden !important;
 }
 
+.quote-widget {
+  height: 12rem !important;
+  min-height: 12rem !important;
+  overflow: hidden !important;
+}
+
+.quote-widget * {
+  visibility: hidden !important;
+}
+
 html {
   scroll-behavior: auto !important;
 }

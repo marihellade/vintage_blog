@@ -36,3 +36,20 @@ test('books filters update without layout damage', async ({ page }) => {
     await expect(page.locator('.reviewed-section')).toHaveScreenshot('books-filtered-by-year.png');
   }
 });
+
+test('reviewed card flips with keyboard access', async ({ page }) => {
+  await page.goto('/books');
+  await page.fonts?.ready;
+  await page.waitForLoadState('networkidle');
+
+  const firstCard = page.locator('[data-reviewed-card]').first();
+  await firstCard.scrollIntoViewIfNeeded();
+
+  const cardToggle = firstCard.locator('[data-reviewed-card-toggle]');
+  await cardToggle.focus();
+  await page.keyboard.press('Enter');
+
+  await expect(firstCard).toHaveAttribute('data-flipped', 'true');
+  await expect(firstCard.locator('.reviewed-card-view-more')).toBeVisible();
+  await expect(firstCard).toHaveScreenshot('books-reviewed-card-flipped.png');
+});
