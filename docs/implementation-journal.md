@@ -30,3 +30,33 @@ Phase 1 removed a few high-impact sources of drag without changing the site's pe
 ### Notes
 - `npx astro check` is not yet available in the repo because `@astrojs/check` is not installed; that stays aligned with the roadmap and will be addressed in a later phase
 - The working tree still contains unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore`; they were left untouched
+
+## Phase 2 — Content architecture completion
+
+### Intent
+Phase 2 gave the travel and recipe collections the same scalable shape as the books collection: lightweight index pages for browsing, dedicated detail routes for full entries, and documentation that explains the new authoring flow clearly.
+
+### Work completed
+- Added `src/pages/travel/[slug].astro` with a static path per travel entry and a full detail layout for destination, date, mood, highlights, tags, and markdown body
+- Reworked `src/pages/travel/index.astro` from inline markdown rendering to linked summary cards with thumbnails, metadata, highlight previews, and entry links
+- Added `src/pages/recipes/[slug].astro` with a static path per recipe entry and a full detail layout for source, rating, make-again status, tags, and markdown body
+- Reworked `src/pages/recipes/index.astro` into linked summary cards and aligned recipe star rendering with the shared rating helper
+- Updated `docs/how-to-edit-content.md` so it now explains that travel and recipe entries automatically create both an index card and an individual page
+
+### Validation
+- Ran `npm run build` after the travel slice, after the recipe slice, after the docs update, and again in the final acceptance pass
+- Verified the build now generates `/travel/sample-trip/` and `/recipes/rosemary-focaccia/`
+- Confirmed the travel and recipe index pages no longer call `render()` for inline entry bodies
+- Confirmed the built index pages link to the new detail routes
+
+### Git
+- Branch: `feature/travel-recipe-detail-pages`
+- Key commits:
+  - `2211652` `feat: add travel detail pages`
+  - `6e06e02` `feat: add recipe detail pages`
+  - `e99fbf6` `docs: update content editing guide`
+- Merge result: merged into `main` with `merge: complete phase 2 content architecture`
+
+### Notes
+- The phase intentionally kept the homepage feature cards unchanged; the roadmap only required the travel and recipe collection architecture to be completed
+- The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
