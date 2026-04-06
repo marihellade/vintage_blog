@@ -95,3 +95,37 @@ Phase 3 moved the project onto a current Astro release while preserving the exis
 ### Notes
 - Astro 6 still reports non-blocking hints in `src/pages/books/index.astro` and a deprecation hint for `z.string().url()` in `src/content/config.ts`; these did not block `astro check` or the build
 - The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
+
+## Phase 4 — Code organisation refactor
+
+### Intent
+Phase 4 reduced layout sprawl, made the repo easier to maintain, added the lightweight check command the roadmap called for, and centralised the repeated interface colours that were starting to drift across pages.
+
+### Work completed
+- Extracted `src/components/DecorativeTrees.astro` from `BaseLayout.astro` so the fixed page-edge illustration now lives in its own component
+- Extracted `src/components/RightSidebar.astro` so the season, tea, updates, and yearly books widgets no longer live inside the base layout
+- Shrunk `src/layouts/BaseLayout.astro` to a small shell component that composes the header, decorative trees, sidebars, cursor, main content, and footer
+- Added `"check": "astro check"` to `package.json`
+- Updated `README.md` and `docs/how-to-run.md` to document the new validation command and the new layout/component split
+- Added new interface colour and gradient tokens in `src/styles/tokens.css` and replaced repeated UI hex values across the global styles, cursor, homepage, book pages, plant page, travel page, recipe page, footer, and sidebar
+- Kept the books reviewed shelf server-rendered by design and added an explicit code comment explaining that the client script enhances the same data for sorting and pagination rather than replacing the no-JS render
+- Reduced the Phase 3 Astro hints from the books page by adding the explicit inline JSON script hint and TypeScript annotations in the reviewed shelf client script
+
+### Validation
+- Ran `npm run check`; result: `0 errors`, `0 warnings`, `1 hint`
+- Ran `npm run build`; result: passed and generated 18 static pages
+- Confirmed `src/layouts/BaseLayout.astro` is now 100 lines
+- Confirmed the remaining hardcoded hex values in the touched UI files now live in `src/styles/tokens.css`
+
+### Git
+- Branch: `refactor/code-organisation`
+- Key commits:
+  - `8ed47f2` `refactor: extract base layout side elements`
+  - `70762d8` `chore: add astro check workflow`
+  - `29cb69a` `refactor: centralize interface colors`
+- Merge result: merged into `main` with `merge: complete phase 4 code organisation`
+
+### Notes
+- The roadmap’s “no hardcoded hex colours outside tokens.css” goal was adapted to repeated interface colours. Illustration-heavy SVG palettes in files like `src/components/DecorativeTrees.astro` and `src/components/Header.astro` remain local because they function more like artwork than reusable UI tokens
+- One non-blocking Astro hint remains in `src/content/config.ts` for the deprecated `z.string().url()` helper
+- The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
