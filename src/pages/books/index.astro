@@ -85,6 +85,8 @@ if (reviewedBooksData.some((book) => book.year === UNDATED_YEAR)) {
 }
 
 const reviewedBooksJson = JSON.stringify(reviewedBooksData).replace(/</g, '\\u003c');
+// Keep the first shelf server-rendered for no-JS browsing and instant paint.
+// The client script reuses the same data for sorting and pagination afterward.
 const initialReviewedBooks = reviewedBooksData.slice(0, BOOKS_PER_PAGE);
 const initialReviewedPageCount = Math.ceil(reviewedBooksData.length / BOOKS_PER_PAGE);
 
@@ -262,8 +264,23 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
             &gt;
           </button>
         </nav>
-        <script id="reviewed-books-data" type="application/json" set:html={reviewedBooksJson}></script>
+        <script id="reviewed-books-data" type="application/json" is:inline set:html={reviewedBooksJson}></script>
         <script>
+          type ReviewedBook = {
+            slug: string;
+            title: string;
+            author: string;
+            cover: string | null;
+            rating: number | null;
+            mood: string | null;
+            tags: string[];
+            year: number | 'Undated';
+            dateFinished: string | null;
+            coverGradient: string;
+            ratingText: string | null;
+            ratingLabel: string | null;
+          };
+
           const initReviewedBooks = () => {
             const dataElement = document.querySelector('#reviewed-books-data');
             const grid = document.querySelector('#reviewed-grid');
@@ -284,23 +301,23 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
             let currentPage = 1;
             let renderVersion = 0;
 
-            const books = JSON.parse(dataElement.textContent || '[]');
+            const books = JSON.parse(dataElement.textContent || '[]') as ReviewedBook[];
 
-            const escapeHtml = (value) => String(value)
+            const escapeHtml = (value: string | number | null | undefined) => String(value ?? '')
               .replaceAll('&', '&amp;')
               .replaceAll('<', '&lt;')
               .replaceAll('>', '&gt;')
               .replaceAll('"', '&quot;')
               .replaceAll("'", '&#39;');
 
-            const starsForRating = (rating) => {
+            const starsForRating = (rating: number) => {
               const full = Math.floor(rating);
               const half = rating % 1 >= 0.5 ? 1 : 0;
               const empty = 5 - full - half;
               return '✦'.repeat(full) + (half ? '✩' : '') + '✧'.repeat(empty);
             };
 
-            const compareByDate = (a, b) => {
+            const compareByDate = (a: ReviewedBook, b: ReviewedBook) => {
               const aTime = a.dateFinished ? new Date(a.dateFinished).getTime() : null;
               const bTime = b.dateFinished ? new Date(b.dateFinished).getTime() : null;
 
@@ -317,7 +334,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               return a.title.localeCompare(b.title);
             };
 
-            const compareByRating = (a, b) => {
+            const compareByRating = (a: ReviewedBook, b: ReviewedBook) => {
               const aRating = typeof a.rating === 'number' ? a.rating : Number.NEGATIVE_INFINITY;
               const bRating = typeof b.rating === 'number' ? b.rating : Number.NEGATIVE_INFINITY;
 
@@ -328,7 +345,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               return compareByDate(a, b);
             };
 
-            const renderCard = (book) => {
+            const renderCard = (book: ReviewedBook) => {
               const firstLetter = escapeHtml((book.title || '').charAt(0) || '?');
               const coverMarkup = book.cover
                 ? `<img src="${escapeHtml(book.cover)}" alt="Cover of ${escapeHtml(book.title)}" class="book-cover" loading="lazy" />`
@@ -341,7 +358,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
                 : '';
               const tagMarkup = (book.tags || [])
                 .slice(0, 3)
-                .map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`)
+                .map((tag: string) => `<span class="tag">${escapeHtml(tag)}</span>`)
                 .join('');
 
               return `
@@ -358,7 +375,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               `;
             };
 
-            const wait = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
+            const wait = (duration: number) => new Promise((resolve) => window.setTimeout(resolve, duration));
             const nextFrame = () => new Promise((resolve) => requestAnimationFrame(() => requestAnimationFrame(resolve)));
 
             const updateControls = () => {
@@ -383,7 +400,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               });
             };
 
-            const updatePagination = (totalPages) => {
+            const updatePagination = (totalPages: number) => {
               if (totalPages <= 1) {
                 pagination.hidden = true;
                 pagination.innerHTML = '';
@@ -436,7 +453,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
               const filteredBooks = currentYear === 'all'
                 ? books
-                : books.filter((book) => String(book.year) === currentYear);
+                : books.filter((book: ReviewedBook) => String(book.year) === currentYear);
               const sortedBooks = [...filteredBooks].sort(currentSort === 'rating' ? compareByRating : compareByDate);
               const totalPages = Math.max(1, Math.ceil(sortedBooks.length / booksPerPage));
 
@@ -842,24 +859,24 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     white-space: nowrap;
   }
   .status-badge.reading {
-    background: #3A1810;
+    background: var(--color-badge-reading);
     color: var(--color-terracotta);
   }
   .status-badge.finished {
-    background: #1A301A;
+    background: var(--color-badge-finished);
     color: var(--color-sage-dark);
   }
   .status-badge.dnf {
-    background: #2A1A06;
-    color: #D4953A;
+    background: var(--color-badge-dnf);
+    color: var(--color-badge-dnf-text);
   }
   .status-badge.want-to-read {
-    background: #2A1E08;
+    background: var(--color-badge-want);
     color: var(--color-gold);
   }
 
   .book-cover-placeholder.dnf {
-    background: linear-gradient(135deg, #6A3A10, #3A2006);
+    background: var(--gradient-dnf-cover);
     opacity: 1;
   }
   .dnf-card { opacity: 0.8; }

@@ -21,6 +21,22 @@ Then open [http://localhost:4321](http://localhost:4321) in your browser.
 - [Personal style guide](docs/personal-style-agent.md)
 - [Style evolution notes](docs/style-notes.md)
 
+## Checks
+
+Run these before shipping changes:
+
+```bash
+npm run check
+npm run build
+```
+
+## Project structure
+
+- `src/layouts/BaseLayout.astro` keeps the page shell small and readable.
+- `src/components/DecorativeTrees.astro` holds the fixed page-edge illustration.
+- `src/components/RightSidebar.astro` holds the right-hand widgets.
+- `src/content/` contains the editable Markdown collections.
+
 ## Site sections
 
 - **Book Diary** — reading log, series tracker, reviews

@@ -16,7 +16,6 @@ const allRecipes = await getCollection('recipes');
 
 const currentlyReading = allBooks.filter(b => b.data.status === 'reading');
 const featuredBook     = allBooks.find(b => b.data.featured && b.data.status === 'finished');
-const recentBooks      = allBooks.filter(b => b.data.status === 'finished').slice(0, 3);
 const featuredPlant    = allPlants.find(p => p.data.featured);
 const featuredTravel   = allTravel.find(t => t.data.featured);
 const featuredRecipe   = allRecipes.find(r => r.data.featured);
@@ -188,7 +187,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   }
   .welcome-card {
     padding: var(--space-6);
-    background: linear-gradient(160deg, #1E1812 0%, #181310 100%);
+    background: var(--gradient-surface-card-soft);
     border-radius: var(--radius-md);
     text-align: center;
   }

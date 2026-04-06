@@ -215,7 +215,7 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
     background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
   }
   .plant-photo-placeholder.vegetable {
-    background: linear-gradient(135deg, #4A7A3A, #2A5520);
+    background: var(--gradient-vegetable-cover);
   }
 
   .plant-info h4 { margin-bottom: var(--space-1); }
@@ -237,10 +237,10 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
     margin-bottom: var(--space-2);
   }
   .status-pill.thriving  { background: var(--color-sage-light); color: var(--color-forest); }
-  .status-pill.growing   { background: #D4E8C2; color: var(--color-sage-dark); }
-  .status-pill.recovering { background: #FDE8C4; color: #8B6914; }
+  .status-pill.growing   { background: var(--color-status-growing); color: var(--color-sage-dark); }
+  .status-pill.recovering { background: var(--color-status-recovering); color: var(--color-status-recovering-text); }
   .status-pill.dramatic  { background: var(--color-terracotta-light); color: var(--color-terracotta); }
-  .status-pill.babying   { background: #F3D9E8; color: #9B4D7A; }
+  .status-pill.babying   { background: var(--color-status-babying); color: var(--color-status-babying-text); }
 
   .location {
     font-size: var(--text-xs);
