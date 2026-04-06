@@ -167,6 +167,36 @@ Phase 5 added the roadmap’s next layer of personality and usability polish: be
 - The same non-blocking Astro hint remains in `src/content/config.ts` for the deprecated `z.string().url()` helper
 - The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
 
+## Phase 6 — Book diary editorial shelf pass
+
+### Intent
+Phase 6 re-composed the Book Diary reviewed shelf so it feels more like a candlelit editorial catalogue and less like a utilitarian card grid, while preserving the page’s existing handmade literary atmosphere.
+
+### Work completed
+- Added the planning artefact at `docs/ignored/book-diary-editorial-shelf-plan.md` with the redesign council diagnosis, synthesis, risk register, and acceptance checklist
+- Reworked the reviewed section in `src/pages/books/index.astro` into a framed shelf treatment with a folio-style page indicator and a more atmospheric section note
+- Redesigned the reviewed cards to use smaller figurative book covers, stronger title/author hierarchy, a compact rating-and-status line, a roomier mood note, and quieter tags
+- Replaced the old bottom pagination row with always-visible side-mounted previous/next shelf controls and a Roman numeral page count
+- Moved mood filtering into an accessible plus-style reveal while keeping year and sort controls visible
+- Preserved the existing progressive enhancement model so the first reviewed shelf still renders on the server and the client script enhances filtering, sorting, paging, and state updates
+
+### Validation
+- Ran `npm run check` after the redesign pass and after the final accessibility polish; result: `0 errors`, `0 warnings`, `1 hint`
+- Ran `npm run build` after the redesign pass and after the final accessibility polish; result: passed and generated 20 static pages
+- Confirmed the built `/books/` output now contains the folio indicator, side-mounted shelf controls, the plus-style mood reveal, and the updated reviewed card structure
+
+### Git
+- Branch: `feature/book-diary-editorial-shelf-pass`
+- Key commits:
+  - `108883d` `docs: add book diary editorial shelf redesign plan`
+  - `0eca30b` `feat: redesign book diary reviewed shelf`
+
+### Notes
+- The reviewed shelf now reads more clearly as a curated catalogue without changing how book content is authored; all book edits still happen in `src/content/books/`
+- The no-JS experience remains intentionally lightweight: the first reviewed page renders meaningfully on the server, while filtering and paging stay client-enhanced rather than becoming a URL/query-param system
+- The same non-blocking Astro hint remains in `src/content/config.ts` for the deprecated `z.string().url()` helper
+- The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
+
 ## Final Snapshot
 
 ### Completed phases
@@ -175,9 +205,10 @@ Phase 5 added the roadmap’s next layer of personality and usability polish: be
 - Phase 3 — Astro upgrade
 - Phase 4 — Code organisation refactor
 - Phase 5 — Selective delight and expansion
+- Phase 6 — Book diary editorial shelf pass
 
 ### Repo-level impact
-- The site now has clean travel and recipe detail routes, a current Astro version, a smaller and more maintainable layout structure, a built-in `npm run check` command, filterable reviewed books, gentler cursor behavior, richer collection pages, and two new personal pages
+- The site now has clean travel and recipe detail routes, a current Astro version, a smaller and more maintainable layout structure, a built-in `npm run check` command, richer collection pages, two new personal pages, and a redesigned Book Diary shelf with editorial card hierarchy, side-mounted navigation, and a progressive mood-filter reveal
 
 ### Validation summary
 - Final repo validation: `npm run check` passed with `0 errors`, `0 warnings`, `1 hint`
@@ -188,5 +219,5 @@ Phase 5 added the roadmap’s next layer of personality and usability polish: be
 - Consider adding a dedicated gallery / cute-things page if the site wants another round of personality-focused expansion
 
 ### Manual review suggestions
-- Give the updated plant, travel, and recipe index pages a quick visual pass on desktop and mobile
+- Give the updated Book Diary reviewed shelf a quick visual pass on desktop and mobile, especially the side controls and filter reveal
 - Click through the new `/now/` and `/links/` routes to confirm the tone and content feel right for the owner
