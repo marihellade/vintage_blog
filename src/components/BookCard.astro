@@ -100,7 +100,15 @@ const displayedRatingLabel = typeof rating === 'number'
         </div>
         {tags.length > 0 && (
           <div class="tag-row reviewed-tag-row">
-            {tags.slice(0, 2).map((tag) => <span class="tag">{tag}</span>)}
+            {tags.slice(0, 2).map((tag) => (
+              <button
+                type="button"
+                class="tag reviewed-card-tag"
+                data-tag-filter={tag}
+              >
+                {tag}
+              </button>
+            ))}
           </div>
         )}
       </div>
@@ -307,6 +315,19 @@ const displayedRatingLabel = typeof rating === 'number'
 
   .reviewed-tag-row {
     padding-top: var(--space-2);
+  }
+
+  .reviewed-card-tag {
+    appearance: none;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .reviewed-card-tag:hover,
+  .reviewed-card-tag:focus-visible {
+    color: var(--color-cream);
+    border-color: var(--color-gold);
+    outline: none;
   }
 
   .dnf-card {

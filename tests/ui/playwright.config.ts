@@ -19,7 +19,7 @@ export default defineConfig({
     toHaveScreenshot: {
       animations: 'disabled',
       maxDiffPixels: 150,
-      stylePath: './tests/ui/screenshot.css'
+      stylePath: './screenshot.css'
     }
   },
   webServer: {
