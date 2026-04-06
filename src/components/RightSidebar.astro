@@ -1,0 +1,167 @@
+---
+import TeaIcon from './icons/TeaIcon.astro';
+import StarIcon from './icons/StarIcon.astro';
+import SproutIcon from './icons/SproutIcon.astro';
+---
+
+<aside class="right-sidebar">
+  <slot />
+
+  <div class="widget-box">
+    <h4 class="widget-title"><SproutIcon class="icon-sm" /> This Season</h4>
+    <p class="season-text">
+      Autumn light through the window. Books piling up on the nightstand.
+      The garden is going golden and the air smells like woodsmoke and old leaves.
+    </p>
+  </div>
+
+  <div class="widget-box tea-widget">
+    <div class="tea-row">
+      <TeaIcon class="icon-lg" />
+      <p class="tea-text">tea count today: <strong>3</strong></p>
+    </div>
+    <div class="mini-stars" aria-hidden="true">
+      <StarIcon delay={1} />
+      <StarIcon delay={2} />
+      <StarIcon delay={3} />
+    </div>
+  </div>
+
+  <div class="widget-box">
+    <h4 class="widget-title"><span class="widget-icon" aria-hidden="true">❧</span> Site Updates</h4>
+    <ul class="updates-list">
+      <li><span class="update-date">Mar 2026</span> site launched!</li>
+      <li><span class="update-date">Mar 2026</span> book diary & plant journal added</li>
+      <li><span class="update-date">Mar 2026</span> recipe box opened</li>
+    </ul>
+  </div>
+
+  <div class="widget-box hit-counter-widget">
+    <p class="hit-counter">
+      <span class="hit-label">Books Read in 2026</span>
+      <span class="hit-digits">007</span>
+    </p>
+  </div>
+</aside>
+
+<style>
+  .right-sidebar .widget-title {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: var(--text-sm);
+  }
+
+  .right-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .season-text {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    line-height: 1.6;
+    max-width: none;
+    margin: 0;
+  }
+
+  .updates-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+  }
+
+  .updates-list li {
+    padding: var(--space-2) 0;
+    border-bottom: 1px dotted var(--color-gold-light);
+    color: var(--color-ink-soft);
+    margin: 0;
+  }
+
+  .updates-list li:last-child {
+    border-bottom: none;
+  }
+
+  .update-date {
+    font-family: var(--font-body);
+    font-weight: 600;
+    color: var(--color-terracotta);
+    margin-right: var(--space-2);
+  }
+
+  .tea-widget {
+    text-align: center;
+  }
+
+  .tea-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-3);
+  }
+
+  .tea-text {
+    font-family: var(--font-body);
+    font-style: normal;
+    font-size: var(--text-sm);
+    color: var(--color-ink-soft);
+    margin: 0;
+    max-width: none;
+  }
+
+  .tea-text strong {
+    color: var(--color-terracotta);
+    font-size: var(--text-md);
+  }
+
+  .mini-stars {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-1);
+    margin-top: var(--space-2);
+  }
+
+  .hit-counter-widget {
+    text-align: center;
+  }
+
+  .hit-counter {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-1);
+    margin: 0;
+  }
+
+  .hit-label {
+    font-family: var(--font-body);
+    font-size: var(--text-sm);
+    letter-spacing: 0;
+    text-transform: none;
+    color: var(--color-gold);
+  }
+
+  .hit-digits {
+    font-family: 'Courier New', monospace;
+    font-size: var(--text-md);
+    letter-spacing: 0.2em;
+    color: var(--color-sage-dark);
+    background: var(--color-parchment);
+    border: 1px solid var(--color-gold-light);
+    padding: var(--space-1) var(--space-3);
+    border-radius: var(--radius-sm);
+  }
+
+  @media (max-width: 900px) {
+    .right-sidebar {
+      order: 3;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--space-4);
+    }
+  }
+</style>
