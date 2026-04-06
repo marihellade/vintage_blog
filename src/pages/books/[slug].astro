@@ -97,7 +97,7 @@ const statusLabels: Record<string, string> = {
     <div class="book-sections">
 
       <section class="book-section-panel">
-        <h3 class="panel-title">✎ Thoughts whilst reading</h3>
+        <h2 class="panel-title">✎ Thoughts whilst reading</h2>
         {d.thoughts ? (
           <div class="panel-body thoughts-body">
             {d.thoughts.split('\n').filter((l: string) => l.trim()).map((para: string) => (
@@ -110,7 +110,7 @@ const statusLabels: Record<string, string> = {
       </section>
 
       <section class="book-section-panel">
-        <h3 class="panel-title">✦ Review</h3>
+        <h2 class="panel-title">✦ Review</h2>
         <div class="panel-body review-body">
           <Content />
         </div>

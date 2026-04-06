@@ -28,7 +28,7 @@ const sorted = allRecipes.sort((a, b) => {
           <article class="recipe-entry card">
             <div class="recipe-header">
               <div>
-                <h3>{recipe.data.title}</h3>
+                <h2>{recipe.data.title}</h2>
                 <div class="recipe-meta">
                   {recipe.data.source && (
                     <span class="source">
@@ -108,7 +108,7 @@ const sorted = allRecipes.sort((a, b) => {
     flex-wrap: wrap;
   }
 
-  .recipe-header h3 {
+  .recipe-header h2 {
     color: var(--color-ink);
     margin-bottom: var(--space-1);
   }

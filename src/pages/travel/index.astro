@@ -30,7 +30,7 @@ const sorted = allTravel.sort((a, b) => {
               <img src={trip.data.cover} alt={trip.data.destination} class="travel-cover" loading="lazy" />
             )}
             <div class="travel-content">
-              <h3>{trip.data.title}</h3>
+              <h2>{trip.data.title}</h2>
               <div class="travel-meta">
                 <span class="destination">{trip.data.destination}</span>
                 {trip.data.date && (
@@ -97,7 +97,7 @@ const sorted = allTravel.sort((a, b) => {
     width: calc(100% + var(--space-6) * 2);
   }
 
-  .travel-content h3 {
+  .travel-content h2 {
     color: var(--color-ink);
     margin-bottom: var(--space-2);
   }

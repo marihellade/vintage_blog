@@ -44,7 +44,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   <!-- Currently reading banner -->
   {currentlyReading.length > 0 && (
     <section class="currently-banner">
-      <h3 class="section-title"><BookIcon /> Currently Reading</h3>
+      <h2 class="section-title"><BookIcon /> Currently Reading</h2>
       <div class="currently-grid">
         {currentlyReading.map(book => (
           <a href={`/books/${book.slug}`} class="card currently-card">
@@ -77,7 +77,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   <!-- Featured book review -->
   {featuredBook && (
     <section class="featured-section">
-      <h3 class="section-title"><BookIcon /> In My Book Library</h3>
+      <h2 class="section-title"><BookIcon /> In My Book Library</h2>
       <div class="card featured-book-card">
         <div class="featured-book-layout">
           <div class="featured-cover">
@@ -112,7 +112,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
   <div class="two-col-grid">
     {featuredTravel && (
       <section class="featured-section">
-        <h3 class="section-title">Wanderings</h3>
+        <h2 class="section-title">Wanderings</h2>
         <div class="card">
           <h4><a href="/travel">{featuredTravel.data.title}</a></h4>
           <p class="meta">{featuredTravel.data.destination}</p>
@@ -129,7 +129,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
 
     {featuredRecipe && (
       <section class="featured-section">
-        <h3 class="section-title">From the Recipe Box</h3>
+        <h2 class="section-title">From the Recipe Box</h2>
         <div class="card">
           <h4><a href="/recipes">{featuredRecipe.data.title}</a></h4>
           {featuredRecipe.data.rating && (
@@ -150,7 +150,7 @@ const featuredRecipe   = allRecipes.find(r => r.data.featured);
     <>
       <hr class="fancy" />
       <section class="featured-section">
-        <h3 class="section-title"><SproutIcon class="icon-sm" /> From the Garden</h3>
+        <h2 class="section-title"><SproutIcon class="icon-sm" /> From the Garden</h2>
         <div class="card plant-feature-card">
           <h4><a href="/plants">{featuredPlant.data.name}</a></h4>
           {featuredPlant.data.botanicalName && <p class="meta"><em>{featuredPlant.data.botanicalName}</em></p>}
