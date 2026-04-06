@@ -47,6 +47,16 @@ npm run build
 
 This creates a `dist/` folder with all the HTML, CSS, and images.
 
+## Run the built-in checks
+
+Before committing or deploying, run:
+
+```bash
+npm run check
+```
+
+This runs Astro's diagnostics pass and helps catch content or template mistakes early.
+
 ## Preview the production build
 
 ```bash
