@@ -5,5 +5,6 @@ cover: "/images/books/IronFlame.jpg"
 status: reading
 series: "The Empyrean"
 seriesNumber: 2
-tags: ["fantasy", "romance", "ebook"]
+tags: ["fantasy", "romance"]
+format: ["e-book"]
 ---

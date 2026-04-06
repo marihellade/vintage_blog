@@ -77,6 +77,12 @@ const statusLabels: Record<string, string> = {
               {d.tags.map(tag => <span class="tag">{tag}</span>)}
             </div>
           )}
+
+          {d.format.length > 0 && (
+            <div class="format-row">
+              {d.format.map(f => <span class="format-badge">{f.replace('-', ' ')}</span>)}
+            </div>
+          )}
         </div>
       </div>
     </header>
@@ -230,6 +236,25 @@ const statusLabels: Record<string, string> = {
     display: flex;
     flex-wrap: wrap;
     gap: var(--space-2);
+  }
+
+  .format-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-2);
+  }
+
+  .format-badge {
+    font-family: var(--font-accent);
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 2px var(--space-2);
+    border-radius: 999px;
+    background: #1A1A2E;
+    color: #B8A9C9;
+    border: 1px solid rgba(184, 169, 201, 0.25);
   }
 
   /* --- Quote --- */

@@ -9,7 +9,7 @@ const books = defineCollection({
   schema: z.object({
     title: z.string(),
     author: z.string(),
-    cover: z.string().optional(),          // path like /images/books/fourth-wing.jpg
+    cover: z.string().optional(),            // path like /images/books/fourth-wing.jpg
     rating: z.number().min(0.5).max(5).multipleOf(0.5).optional(),
     dateStarted: z.coerce.date().optional(),
     dateFinished: z.coerce.date().optional(),
@@ -20,6 +20,7 @@ const books = defineCollection({
     favouriteQuote: z.string().optional(),
     thoughts: z.string().optional(),       // notes whilst reading, before review
     mood: z.string().optional(),           // e.g. "fae courts, slow burn, devastating"
+    format: z.array(z.enum(['e-book', 'kindle-unlimited', 'library-book', 'audiobook', 'physical-book', 'owned'])).default([]),
     tags: z.array(z.string()).default([]),
     featured: z.boolean().default(false),
   }),
