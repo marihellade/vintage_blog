@@ -6,13 +6,16 @@
     "dev": "astro dev",
     "check": "astro check",
     "build": "astro build",
-    "preview": "astro preview"
+    "preview": "astro preview",
+    "ui:review": "playwright test -c tests/ui/playwright.config.ts",
+    "ui:review:update": "playwright test -c tests/ui/playwright.config.ts --update-snapshots"
   },
   "dependencies": {
     "astro": "^6.1.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
+    "@playwright/test": "^1.59.1",
     "typescript": "^5.9.3"
   }
 }

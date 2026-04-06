@@ -1,0 +1,18 @@
+/* Hide unstable or non-essential motion/noise during visual review */
+*,
+*::before,
+*::after {
+  caret-color: transparent !important;
+}
+
+[data-debug],
+[data-dev-overlay],
+iframe,
+video,
+canvas[data-volatile] {
+  visibility: hidden !important;
+}
+
+html {
+  scroll-behavior: auto !important;
+}
