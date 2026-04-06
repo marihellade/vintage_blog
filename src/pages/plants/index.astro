@@ -9,6 +9,7 @@ const vegetables = active.filter(p => p.data.category === 'vegetable');
 const general    = active.filter(p => p.data.category !== 'native' && p.data.category !== 'vegetable');
 const wishlist   = allPlants.filter(p => p.data.status === 'wishlist');
 const rip        = allPlants.filter(p => p.data.status === 'rip');
+const dramatic   = active.filter((plant) => ['recovering', 'dramatic', 'babying'].includes(plant.data.status));
 ---
 
 <BaseLayout title="Plant Journal" description="Everything growing (or dramatically not growing) in Marihella's garden.">
@@ -21,8 +22,27 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
       </p>
     </header>
 
+    <section class="garden-notes" aria-label="Garden notes">
+      <article class="garden-note card">
+        <p class="garden-note-label">Currently tending</p>
+        <p class="garden-note-value">{active.length}</p>
+        <p class="garden-note-copy">pots, beds, herbs, and whatever volunteered itself into a corner</p>
+      </article>
+      <article class="garden-note card">
+        <p class="garden-note-label">Most dramatic patch</p>
+        <p class="garden-note-value">{dramatic.length}</p>
+        <p class="garden-note-copy">plants currently being coaxed, encouraged, or outright begged</p>
+      </article>
+      <article class="garden-note card">
+        <p class="garden-note-label">Still dreaming of</p>
+        <p class="garden-note-value">{wishlist.length}</p>
+        <p class="garden-note-copy">future additions waiting for cooler weather and stronger self-control</p>
+      </article>
+    </section>
+
     <section class="plant-section">
       <h2 class="section-title">Natives I'm Growing</h2>
+      <p class="section-note">The sturdy sun-lovers and soft silvery things I am trying to keep happy through Perth weather mood swings.</p>
       {natives.length > 0 ? (
         <div class="plant-grid">
           {natives.map(plant => (
@@ -56,6 +76,7 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
 
     <section class="plant-section">
       <h2 class="section-title">Vegetable Garden</h2>
+      <p class="section-note">Seasonal optimism, dirt under the nails, and at least one patch that ends up far more chaotic than planned.</p>
       {vegetables.length > 0 ? (
         <div class="plant-grid">
           {vegetables.map(plant => (
@@ -90,6 +111,7 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
     {general.length > 0 && (
       <section class="plant-section">
         <h2 class="section-title">The Rest of the Garden</h2>
+        <p class="section-note">Everything else that has found a home here, from dependable greenery to suspicious little experiments.</p>
         <div class="plant-grid">
           {general.map(plant => (
             <div class="plant-card card">
@@ -121,6 +143,7 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
     {wishlist.length > 0 && (
       <section class="plant-section">
         <h2 class="section-title">Wishlist</h2>
+        <p class="section-note">The dangerous list of future companions I absolutely do not have room for yet.</p>
         <div class="plant-grid">
           {wishlist.map(plant => (
             <div class="plant-card card wishlist-card">
@@ -140,6 +163,7 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
     {rip.length > 0 && (
       <section class="plant-section">
         <h2 class="section-title">In Memoriam</h2>
+        <p class="section-note">Gone, but not forgotten. Some plants simply arrive to teach a hard lesson and leave.</p>
         <div class="plant-grid">
           {rip.map(plant => (
             <div class="plant-card card rip-card">
@@ -173,7 +197,66 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
     font-style: italic;
   }
 
+  .garden-notes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-10, 2.5rem);
+  }
+
+  .garden-note {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .garden-note::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top right, rgba(154, 191, 158, 0.12), transparent 60%);
+    pointer-events: none;
+  }
+
+  .garden-note-label,
+  .garden-note-value,
+  .garden-note-copy {
+    position: relative;
+    z-index: 1;
+    max-width: none;
+  }
+
+  .garden-note-label {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin: 0 0 var(--space-2);
+  }
+
+  .garden-note-value {
+    font-family: var(--font-heading);
+    font-size: var(--text-2xl);
+    font-style: italic;
+    color: var(--color-sage-dark);
+    margin: 0 0 var(--space-2);
+  }
+
+  .garden-note-copy {
+    color: var(--color-ink-soft);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+
   .plant-section { margin-bottom: var(--space-12); }
+
+  .section-note {
+    color: var(--color-ink-soft);
+    font-size: var(--text-sm);
+    font-style: italic;
+    margin-bottom: var(--space-4);
+    max-width: 62ch;
+  }
 
   .empty-section {
     font-style: italic;
@@ -190,6 +273,37 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
   .plant-card {
     display: flex;
     gap: var(--space-4);
+    align-items: flex-start;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .plant-card::before {
+    content: 'garden log';
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-4);
+    font-family: var(--font-accent);
+    font-size: 0.66rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(200, 152, 78, 0.45);
+    pointer-events: none;
+  }
+
+  .plant-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at bottom right, rgba(122, 168, 126, 0.08), transparent 42%);
+    pointer-events: none;
+  }
+
+  .plant-info,
+  .plant-photo,
+  .plant-photo-placeholder {
+    position: relative;
+    z-index: 1;
   }
 
   .plant-photo {
@@ -198,6 +312,7 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
     object-fit: cover;
     border-radius: var(--radius-md);
     flex-shrink: 0;
+    border: 1px solid rgba(237, 224, 200, 0.12);
   }
 
   .plant-photo-placeholder {
@@ -259,4 +374,10 @@ const rip        = allPlants.filter(p => p.data.status === 'rip');
 
   .wishlist-card { opacity: 0.85; }
   .rip-card { opacity: 0.6; }
+
+  @media (max-width: 720px) {
+    .garden-notes {
+      grid-template-columns: 1fr;
+    }
+  }
 </style>

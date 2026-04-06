@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { contentSlugFromId } from '../utils/contentSlug';
+
+const extras = await getCollection('extras');
+const page = extras.find((entry) => contentSlugFromId(entry.id) === 'now');
+
+if (!page) {
+  throw new Error('Missing extras/now content entry');
+}
+
+const { Content } = await render(page);
+const updatedLabel = page.data.updated
+  ? page.data.updated.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
+  : null;
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <div class="extras-page">
+    <header class="page-header">
+      <p class="page-kicker">tiny status bulletin</p>
+      <h1>{page.data.title}</h1>
+      {page.data.summary && <p class="page-intro">{page.data.summary}</p>}
+      {updatedLabel && <p class="page-updated">updated {updatedLabel}</p>}
+    </header>
+
+    {page.data.statusItems.length > 0 && (
+      <section class="status-grid" aria-label="Current status">
+        {page.data.statusItems.map((item) => (
+          <article class="status-card card">
+            <p class="status-label">{item.label}</p>
+            <p class="status-value">{item.value}</p>
+          </article>
+        ))}
+      </section>
+    )}
+
+    <section class="content-panel card">
+      <div class="content-stamp" aria-hidden="true">✦ currently in motion ✦</div>
+      <div class="page-copy">
+        <Content />
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .extras-page {
+    padding: var(--space-4) 0;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .page-kicker {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin: 0 0 var(--space-2);
+    max-width: none;
+  }
+
+  .page-header h1 {
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-intro {
+    max-width: 620px;
+    margin: 0 auto var(--space-2);
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .page-updated {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-terracotta);
+    margin: 0;
+    max-width: none;
+  }
+
+  .status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .status-card {
+    min-height: 100%;
+    padding: var(--space-5, 1.25rem);
+  }
+
+  .status-label {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin: 0 0 var(--space-2);
+    max-width: none;
+  }
+
+  .status-value {
+    color: var(--color-ink);
+    font-style: italic;
+    margin: 0;
+    max-width: none;
+  }
+
+  .content-panel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .content-panel::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px dashed rgba(200, 152, 78, 0.16);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .content-stamp {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-4);
+  }
+
+  .page-copy {
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-copy :global(h2) {
+    color: var(--color-sage-dark);
+    margin: var(--space-6) 0 var(--space-3);
+  }
+
+  .page-copy :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .page-copy :global(ul) {
+    list-style: none;
+    padding: 0;
+    margin-bottom: var(--space-5, 1.25rem);
+  }
+
+  .page-copy :global(li) {
+    position: relative;
+    padding-left: var(--space-5, 1.25rem);
+    margin-bottom: var(--space-2);
+    color: var(--color-ink-soft);
+  }
+
+  .page-copy :global(li::before) {
+    content: '✦';
+    position: absolute;
+    left: 0;
+    color: var(--color-gold);
+    font-size: var(--text-xs);
+  }
+</style>

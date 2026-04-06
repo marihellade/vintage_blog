@@ -39,6 +39,8 @@ npm run build
 
 ## Site sections
 
+- **Now** — a small snapshot of current fixations and in-progress life bits
+- **Links** — favourite web corners, rabbit holes, and bookmarks worth keeping
 - **Book Diary** — reading log, series tracker, reviews
 - **Plant Journal** — garden inventory and care notes
 - **Travel** — scrapbook-style travel memories

@@ -85,4 +85,32 @@ const recipes = defineCollection({
   }),
 });
 
-export const collections = { books, plants, travel, recipes };
+/* ------------------------------------------------------------------
+   EXTRAS
+   Small personal pages such as now/links live here.
+   ------------------------------------------------------------------ */
+const extras = defineCollection({
+  type: 'content',
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    summary: z.string().optional(),
+    updated: z.coerce.date().optional(),
+    statusItems: z.array(z.object({
+      label: z.string(),
+      value: z.string(),
+    })).default([]),
+    blinkies: z.array(z.string()).default([]),
+    linkSections: z.array(z.object({
+      title: z.string(),
+      intro: z.string().optional(),
+      items: z.array(z.object({
+        label: z.string(),
+        href: z.string(),
+        note: z.string().optional(),
+      })).default([]),
+    })).default([]),
+  }),
+});
+
+export const collections = { books, plants, travel, recipes, extras };
