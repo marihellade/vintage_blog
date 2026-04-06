@@ -1,0 +1,208 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+import { contentSlugFromId } from '../utils/contentSlug';
+
+const extras = await getCollection('extras');
+const page = extras.find((entry) => contentSlugFromId(entry.id) === 'links');
+
+if (!page) {
+  throw new Error('Missing extras/links content entry');
+}
+
+const { Content } = await render(page);
+const updatedLabel = page.data.updated
+  ? page.data.updated.toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' })
+  : null;
+---
+
+<BaseLayout title={page.data.title} description={page.data.description}>
+  <div class="extras-page">
+    <header class="page-header">
+      <p class="page-kicker">bookmark drawer</p>
+      <h1>{page.data.title}</h1>
+      {page.data.summary && <p class="page-intro">{page.data.summary}</p>}
+      {updatedLabel && <p class="page-updated">last tended {updatedLabel}</p>}
+    </header>
+
+    {page.data.blinkies.length > 0 && (
+      <div class="blinkie-row" aria-label="Decorative blinkie labels">
+        {page.data.blinkies.map((blinkie) => (
+          <span class="blinkie-chip">{blinkie}</span>
+        ))}
+      </div>
+    )}
+
+    <section class="links-grid">
+      {page.data.linkSections.map((section) => (
+        <article class="link-card card">
+          <h2>{section.title}</h2>
+          {section.intro && <p class="link-card-intro">{section.intro}</p>}
+          <ul class="link-list">
+            {section.items.map((item) => (
+              <li>
+                <a href={item.href} target="_blank" rel="noopener noreferrer">{item.label}</a>
+                {item.note && <p class="link-note">{item.note}</p>}
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </section>
+
+    <section class="content-panel card">
+      <div class="content-stamp" aria-hidden="true">save this for later</div>
+      <div class="page-copy">
+        <Content />
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .extras-page {
+    padding: var(--space-4) 0;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: var(--space-8);
+  }
+
+  .page-kicker {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+    margin: 0 0 var(--space-2);
+    max-width: none;
+  }
+
+  .page-header h1 {
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-3);
+  }
+
+  .page-intro {
+    max-width: 640px;
+    margin: 0 auto var(--space-2);
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .page-updated {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-terracotta);
+    margin: 0;
+    max-width: none;
+  }
+
+  .blinkie-row {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-bottom: var(--space-8);
+  }
+
+  .blinkie-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 31px;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--color-gold);
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(212, 133, 58, 0.18), rgba(122, 168, 126, 0.15));
+    box-shadow: var(--shadow-sm);
+    font-family: monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-cream);
+  }
+
+  .links-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: var(--space-6);
+    margin-bottom: var(--space-8);
+  }
+
+  .link-card h2 {
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-2);
+  }
+
+  .link-card-intro {
+    color: var(--color-ink-soft);
+    font-style: italic;
+    font-size: var(--text-sm);
+    margin-bottom: var(--space-4);
+  }
+
+  .link-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .link-list li {
+    padding: var(--space-3) 0;
+    border-bottom: 1px dotted var(--color-gold-light);
+    margin: 0;
+  }
+
+  .link-list li:last-child {
+    border-bottom: none;
+  }
+
+  .link-list a {
+    font-family: var(--font-heading);
+    font-size: var(--text-md);
+    text-decoration: none;
+  }
+
+  .link-note {
+    color: var(--color-ink-soft);
+    font-size: var(--text-sm);
+    margin: var(--space-1) 0 0;
+    max-width: none;
+  }
+
+  .content-panel {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .content-panel::before {
+    content: '';
+    position: absolute;
+    inset: 12px;
+    border: 1px dashed rgba(200, 152, 78, 0.16);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .content-stamp {
+    font-family: var(--font-accent);
+    font-size: var(--text-xs);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-sage-dark);
+    margin-bottom: var(--space-4);
+  }
+
+  .page-copy {
+    position: relative;
+    z-index: 1;
+  }
+
+  .page-copy :global(p:last-child) {
+    margin-bottom: 0;
+  }
+</style>

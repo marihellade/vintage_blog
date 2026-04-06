@@ -145,6 +145,32 @@ Each recipe entry now appears in two places automatically:
 
 The About page is at `src/pages/about.astro`. Open it in any text editor and change the text directly. The text is plain English inside HTML-like tags — just change the words between the `<p>` and `</p>` markers.
 
+## Editing the Now page
+
+The Now page content lives in:
+
+```text
+src/content/extras/now.md
+```
+
+You can update:
+- the short summary in the frontmatter
+- the `statusItems` list at the top of the page
+- the Markdown headings and bullet lists in the body
+
+## Editing the Links page
+
+The Links page content lives in:
+
+```text
+src/content/extras/links.md
+```
+
+You can update:
+- the summary and decorative `blinkies` labels in the frontmatter
+- the `linkSections` groups and items
+- the closing note in the Markdown body
+
 ## Editing the home page welcome text
 
 The home page is at `src/pages/index.astro`. Find the `welcome-card` section and change the text inside the `<p>` tag.
