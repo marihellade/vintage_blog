@@ -60,3 +60,38 @@ Phase 2 gave the travel and recipe collections the same scalable shape as the bo
 ### Notes
 - The phase intentionally kept the homepage feature cards unchanged; the roadmap only required the travel and recipe collection architecture to be completed
 - The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
+
+## Phase 3 — Astro upgrade
+
+### Intent
+Phase 3 moved the project onto a current Astro release while preserving the existing content authoring flow, route structure, and static output.
+
+### Work completed
+- Upgraded Astro from `4.16.0` to `6.1.3`
+- Added `@astrojs/check` and `typescript` so the repo can run Astro’s type and diagnostics pass
+- Enabled the official temporary `legacy.collectionsBackwardsCompat` flag so the existing `src/content/config.ts` file and collection setup continue to work during the upgrade
+- Updated `src/content/config.ts` to import `z` from `astro/zod`
+- Added the official Astro TypeScript `include` and `exclude` guidance to `tsconfig.json`
+- Migrated collection entry usage from `entry.slug` and `entry.render()` to `render(entry)` plus clean slug generation based on entry IDs
+- Added `src/utils/contentSlug.ts` to preserve the existing clean URLs after Astro 6’s path-based legacy entry IDs introduced `.md` suffixes
+- Updated `README.md` and `docs/how-to-run.md` to note the new Node.js `22.12.0+` requirement
+
+### Validation
+- Ran `npx astro check` after the compatibility fixes and in the final acceptance pass; result: `0 errors`
+- Ran `npm run build` after the upgrade work and in the final acceptance pass; result: passed
+- Verified generated routes remained clean and extension-free:
+  - `/books/...`
+  - `/travel/sample-trip`
+  - `/recipes/rosemary-focaccia`
+
+### Git
+- Branch: `chore/astro-upgrade`
+- Key commits:
+  - `22bdeaf` `chore: upgrade astro to v6`
+  - `51fe7f1` `fix: adapt collection routes for astro v6`
+  - `8de0632` `docs: note astro 6 node requirement`
+- Merge result: merged into `main` with `merge: complete phase 3 astro upgrade`
+
+### Notes
+- Astro 6 still reports non-blocking hints in `src/pages/books/index.astro` and a deprecation hint for `z.string().url()` in `src/content/config.ts`; these did not block `astro check` or the build
+- The same unrelated pre-existing local edits in `.claude/settings.local.json` and `.gitignore` remain untouched
