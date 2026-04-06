@@ -6,6 +6,7 @@ import CandleIcon from './icons/CandleIcon.astro';
 import StarIcon from './icons/StarIcon.astro';
 import PotionIcon from './icons/PotionIcon.astro';
 import QuillIcon from './icons/QuillIcon.astro';
+import { contentSlugFromId } from '../utils/contentSlug';
 
 const navLinks = [
   { href: '/',         label: 'Home',          icon: '✦' },
@@ -59,7 +60,7 @@ const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
       <ul class="reading-list">
         {currentlyReading.map(book => (
           <li>
-            <a href={`/books/${book.slug}`}>{book.data.title}</a>
+            <a href={`/books/${contentSlugFromId(book.id)}`}>{book.data.title}</a>
             {book.data.series && <span class="reading-series">{book.data.series}</span>}
           </li>
         ))}

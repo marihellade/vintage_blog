@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, render, type CollectionEntry } from 'astro:content';
 import { starsHtml, starsLabel } from '../../utils/stars';
+import { contentSlugFromId } from '../../utils/contentSlug';
 
 export async function getStaticPaths() {
   const recipeEntries = await getCollection('recipes');
   return recipeEntries.map((recipe) => ({
-    params: { slug: recipe.slug },
+    params: { slug: contentSlugFromId(recipe.id) },
     props: { recipe },
   }));
 }
@@ -16,7 +17,7 @@ interface Props {
 }
 
 const { recipe } = Astro.props;
-const { Content } = await recipe.render();
+const { Content } = await render(recipe);
 const d = recipe.data;
 ---
 

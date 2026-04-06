@@ -420,10 +420,10 @@
 
 <script>
   (function () {
-    const header = document.querySelector('.site-header');
-    const dragon = document.querySelector('.header-dragon');
+    const header = document.querySelector<HTMLElement>('.site-header');
+    const dragon = document.querySelector<HTMLElement>('.header-dragon');
     if (!header || !dragon) return;
-    let styleEl = null;
+    let styleEl: HTMLStyleElement | null = null;
     function recalc() {
       if (window.getComputedStyle(dragon).display === 'none') return;
       const hw = header.offsetWidth;
@@ -481,7 +481,7 @@
     } else {
       init();
     }
-    let resizeTimer;
+    let resizeTimer: number | undefined;
     window.addEventListener('resize', () => {
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(recalc, 150);
