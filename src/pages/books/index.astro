@@ -8,6 +8,43 @@ import { contentSlugFromId } from '../../utils/contentSlug';
 const allBooks = await getCollection('books');
 const BOOKS_PER_PAGE = 6;
 const UNDATED_YEAR = 'Undated';
+const ROMAN_NUMERALS = [
+  ['M', 1000],
+  ['CM', 900],
+  ['D', 500],
+  ['CD', 400],
+  ['C', 100],
+  ['XC', 90],
+  ['L', 50],
+  ['XL', 40],
+  ['X', 10],
+  ['IX', 9],
+  ['V', 5],
+  ['IV', 4],
+  ['I', 1],
+] as const;
+
+const toRomanNumeral = (value: number) => {
+  if (!Number.isFinite(value) || value <= 0) {
+    return '—';
+  }
+
+  let remaining = Math.floor(value);
+  let roman = '';
+
+  for (const [symbol, amount] of ROMAN_NUMERALS) {
+    while (remaining >= amount) {
+      roman += symbol;
+      remaining -= amount;
+    }
+  }
+
+  return roman;
+};
+
+const formatRomanPageCount = (currentPage: number, totalPages: number) => totalPages > 0
+  ? `${toRomanNumeral(currentPage)} / ${toRomanNumeral(totalPages)}`
+  : '— / —';
 
 const compareByDateFinishedDesc = (a: typeof allBooks[number], b: typeof allBooks[number]) => {
   const aTime = a.data.dateFinished?.getTime();
@@ -55,6 +92,7 @@ type ReviewedBook = {
   coverGradient: string;
   ratingText: string | null;
   ratingLabel: string | null;
+  finishedLabel: string;
 };
 
 const reviewedBooksData: ReviewedBook[] = finished.map((book) => ({
@@ -70,6 +108,9 @@ const reviewedBooksData: ReviewedBook[] = finished.map((book) => ({
   coverGradient: bookCoverGradient(book.data.title),
   ratingText: book.data.rating ? starsHtml(book.data.rating) : null,
   ratingLabel: book.data.rating ? starsLabel(book.data.rating) : null,
+  finishedLabel: book.data.dateFinished
+    ? `finished ${book.data.dateFinished.getFullYear()}`
+    : 'finished',
 }));
 
 const reviewedYearsNumeric = [...new Set(
@@ -88,7 +129,7 @@ const reviewedBooksJson = JSON.stringify(reviewedBooksData).replace(/</g, '\\u00
 // Keep the first shelf server-rendered for no-JS browsing and instant paint.
 // The client script reuses the same data for sorting and pagination afterward.
 const initialReviewedBooks = reviewedBooksData.slice(0, BOOKS_PER_PAGE);
-const initialReviewedPageCount = Math.ceil(reviewedBooksData.length / BOOKS_PER_PAGE);
+const initialReviewedPageCount = Math.max(1, Math.ceil(reviewedBooksData.length / BOOKS_PER_PAGE));
 const reviewedTags = [...new Set(reviewedBooksData.flatMap((book) => book.tags))].sort();
 
 // Group by series
@@ -179,113 +220,151 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     <!-- All reviewed -->
     {finished.length > 0 && (
       <section class="book-section reviewed-section">
-        <h2 class="section-title">Reviewed</h2>
-        <div class="reviewed-controls" aria-label="Reviewed books controls">
-          <div class="reviewed-filter-block">
-            <span class="reviewed-filter-label">Year</span>
-            <div class="reviewed-year-pills" role="group" aria-label="Filter reviewed books by year">
-              <button type="button" class="reviewed-pill is-active" data-year-filter="all" aria-pressed="true">All</button>
-              {reviewedYears.map((year) => (
-                <button
-                  type="button"
-                  class="reviewed-pill"
-                  data-year-filter={String(year)}
-                  aria-pressed="false"
-                >
-                  {year}
-                </button>
-              ))}
-            </div>
+        <div class="reviewed-section-header">
+          <div class="reviewed-heading-block">
+            <h2 class="section-title">Reviewed</h2>
+            <p class="reviewed-section-note">
+              the shelf where wall-staring favourites, dragon-fuelled binges, and train-ride obsessions
+              get their neat little catalogue cards.
+            </p>
           </div>
-          {reviewedTags.length > 0 && (
-            <div class="reviewed-filter-block">
-              <span class="reviewed-filter-label">Mood</span>
-              <div class="reviewed-tag-pills" role="group" aria-label="Filter reviewed books by tag">
-                <button type="button" class="reviewed-pill reviewed-pill--tag is-active" data-tag-filter="all" aria-pressed="true">All moods</button>
-                {reviewedTags.map((tag) => (
-                  <button
-                    type="button"
-                    class="reviewed-pill reviewed-pill--tag"
-                    data-tag-filter={tag}
-                    aria-pressed="false"
-                  >
-                    {tag}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-          <div class="reviewed-sort-group" role="group" aria-label="Sort reviewed books">
-            <span class="reviewed-sort-label">Sort:</span>
-            <button type="button" class="reviewed-sort-option is-active" data-sort="date" aria-pressed="true">Date</button>
-            <button type="button" class="reviewed-sort-option" data-sort="rating" aria-pressed="false">Rating</button>
-          </div>
+          <p class="reviewed-page-indicator" aria-live="polite" aria-atomic="true">
+            <span class="reviewed-page-indicator-label">folio</span>
+            <span id="reviewed-page-indicator-value" class="reviewed-page-indicator-value">
+              {formatRomanPageCount(1, initialReviewedPageCount)}
+            </span>
+          </p>
         </div>
-        <div id="reviewed-grid" class="book-grid reviewed-grid">
-          {initialReviewedBooks.map((book) => (
-            <a href={`/books/${book.slug}`} class="book-card card">
-              {book.cover ? (
-                <img src={book.cover} alt={`Cover of ${book.title}`} class="book-cover" loading="lazy" />
-              ) : (
-                <div class="book-cover-placeholder" style={`background: ${book.coverGradient}`}>
-                  <span>{book.title.charAt(0)}</span>
-                </div>
-              )}
-              <div class="book-info">
-                <h4>{book.title}</h4>
-                <p class="meta">{book.author}</p>
-                {book.rating && (
-                  <p class="rating" aria-label={book.ratingLabel ?? starsLabel(book.rating)}>
-                    {book.ratingText ?? starsHtml(book.rating)}
-                  </p>
-                )}
-                {book.mood && <p class="mood-line">{book.mood}</p>}
-                <div class="tag-row">
-                  {book.tags.slice(0, 3).map((tag) => <span class="tag">{tag}</span>)}
-                </div>
-              </div>
-            </a>
-          ))}
-        </div>
-        <p id="reviewed-empty" class="reviewed-empty" hidden>No books tucked onto this shelf yet.</p>
-        <nav
-          id="reviewed-pagination"
-          class="reviewed-pagination"
-          aria-label="Reviewed books pages"
-          hidden={initialReviewedPageCount <= 1}
-        >
+
+        <div class="reviewed-shelf-frame">
           <button
+            id="reviewed-prev-button"
             type="button"
-            class="reviewed-page-control reviewed-page-arrow"
-            data-page="0"
-            aria-label="Previous page"
+            class="reviewed-side-nav reviewed-side-nav--prev"
+            aria-label="Previous shelf page"
+            aria-controls="reviewed-grid"
             disabled
           >
-            &lt;
+            <span class="reviewed-side-nav-symbol" aria-hidden="true">‹</span>
+            <span class="reviewed-side-nav-label">prev</span>
           </button>
-          {Array.from({ length: initialReviewedPageCount }, (_, index) => {
-            const page = index + 1;
-            return (
-              <button
-                type="button"
-                class={`reviewed-page-control ${page === 1 ? 'is-active' : ''}`}
-                data-page={String(page)}
-                aria-current={page === 1 ? 'page' : undefined}
-              >
-                {page}
-              </button>
-            );
-          })}
+
+          <div class="reviewed-shelf-body">
+            <div class="reviewed-controls" role="group" aria-label="Reviewed books controls">
+              <div class="reviewed-controls-primary">
+                <div class="reviewed-filter-block">
+                  <span class="reviewed-filter-label">Year</span>
+                  <div class="reviewed-year-pills" role="group" aria-label="Filter reviewed books by year">
+                    <button type="button" class="reviewed-pill is-active" data-year-filter="all" aria-pressed="true">All</button>
+                    {reviewedYears.map((year) => (
+                      <button
+                        type="button"
+                        class="reviewed-pill"
+                        data-year-filter={String(year)}
+                        aria-pressed="false"
+                      >
+                        {year}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div class="reviewed-sort-group" role="group" aria-label="Sort reviewed books">
+                  <span class="reviewed-sort-label">Sort</span>
+                  <button type="button" class="reviewed-sort-option is-active" data-sort="date" aria-pressed="true">Latest first</button>
+                  <button type="button" class="reviewed-sort-option" data-sort="rating" aria-pressed="false">Highest rated</button>
+                </div>
+
+                {reviewedTags.length > 0 && (
+                  <details id="reviewed-mood-disclosure" class="reviewed-secondary-filters">
+                    <summary class="reviewed-reveal-button">
+                      <span class="reviewed-reveal-symbol" aria-hidden="true">+</span>
+                      <span class="reviewed-reveal-label">mood notes</span>
+                      <span id="reviewed-active-mood" class="reviewed-reveal-active" hidden></span>
+                    </summary>
+                    <div class="reviewed-filter-block reviewed-filter-block--secondary">
+                      <span class="reviewed-filter-label">Mood</span>
+                      <div class="reviewed-tag-pills" role="group" aria-label="Filter reviewed books by tag">
+                        <button type="button" class="reviewed-pill reviewed-pill--tag is-active" data-tag-filter="all" aria-pressed="true">All moods</button>
+                        {reviewedTags.map((tag) => (
+                          <button
+                            type="button"
+                            class="reviewed-pill reviewed-pill--tag"
+                            data-tag-filter={tag}
+                            aria-pressed="false"
+                          >
+                            {tag}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </details>
+                )}
+              </div>
+            </div>
+
+            <div id="reviewed-grid" class="book-grid reviewed-grid">
+              {initialReviewedBooks.map((book) => (
+                <a href={`/books/${book.slug}`} class="book-card card reviewed-card">
+                  <div class="reviewed-card-figure">
+                    {book.cover ? (
+                      <img
+                        src={book.cover}
+                        alt={`Cover of ${book.title}`}
+                        class="book-cover reviewed-book-cover"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div class="book-cover-placeholder reviewed-book-cover-placeholder" style={`background: ${book.coverGradient}`}>
+                        <span>{book.title.charAt(0)}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div class="book-info reviewed-card-copy">
+                    <h3 class="reviewed-card-title">{book.title}</h3>
+                    <p class="meta reviewed-card-author">by {book.author}</p>
+                    <div class="reviewed-card-line">
+                      {book.rating && (
+                        <>
+                          <span
+                            class="reviewed-card-rating"
+                            role="img"
+                            aria-label={book.ratingLabel ?? starsLabel(book.rating)}
+                          >
+                            {book.ratingText ?? starsHtml(book.rating)}
+                          </span>
+                          <span class="reviewed-card-divider" aria-hidden="true">·</span>
+                        </>
+                      )}
+                      <span class="reviewed-card-status">{book.finishedLabel}</span>
+                    </div>
+                    {book.mood && <p class="reviewed-card-note">{book.mood}</p>}
+                    {book.tags.length > 0 && (
+                      <div class="tag-row reviewed-tag-row">
+                        {book.tags.slice(0, 2).map((tag) => <span class="tag">{tag}</span>)}
+                      </div>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
+
+            <p id="reviewed-empty" class="reviewed-empty" hidden>No books tucked onto this shelf yet.</p>
+          </div>
+
           <button
+            id="reviewed-next-button"
             type="button"
-            class="reviewed-page-control reviewed-page-arrow"
-            data-page="2"
-            aria-label="Next page"
+            class="reviewed-side-nav reviewed-side-nav--next"
+            aria-label="Next shelf page"
+            aria-controls="reviewed-grid"
             disabled={initialReviewedPageCount <= 1}
           >
-            &gt;
+            <span class="reviewed-side-nav-symbol" aria-hidden="true">›</span>
+            <span class="reviewed-side-nav-label">next</span>
           </button>
-        </nav>
+        </div>
+
         <script id="reviewed-books-data" type="application/json" is:inline set:html={reviewedBooksJson}></script>
         <script>
           type ReviewedBook = {
@@ -301,18 +380,30 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
             coverGradient: string;
             ratingText: string | null;
             ratingLabel: string | null;
+            finishedLabel: string;
           };
 
           const initReviewedBooks = () => {
             const dataElement = document.querySelector('#reviewed-books-data');
             const grid = document.querySelector('#reviewed-grid');
             const emptyState = document.querySelector('#reviewed-empty');
-            const pagination = document.querySelector('#reviewed-pagination');
-            const yearButtons = Array.from(document.querySelectorAll('[data-year-filter]'));
-            const tagButtons = Array.from(document.querySelectorAll('[data-tag-filter]'));
-            const sortButtons = Array.from(document.querySelectorAll('[data-sort]'));
+            const previousButton = document.querySelector('#reviewed-prev-button');
+            const nextButton = document.querySelector('#reviewed-next-button');
+            const pageIndicator = document.querySelector('#reviewed-page-indicator-value');
+            const moodDisclosure = document.querySelector('#reviewed-mood-disclosure');
+            const activeMoodBadge = document.querySelector('#reviewed-active-mood');
+            const yearButtons = Array.from(document.querySelectorAll('.reviewed-year-pills [data-year-filter]'));
+            const tagButtons = Array.from(document.querySelectorAll('.reviewed-tag-pills [data-tag-filter]'));
+            const sortButtons = Array.from(document.querySelectorAll('.reviewed-sort-group [data-sort]'));
 
-            if (!(dataElement instanceof HTMLScriptElement) || !(grid instanceof HTMLElement) || !(emptyState instanceof HTMLElement) || !(pagination instanceof HTMLElement)) {
+            if (
+              !(dataElement instanceof HTMLScriptElement)
+              || !(grid instanceof HTMLElement)
+              || !(emptyState instanceof HTMLElement)
+              || !(previousButton instanceof HTMLButtonElement)
+              || !(nextButton instanceof HTMLButtonElement)
+              || !(pageIndicator instanceof HTMLElement)
+            ) {
               return;
             }
 
@@ -369,31 +460,81 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               return compareByDate(a, b);
             };
 
+            const romanNumerals = [
+              ['M', 1000],
+              ['CM', 900],
+              ['D', 500],
+              ['CD', 400],
+              ['C', 100],
+              ['XC', 90],
+              ['L', 50],
+              ['XL', 40],
+              ['X', 10],
+              ['IX', 9],
+              ['V', 5],
+              ['IV', 4],
+              ['I', 1],
+            ] as const;
+
+            const toRomanNumeral = (value: number) => {
+              if (!Number.isFinite(value) || value <= 0) {
+                return '—';
+              }
+
+              let remaining = Math.floor(value);
+              let roman = '';
+
+              for (const [symbol, amount] of romanNumerals) {
+                while (remaining >= amount) {
+                  roman += symbol;
+                  remaining -= amount;
+                }
+              }
+
+              return roman;
+            };
+
+            const formatRomanPageCount = (page: number, total: number) => total > 0
+              ? `${toRomanNumeral(page)} / ${toRomanNumeral(total)}`
+              : '— / —';
+
             const renderCard = (book: ReviewedBook) => {
               const firstLetter = escapeHtml((book.title || '').charAt(0) || '?');
               const coverMarkup = book.cover
-                ? `<img src="${escapeHtml(book.cover)}" alt="Cover of ${escapeHtml(book.title)}" class="book-cover" loading="lazy" />`
-                : `<div class="book-cover-placeholder" style="background: ${escapeHtml(book.coverGradient)}"><span>${firstLetter}</span></div>`;
+                ? `<img src="${escapeHtml(book.cover)}" alt="Cover of ${escapeHtml(book.title)}" class="book-cover reviewed-book-cover" loading="lazy" />`
+                : `<div class="book-cover-placeholder reviewed-book-cover-placeholder" style="background: ${escapeHtml(book.coverGradient)}"><span>${firstLetter}</span></div>`;
               const ratingMarkup = typeof book.rating === 'number'
-                ? `<p class="rating" aria-label="${escapeHtml(book.ratingLabel || `Rating: ${book.rating} out of 5`)}">${escapeHtml(book.ratingText || starsForRating(book.rating))}</p>`
+                ? `<span class="reviewed-card-rating" role="img" aria-label="${escapeHtml(book.ratingLabel || `Rating: ${book.rating} out of 5`)}">${escapeHtml(book.ratingText || starsForRating(book.rating))}</span>`
                 : '';
               const moodMarkup = book.mood
-                ? `<p class="mood-line">${escapeHtml(book.mood)}</p>`
+                ? `<p class="reviewed-card-note">${escapeHtml(book.mood)}</p>`
                 : '';
               const tagMarkup = (book.tags || [])
-                .slice(0, 3)
+                .slice(0, 2)
                 .map((tag: string) => `<span class="tag">${escapeHtml(tag)}</span>`)
                 .join('');
+              const tagSection = tagMarkup
+                ? `<div class="tag-row reviewed-tag-row">${tagMarkup}</div>`
+                : '';
+              const dividerMarkup = ratingMarkup
+                ? '<span class="reviewed-card-divider" aria-hidden="true">·</span>'
+                : '';
 
               return `
-                <a href="/books/${escapeHtml(book.slug)}" class="book-card card">
-                  ${coverMarkup}
-                  <div class="book-info">
-                    <h4>${escapeHtml(book.title)}</h4>
-                    <p class="meta">${escapeHtml(book.author)}</p>
-                    ${ratingMarkup}
+                <a href="/books/${escapeHtml(book.slug)}" class="book-card card reviewed-card">
+                  <div class="reviewed-card-figure">
+                    ${coverMarkup}
+                  </div>
+                  <div class="book-info reviewed-card-copy">
+                    <h3 class="reviewed-card-title">${escapeHtml(book.title)}</h3>
+                    <p class="meta reviewed-card-author">by ${escapeHtml(book.author)}</p>
+                    <div class="reviewed-card-line">
+                      ${ratingMarkup}
+                      ${dividerMarkup}
+                      <span class="reviewed-card-status">${escapeHtml(book.finishedLabel)}</span>
+                    </div>
                     ${moodMarkup}
-                    <div class="tag-row">${tagMarkup}</div>
+                    ${tagSection}
                   </div>
                 </a>
               `;
@@ -432,53 +573,22 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
                 button.classList.toggle('is-active', isActive);
                 button.setAttribute('aria-pressed', String(isActive));
               });
-            };
 
-            const updatePagination = (totalPages: number) => {
-              if (totalPages <= 1) {
-                pagination.hidden = true;
-                pagination.innerHTML = '';
-                return;
+              if (activeMoodBadge instanceof HTMLElement) {
+                const hasActiveMood = currentTag !== 'all';
+                activeMoodBadge.hidden = !hasActiveMood;
+                activeMoodBadge.textContent = hasActiveMood ? currentTag : '';
               }
 
-              pagination.hidden = false;
+              if (moodDisclosure instanceof HTMLDetailsElement) {
+                moodDisclosure.classList.toggle('has-active-filter', currentTag !== 'all');
+              }
+            };
 
-              const pageButtons = Array.from({ length: totalPages }, (_, index) => {
-                const page = index + 1;
-                const isActive = page === currentPage;
-                return `
-                  <button
-                    type="button"
-                    class="reviewed-page-control ${isActive ? 'is-active' : ''}"
-                    data-page="${page}"
-                    ${isActive ? 'aria-current="page"' : ''}
-                  >
-                    ${page}
-                  </button>
-                `;
-              }).join('');
-
-              pagination.innerHTML = `
-                <button
-                  type="button"
-                  class="reviewed-page-control reviewed-page-arrow"
-                  data-page="${currentPage - 1}"
-                  aria-label="Previous page"
-                  ${currentPage === 1 ? 'disabled' : ''}
-                >
-                  &lt;
-                </button>
-                ${pageButtons}
-                <button
-                  type="button"
-                  class="reviewed-page-control reviewed-page-arrow"
-                  data-page="${currentPage + 1}"
-                  aria-label="Next page"
-                  ${currentPage === totalPages ? 'disabled' : ''}
-                >
-                  &gt;
-                </button>
-              `;
+            const updateNavigation = (totalPages: number) => {
+              pageIndicator.textContent = formatRomanPageCount(totalPages === 0 ? 0 : currentPage, totalPages);
+              previousButton.disabled = totalPages === 0 || currentPage <= 1;
+              nextButton.disabled = totalPages === 0 || currentPage >= totalPages;
             };
 
             const render = async ({ animate = false } = {}) => {
@@ -503,7 +613,7 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               const cardsMarkup = pageBooks.map(renderCard).join('');
 
               updateControls();
-              updatePagination(sortedBooks.length === 0 ? 0 : totalPages);
+              updateNavigation(sortedBooks.length === 0 ? 0 : totalPages);
               emptyState.textContent = currentYear === 'all' && currentTag === 'all'
                 ? 'No books tucked onto this shelf yet.'
                 : 'No books match this shelf filter yet.';
@@ -540,7 +650,8 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
               const yearButton = target?.closest('[data-year-filter]');
               const tagButton = target?.closest('[data-tag-filter]');
               const sortButton = target?.closest('[data-sort]');
-              const pageButton = target?.closest('[data-page]');
+              const previousShelfButton = target?.closest('#reviewed-prev-button');
+              const nextShelfButton = target?.closest('#reviewed-next-button');
 
               if (yearButton instanceof HTMLButtonElement) {
                 const nextYear = yearButton.dataset.yearFilter;
@@ -581,12 +692,20 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
                 return;
               }
 
-              if (pageButton instanceof HTMLButtonElement && pagination.contains(pageButton) && !pageButton.disabled) {
-                const nextPage = Number(pageButton.dataset.page);
+              if (previousShelfButton instanceof HTMLButtonElement && !previousShelfButton.disabled) {
+                const nextPage = currentPage - 1;
 
-                if (!Number.isFinite(nextPage) || nextPage < 1 || nextPage === currentPage) {
+                if (nextPage < 1) {
                   return;
                 }
+
+                currentPage = nextPage;
+                void render({ animate: true });
+                return;
+              }
+
+              if (nextShelfButton instanceof HTMLButtonElement && !nextShelfButton.disabled) {
+                const nextPage = currentPage + 1;
 
                 currentPage = nextPage;
                 void render({ animate: true });
@@ -685,23 +804,106 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
   .book-section { margin-bottom: var(--space-12); }
 
-  .reviewed-controls {
+  .reviewed-section {
+    position: relative;
+  }
+
+  .reviewed-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: var(--space-4);
+    margin-bottom: var(--space-4);
+  }
+
+  .reviewed-heading-block {
+    min-width: 0;
+  }
+
+  .reviewed-heading-block .section-title {
+    margin-bottom: var(--space-3);
+  }
+
+  .reviewed-section-note {
+    margin: 0;
+    max-width: 60ch;
+    color: var(--color-ink-soft);
+    font-style: italic;
+  }
+
+  .reviewed-page-indicator {
     display: flex;
     flex-direction: column;
-    gap: var(--space-4);
-    margin-bottom: var(--space-6);
+    align-items: flex-end;
+    gap: 0.2rem;
+    margin: 0;
+    padding: 0.7rem 0.95rem;
+    border: 1px solid rgba(200, 152, 78, 0.28);
+    border-radius: 999px;
+    background: rgba(22, 17, 12, 0.62);
+    box-shadow: inset 0 1px 0 rgba(200, 152, 78, 0.08);
   }
 
-  .reviewed-year-pills {
+  .reviewed-page-indicator-label {
+    font-family: var(--font-accent);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .reviewed-page-indicator-value {
+    font-family: var(--font-accent);
+    font-size: var(--text-sm);
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--color-gold);
+  }
+
+  .reviewed-shelf-frame {
+    position: relative;
+  }
+
+  .reviewed-shelf-body {
+    position: relative;
+    padding: var(--space-6);
+    border: 1px solid var(--color-gold-light);
+    border-radius: var(--radius-md);
+    background: var(--gradient-surface-warm);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(200, 152, 78, 0.07);
+    overflow: clip;
+  }
+
+  .reviewed-shelf-body::before {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px dashed rgba(200, 152, 78, 0.15);
+    border-radius: calc(var(--radius-md) - 4px);
+    pointer-events: none;
+  }
+
+  .reviewed-controls {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+  }
+
+  .reviewed-controls-primary {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    align-items: flex-start;
+    gap: var(--space-4);
   }
 
+  .reviewed-year-pills,
   .reviewed-tag-pills {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2);
+    gap: 0.45rem;
   }
 
   .reviewed-filter-block {
@@ -710,24 +912,32 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     gap: var(--space-2);
   }
 
+  .reviewed-filter-block--secondary {
+    margin-top: var(--space-3);
+    padding: var(--space-3);
+    border: 1px dotted rgba(200, 152, 78, 0.22);
+    border-radius: var(--radius-md);
+    background: rgba(14, 10, 8, 0.42);
+  }
+
   .reviewed-filter-label {
     font-family: var(--font-accent);
     font-size: 0.72rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     color: var(--color-ink-soft);
   }
 
   .reviewed-pill {
     appearance: none;
-    border: 1px solid var(--color-sage);
-    background: rgba(95, 128, 101, 0.18);
-    color: var(--color-sage-dark);
+    border: 1px solid rgba(154, 191, 158, 0.34);
+    background: rgba(20, 16, 12, 0.68);
+    color: var(--color-ink-soft);
     font-family: var(--font-accent);
-    font-size: var(--text-xs);
+    font-size: 0.78rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    padding: 2px var(--space-3);
+    padding: 0.18rem 0.8rem;
     border-radius: 999px;
     cursor: pointer;
     transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
@@ -735,27 +945,28 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
 
   .reviewed-pill:hover,
   .reviewed-pill:focus-visible {
-    background: rgba(154, 191, 158, 0.15);
+    background: rgba(95, 128, 101, 0.16);
     border-color: var(--color-sage-dark);
+    color: var(--color-cream);
     outline: none;
   }
 
   .reviewed-pill.is-active {
-    background: var(--color-sage-dark);
+    background: rgba(95, 128, 101, 0.24);
     border-color: var(--color-sage-dark);
-    color: var(--color-parchment);
+    color: var(--color-cream);
+  }
+
+  .reviewed-pill--tag {
+    border-color: rgba(212, 133, 58, 0.24);
   }
 
   .reviewed-pill--tag:hover,
-  .reviewed-pill--tag:focus-visible {
-    background: rgba(212, 133, 58, 0.12);
-    border-color: var(--color-terracotta);
-  }
-
+  .reviewed-pill--tag:focus-visible,
   .reviewed-pill--tag.is-active {
-    background: var(--color-terracotta);
+    background: rgba(212, 133, 58, 0.14);
     border-color: var(--color-terracotta);
-    color: var(--color-parchment);
+    color: var(--color-cream);
   }
 
   .reviewed-sort-group {
@@ -763,9 +974,11 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     flex-wrap: wrap;
     align-items: center;
     gap: var(--space-2);
+    margin-left: auto;
+    padding-top: 1.35rem;
     color: var(--color-ink-soft);
     font-family: var(--font-accent);
-    font-size: var(--text-xs);
+    font-size: 0.78rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
@@ -799,6 +1012,65 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     border-color: currentColor;
   }
 
+  .reviewed-secondary-filters {
+    margin-left: auto;
+    min-width: min(100%, 13rem);
+  }
+
+  .reviewed-reveal-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    list-style: none;
+    cursor: pointer;
+    font-family: var(--font-accent);
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+    user-select: none;
+  }
+
+  .reviewed-reveal-button::-webkit-details-marker {
+    display: none;
+  }
+
+  .reviewed-reveal-symbol {
+    display: inline-grid;
+    place-items: center;
+    width: 1.35rem;
+    height: 1.35rem;
+    border: 1px solid rgba(200, 152, 78, 0.3);
+    border-radius: 50%;
+    color: var(--color-gold);
+    font-size: 1rem;
+    line-height: 1;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .reviewed-reveal-button:hover .reviewed-reveal-symbol,
+  .reviewed-reveal-button:focus-visible .reviewed-reveal-symbol,
+  .reviewed-secondary-filters.has-active-filter .reviewed-reveal-symbol {
+    border-color: var(--color-gold);
+  }
+
+  .reviewed-secondary-filters[open] .reviewed-reveal-symbol {
+    transform: rotate(45deg);
+  }
+
+  .reviewed-reveal-active {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.08rem 0.45rem;
+    border-radius: 999px;
+    background: rgba(212, 133, 58, 0.12);
+    color: var(--color-cream);
+    border: 1px solid rgba(212, 133, 58, 0.28);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.86rem;
+  }
+
   /* --- Book grid --- */
   .book-grid {
     display: grid;
@@ -807,6 +1079,10 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
   }
 
   .reviewed-grid {
+    position: relative;
+    z-index: 1;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr));
+    gap: var(--space-4);
     transform-origin: center left;
     transition: opacity 0.15s ease, transform 0.15s ease;
     will-change: opacity, transform;
@@ -855,6 +1131,129 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
   }
   .book-cover-placeholder.wishlist {
     background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
+  }
+
+  .reviewed-card {
+    --reviewed-cover-width: 68px;
+    --reviewed-cover-height: 102px;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-4);
+    min-height: 100%;
+    overflow: clip;
+  }
+
+  .reviewed-card::before {
+    content: '';
+    position: absolute;
+    top: var(--space-4);
+    bottom: var(--space-4);
+    left: calc(var(--space-4) + var(--reviewed-cover-width) + var(--space-2));
+    width: 1px;
+    background: linear-gradient(180deg, transparent 0%, rgba(200, 152, 78, 0.45) 18%, rgba(200, 152, 78, 0.16) 100%);
+    pointer-events: none;
+  }
+
+  .reviewed-card-figure {
+    position: relative;
+    flex-shrink: 0;
+    padding-right: var(--space-2);
+  }
+
+  .reviewed-card-figure::after {
+    content: '';
+    position: absolute;
+    inset: 6px -4px 6px 8px;
+    border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    background: linear-gradient(180deg, rgba(245, 233, 200, 0.06), rgba(200, 152, 78, 0.16));
+    border: 1px solid rgba(200, 152, 78, 0.14);
+    z-index: 0;
+  }
+
+  .reviewed-book-cover,
+  .reviewed-book-cover-placeholder {
+    position: relative;
+    z-index: 1;
+    width: var(--reviewed-cover-width);
+    height: var(--reviewed-cover-height);
+    border: 1px solid rgba(200, 152, 78, 0.14);
+  }
+
+  .reviewed-book-cover-placeholder {
+    font-size: 1.9rem;
+  }
+
+  .reviewed-card-copy {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 0;
+  }
+
+  .reviewed-card-title {
+    margin: 0;
+    font-size: 1.5rem;
+    line-height: 1.02;
+    color: var(--color-cream);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .reviewed-card-author {
+    margin: 0;
+  }
+
+  .reviewed-card-line {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem;
+    margin: 0;
+    font-family: var(--font-accent);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-ink-soft);
+  }
+
+  .reviewed-card-rating {
+    color: var(--color-gold);
+    letter-spacing: 0.14em;
+  }
+
+  .reviewed-card-divider {
+    color: rgba(200, 152, 78, 0.6);
+  }
+
+  .reviewed-card-note {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: var(--color-sage-dark);
+    font-style: italic;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .reviewed-tag-row {
+    gap: 0.35rem;
+    margin-top: auto;
+    padding-top: 0.65rem;
+    border-top: 1px dotted rgba(200, 152, 78, 0.18);
+  }
+
+  .reviewed-tag-row .tag {
+    padding: 1px 0.55rem;
+    background: rgba(200, 152, 78, 0.08);
+    border-color: rgba(200, 152, 78, 0.18);
+    color: var(--color-ink-soft);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
   }
 
   .book-info h4 {
@@ -968,7 +1367,9 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
   .dnf-card { opacity: 0.8; }
 
   .reviewed-empty {
-    margin: 0;
+    position: relative;
+    z-index: 1;
+    margin: var(--space-4) 0 0;
     padding: var(--space-6);
     text-align: center;
     color: var(--color-ink-soft);
@@ -978,58 +1379,132 @@ const allTags = [...new Set(allBooks.flatMap(b => b.data.tags))].sort();
     background: rgba(26, 20, 16, 0.45);
   }
 
-  .reviewed-pagination {
-    margin-top: var(--space-6);
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: var(--space-2);
-  }
-
-  .reviewed-page-control {
+  .reviewed-side-nav {
     appearance: none;
-    min-width: 2.25rem;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.35rem;
+    min-height: 7.8rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
     border: 1px solid var(--color-gold-light);
-    border-radius: 999px;
-    background: rgba(28, 22, 16, 0.7);
+    background: linear-gradient(180deg, rgba(32, 26, 18, 0.98), rgba(18, 14, 10, 0.98));
     color: var(--color-ink-soft);
-    cursor: pointer;
     font-family: var(--font-accent);
-    font-size: var(--text-xs);
-    letter-spacing: 0.08em;
-    padding: 0.35rem 0.7rem;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
-    transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
   }
 
-  .reviewed-page-control:hover:not(:disabled),
-  .reviewed-page-control:focus-visible {
+  .reviewed-side-nav--prev {
+    left: -1rem;
+    border-radius: 999px 0.85rem 0.85rem 999px;
+  }
+
+  .reviewed-side-nav--next {
+    right: -1rem;
+    border-radius: 0.85rem 999px 999px 0.85rem;
+  }
+
+  .reviewed-side-nav:hover:not(:disabled),
+  .reviewed-side-nav:focus-visible {
     color: var(--color-cream);
     border-color: var(--color-gold);
     outline: none;
+    transform: translateY(-50%) scale(1.02);
   }
 
-  .reviewed-page-control.is-active {
-    color: var(--color-cream);
-    border-color: var(--color-gold);
-    background: rgba(200, 152, 78, 0.16);
-  }
-
-  .reviewed-page-control:disabled {
+  .reviewed-side-nav:disabled {
     opacity: 0.45;
     cursor: default;
   }
 
-  .reviewed-page-arrow {
-    padding-inline: 0.8rem;
+  .reviewed-side-nav-symbol {
+    font-size: 1.7rem;
+    line-height: 1;
+    color: var(--color-gold);
+  }
+
+  .reviewed-side-nav-label {
+    font-size: 0.62rem;
   }
 
   .tags-section { text-align: center; }
   .tags-section .tag-row { justify-content: center; }
 
+  @media (max-width: 900px) {
+    .reviewed-sort-group,
+    .reviewed-secondary-filters {
+      margin-left: 0;
+    }
+
+    .reviewed-side-nav {
+      position: static;
+      transform: none;
+      width: 100%;
+      min-height: 0;
+      flex-direction: row;
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+    }
+
+    .reviewed-side-nav:hover:not(:disabled),
+    .reviewed-side-nav:focus-visible {
+      transform: none;
+    }
+
+    .reviewed-shelf-frame {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-2);
+    }
+
+    .reviewed-shelf-body {
+      grid-column: 1 / -1;
+    }
+  }
+
   @media (max-width: 720px) {
-    .reviewed-controls {
+    .reviewed-section-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .reviewed-page-indicator {
+      align-items: flex-start;
+    }
+
+    .reviewed-controls-primary {
       gap: var(--space-3);
+    }
+
+    .reviewed-filter-block,
+    .reviewed-sort-group,
+    .reviewed-secondary-filters {
+      width: 100%;
+    }
+
+    .reviewed-sort-group {
+      padding-top: 0;
+    }
+
+    .reviewed-reveal-button {
+      width: 100%;
+    }
+
+    .reviewed-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .reviewed-card {
+      --reviewed-cover-width: 72px;
+      --reviewed-cover-height: 108px;
     }
   }
 
